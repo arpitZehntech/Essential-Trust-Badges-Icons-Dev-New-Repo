@@ -1,0 +1,87 @@
+.icon-title {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.icon-container {
+    margin-bottom: 20px;
+    width: calc(19% - 12px); /* 5 icons per row, subtracting margin */
+    position: relative;
+    display: inline-block;
+    border: 1px solid transparent; /* Initial transparent border */
+    border-radius: 4px; /* Optional: Rounded corners */
+    transition: border-color 0.3s ease; /* Smooth transition for the border */
+}
+
+.Polaris-Thumbnail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Polaris-Thumbnail > * {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
+    color: #3F3F3F !important;
+}
+
+.Polaris-Scrollable--horizontal {
+    overflow-x:hidden;
+}
+
+/* Tooltip Styling */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: rgb(255, 255, 255); /* White background */
+    color: #000000; /* Black text */
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 107%;
+    left: 50%;
+    transform: translateX(-50%); /* Center the tooltip horizontally */
+    white-space: nowrap; /* Prevents tooltip from breaking to new lines */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
+}
+
+/* Tooltip Arrow */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%); /* Centers the tooltip arrow */
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgb(255, 255, 255) transparent transparent transparent;
+}
+
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+/* Highlight border on hover */
+.icon-container:hover {
+    border-color: #0070f3; /* Change to your desired color on hover */
+    
+}
+

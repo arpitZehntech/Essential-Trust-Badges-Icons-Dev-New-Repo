@@ -1,0 +1,104 @@
+/* MainPage.css */
+
+.emptyStateMargin {
+    padding: 28px 0px 0px;
+}
+
+.Polaris-Page {
+    margin: 0 auto !important;
+    padding: 0 !important;
+    max-width: 62.375rem !important;
+    width: 100% !important;
+    /* Allow full width on smaller screens */
+    overflow-x: hidden !important;
+    /* Prevent horizontal scrolling */
+    border-radius: var(--p-border-radius-2) !important;
+    /* Add border-radius */
+}
+
+@media (min-width: 10.625em) {
+    .Polaris-Card {
+        border-radius: var(--p-border-radius-2);
+    }
+}
+
+.Polaris-Page__Content {
+    padding-top: 0px !important;
+}
+
+@media (min-width: 30.625em) {
+    .Polaris-Page {
+        padding: 0 var(--p-space-3) !important;
+    }
+}
+
+/* Add a media query for responsiveness */
+@media (max-width: 600px) {
+    .Polaris-Text--subdued {
+        padding-top: 4px !important;
+    }
+}
+
+.Polaris-Text--subdued {
+    padding: 0px 0px 24px;
+}
+
+.Polaris-Button {
+    padding: 7px 16px;
+}
+
+.heading {
+    margin-bottom: 3px !important;
+}
+
+
+/* css for data table for result from database*/
+
+.left-header,
+.right-header {
+  font-weight: 600;
+  padding: 16px 20px;
+}
+
+.left-header {
+  text-align: left;
+}
+
+.right-header {
+  text-align: right;
+}
+
+.body-row {
+  border-top: 1px solid #e1e3e5;
+}
+
+.left-data,
+.right-data {
+  padding: 16px 20px;
+  border-top: 1px solid #e1e3e5;
+}
+
+.left-data {
+  text-align: left;
+}
+
+.right-data {
+  text-align: right;
+}
+
+.custom-row {
+  display: flex;
+  align-items: center;
+}
+
+.drag-icon {
+  margin-right: 8px;
+}
+.title1
+{
+  margin-left: 8px;
+}
+.warnigText
+{
+  padding: 20px;
+}

@@ -1,0 +1,37 @@
+.back-arrow {
+    fill: rgb(97, 106, 117);
+    /* Initial color */
+    transition: fill 0.3s ease;
+}
+
+.Polaris-Button:hover .back-arrow {
+    fill: rgb(31, 33, 36);
+    /* Color on hover */
+}
+
+.cardContainer  {
+    overflow: hidden !important;
+    padding: 10px !important;
+    width: 290px !important;
+}
+
+.cardImage  {
+    margin-bottom: 20px;
+}
+
+/* Media query for screens below 489px */
+@media (max-width: 489px) {
+    .flexContainer  {
+        padding: var(--p-space-4) var(--p-space-4) !important;
+    }
+}
+.flexContainer 
+{
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumbs
+{
+    padding-right: 10px; 
+}
