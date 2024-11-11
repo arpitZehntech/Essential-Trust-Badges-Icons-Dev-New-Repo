@@ -1,5 +1,14 @@
+{% comment %} <script>
+    const APP_URL = "https://packed-jewellery-celebration-mali.trycloudflare.com/";
+    var shop_url = '{{ shop.url }}';
+    const SHOP_URL = shop_url.replace('https://',''); 
+</script> {% endcomment %}
+
 <script>
-    const APP_URL = "https://barn-grad-trials-deborah.trycloudflare.com/";
+    const APP_URL = "https://course-trinity-scholarship-philadelphia.trycloudflare.com/";
     var shop_url = '{{ shop.url }}';
     const SHOP_URL = shop_url.replace('https://','');
 </script>
+
+<!-- Add data attributes for product_id -->
+<div data-product-id="{{ product.id }}"></div>

@@ -363,6 +363,96 @@
 //   );
 // }
 
+
+// working code at 11-11-2024
+
+// import { Card, Page, Layout } from "@shopify/polaris";
+// import { TitleBar } from "@shopify/app-bridge-react";
+// import { useTranslation } from "react-i18next";
+// import React, { useState } from 'react';
+// import MainPage from "../components/mainPage";
+// import BadgeTypePage from "../components/BadgeTypePage";
+// import BadgeEditor from "../components/BadgeEditor";
+
+// export default function HomePage() {
+//   const { t } = useTranslation();
+//   const [showBadgeTypePage, setShowBadgeTypePage] = useState(false);
+//   const [showBadgeEditor, setShowBadgeEditor] = useState(false);
+//   const [badgeType, setBadgeType] = useState(null);
+//   const [badgeId, setBadgeId] = useState(null);
+//   const [badgeData, setBadgeData] = useState(null);
+//   const [isCreationMode, setIsCreationMode] = useState(false);
+
+//   // Function to handle "Create new badge" button click in MainPage
+//   const handleCreateBadgeClick = () => {
+//     setShowBadgeTypePage(true);
+//     setIsCreationMode(true);
+//   };
+
+//   // Function to handle the next step after selecting badge type in BadgeTypePage
+//   const handleBadgeTypeSelection = (type) => {
+//     setBadgeType(type);
+//     setShowBadgeTypePage(false);
+//     setShowBadgeEditor(true);
+//   };
+
+//   // Function to handle "Back" button click in BadgeTypePage
+//   const handleBackFromBadgeType = () => {
+//     setShowBadgeTypePage(false);
+//   };
+
+//   // Function to handle "Back" button click in BadgeEditor
+//   const handleBackFromBadgeEditor = () => {
+//     setShowBadgeEditor(false);
+//     setShowBadgeTypePage(false); // Ensure this is set to false to go back to the main page
+//   };
+
+//   // Function to handle saving badge data in BadgeEditor
+//   const handleBadgeSave = (id) => {
+//     setBadgeId(id);
+//     setIsCreationMode(false);
+//   };
+
+//   const handleEditBadgeClick = async (badgeId) => {
+//   try {
+//     const response = await fetch(`/api/badges/${badgeId}`);
+//     const data = await response.json();
+//     console.log("Fetched badge data:", data); // Log the fetched data for debugging
+//     setBadgeData(data);
+//     setBadgeId(badgeId);
+//     setShowBadgeEditor(true);
+//     setIsCreationMode(false);
+//   } catch (error) {
+//     console.error('Error fetching badge data:', error);
+//   }
+// };
+
+
+//   return (
+//     <Page narrowWidth>
+//       <TitleBar title={t("HomePage.title")} primaryAction={null} />
+//       <Layout>
+//         <Layout.Section>
+//           {!showBadgeTypePage && !showBadgeEditor ? (
+//             <MainPage onCreateBadgeClick={handleCreateBadgeClick} onEditBadgeClick={handleEditBadgeClick} />
+//           ) : showBadgeTypePage && !showBadgeEditor ? (
+//             <BadgeTypePage onBackClick={handleBackFromBadgeType} onSelectBadgeType={handleBadgeTypeSelection} />
+//           ) : (
+//             <BadgeEditor
+//               onBackClick={handleBackFromBadgeEditor}
+//               onBadgeSave={handleBadgeSave}
+//               badgeType={badgeType}
+//               badgeId={badgeId}
+//               badgeData={badgeData}
+//               isCreationMode={isCreationMode}
+//             />
+//           )}
+//         </Layout.Section>
+//       </Layout>
+//     </Page>
+//   );
+// }
+
 import { Card, Page, Layout } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslation } from "react-i18next";
@@ -384,6 +474,8 @@ export default function HomePage() {
   const handleCreateBadgeClick = () => {
     setShowBadgeTypePage(true);
     setIsCreationMode(true);
+    setBadgeId(null); // Reset badgeId
+    setBadgeData(null); // Reset badgeData
   };
 
   // Function to handle the next step after selecting badge type in BadgeTypePage
@@ -402,6 +494,8 @@ export default function HomePage() {
   const handleBackFromBadgeEditor = () => {
     setShowBadgeEditor(false);
     setShowBadgeTypePage(false); // Ensure this is set to false to go back to the main page
+    setBadgeId(null); // Reset badgeId
+    setBadgeData(null); // Reset badgeData
   };
 
   // Function to handle saving badge data in BadgeEditor
@@ -410,34 +504,19 @@ export default function HomePage() {
     setIsCreationMode(false);
   };
 
-  // Function to handle "Edit" button click in MainPage
-  // const handleEditBadgeClick = async (badgeId) => {
-  //   try {
-  //     const response = await fetch(`/api/badges/${badgeId}`);
-  //     const data = await response.json();
-  //     setBadgeData(data);
-  //     setBadgeId(badgeId);
-  //     setShowBadgeEditor(true);
-  //     setIsCreationMode(false);
-  //   } catch (error) {
-  //     console.error('Error fetching badge data:', error);
-  //   }
-  // };
-
   const handleEditBadgeClick = async (badgeId) => {
-  try {
-    const response = await fetch(`/api/badges/${badgeId}`);
-    const data = await response.json();
-    console.log("Fetched badge data:", data); // Log the fetched data for debugging
-    setBadgeData(data);
-    setBadgeId(badgeId);
-    setShowBadgeEditor(true);
-    setIsCreationMode(false);
-  } catch (error) {
-    console.error('Error fetching badge data:', error);
-  }
-};
-
+    try {
+      const response = await fetch(`/api/badges/${badgeId}`);
+      const data = await response.json();
+      console.log("Fetched badge data:", data); // Log the fetched data for debugging
+      setBadgeData(data);
+      setBadgeId(badgeId);
+      setShowBadgeEditor(true);
+      setIsCreationMode(false);
+    } catch (error) {
+      console.error('Error fetching badge data:', error);
+    }
+  };
 
   return (
     <Page narrowWidth>

@@ -24,7 +24,5 @@ Route::post('/badges', [BadgeController::class, 'store']);
 Route::put('/badges/{id}', [BadgeController::class, 'update']);
 Route::delete('/badges/{id}', [BadgeController::class, 'destroy']); // Add this line for delete
 Route::get('/badges/{id}', [BadgeController::class, 'show']);
-// Route::get('/badges/last-created', [BadgeController::class, 'getLastCreatedBadge']);
-
 
 Route::get('/front-end/badges/published', [BadgeController::class, 'getPublishedBadges']);
