@@ -52,8 +52,7 @@ class Badge extends Model
     public function badgePages()
     {
         return $this->hasMany(BadgePage::class, 'badge_id');
-    }
-    
+    } 
 
 }
 

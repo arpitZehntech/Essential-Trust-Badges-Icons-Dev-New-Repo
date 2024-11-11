@@ -3,7 +3,7 @@
 client_id = "3c71d8066fd873dfafb10a06b22b8ca0"
 name = "Essential-Trust-badges-icons"
 handle = "essential-trust-badges-icons"
-application_url = "https://shepherd-helena-whose-maple.trycloudflare.com"
+application_url = "https://biodiversity-die-apnic-costume.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://shepherd-helena-whose-maple.trycloudflare.com/auth/callback",
-  "https://shepherd-helena-whose-maple.trycloudflare.com/auth/shopify/callback",
-  "https://shepherd-helena-whose-maple.trycloudflare.com/api/auth/callback"
+  "https://biodiversity-die-apnic-costume.trycloudflare.com/auth/callback",
+  "https://biodiversity-die-apnic-costume.trycloudflare.com/auth/shopify/callback",
+  "https://biodiversity-die-apnic-costume.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

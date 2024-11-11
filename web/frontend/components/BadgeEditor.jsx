@@ -2976,12 +2976,12 @@
 // export default BadgeEditor;
 
 
-
+ 
 // working code for all the changes do in 1/11/2024 for icons and update and all
 
 
 
-
+ 
 // import React, { useState, useEffect } from "react";
 // import {
 //   Page,
@@ -4279,6 +4279,7 @@
 // NEW CODE  but old code from gpt 8/11/2024 before this above is working code
 
 
+
 import React, { useState, useEffect } from 'react';
 import {
   Page,
@@ -4402,18 +4403,20 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     return Icon ? <Icon size={32} /> : null;
   };
 
-  
-
   useEffect(() => {
     if (badgeId && !isCreationMode) {
+      console.log("not in isCreationMode");
+      
+      
       const fetchBadgeData = async () => {
         try {
           const response = await fetch(`/api/badges/${badgeId}`);
           const data = await response.json();
           setBadgeType(data.badge_type);
+          console.log("data.badge_type", data.badge_type);
           setBadgeName(data.badge_name);
           setIsPublished(data.status === "Publish");
-  
+
           if (data.badge_type === "single-banner") {
             setSingleBannerState({
               title: data.badge_pages[0].title,
@@ -4436,7 +4439,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-              cta: page.call_to_action,
+              cta: page.call_to_action, // Ensure cta is set here
               buttonText: page.button_text,
               linkType: page.link_type,
               externalUrl: page.external_url,
@@ -4448,34 +4451,35 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-              cta: page.call_to_action,
+              cta: page.call_to_action, // Ensure cta is set here
               buttonText: page.button_text,
               linkType: page.link_type,
               externalUrl: page.external_url,
             })));
           }
-  
+
           setPlacementData({
             placement_product_type: data.badge_pages[0].placement_product_type,
             placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
             placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
             placement_tags_json: data.badge_pages[0].placement_tags_json ? JSON.parse(data.badge_pages[0].placement_tags_json) : null,
           });
-  
+
           setOriginalState({
             singleBannerState: { ...singleBannerState },
             iconBlockPages: [...iconBlockPages],
             paymentIconsPages: [...paymentIconsPages],
             placementData: { ...placementData },
           });
-  
+
         } catch (error) {
           console.error('Error fetching badge data:', error);
         }
       };
-  
+
       fetchBadgeData();
     } else if (isCreationMode) {
+      console.log("in isCreationMode");
       setBadgeName("New Badge");
       setSingleBannerState({
         title: "Sample Title",
@@ -4529,7 +4533,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       });
     }
   }, [badgeId, isCreationMode]);
-  
+
 
   const setBadgeDetails = (badgeData) => {
     setBadgeName(badgeData.badge_name);
@@ -4622,8 +4626,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   };
 
 
-
-  // ths is old handleIconSelect working for normal  icon
+  
+// ths is old handleIconSelect working for normal  icon
 
   // const handleIconSelect = (component, pageId, icon) => {
   //   if (component === "singleBanner") {
@@ -4708,7 +4712,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   };
 
 
-
+  
   const handleContinueToDesign = () => {
     setSelectedTab(1);
   };
@@ -4767,71 +4771,11 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     setIsModified(true);
   };
 
-  // const handleSave = async () => {
-  //   const badgeDetails = getBadgeDetails();
-  //   badgeDetails.status = isPublished ? "Publish" : "Draft";
-
-  //   try {
-  //     const response = await fetch(`/api/badges/${badgeId ? badgeId : ''}`, {
-  //       method: badgeId ? 'PUT' : 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(badgeDetails)
-  //     });
-
-  //     if (response.ok) {
-  //       const savedBadge = await response.json();
-  //       setBadgeDetails(savedBadge);
-  //       setIsSaved(true);
-  //       setToastActive(true);
-  //       setTimeout(() => setToastActive(false), 3000);
-  //       setIsModified(false);
-  //       onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been saved
-  //       onBackClick(); // Redirect back to the main page
-  //     } else {
-  //       console.error('Failed to save badge');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving badge:', error);
-  //   }
-  // };
-
-
-
-  // const handlePublish = async () => {
-  //   const badgeDetails = getBadgeDetails();
-  //   badgeDetails.status = "Publish";
-
-  //   try {
-  //     const response = await fetch(`/api/badges/${badgeId ? badgeId : ''}`, {
-  //       method: badgeId ? 'PUT' : 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(badgeDetails)
-  //     });
-
-  //     if (response.ok) {
-  //       const savedBadge = await response.json();
-  //       setBadgeDetails(savedBadge);
-  //       setIsSaved(true);
-  //       setToastActive(true);
-  //       setTimeout(() => setToastActive(false), 3000);
-  //       setIsModified(false);
-  //       setIsPublished(true);
-  //       onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been published
-  //       onBackClick(); // Redirect back to the main page
-  //     } else {
-  //       console.error('Failed to publish badge');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error publishing badge:', error);
-  //   }
-  // };
-
   const handleSave = async () => {
     const badgeDetails = getBadgeDetails();
+
+    console.log("badgeDetails for save details :",badgeDetails);
+    
     badgeDetails.status = isPublished ? "Publish" : "Draft";
 
     try {
@@ -4860,6 +4804,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     }
   };
 
+
+  
   const handlePublish = async () => {
     const badgeDetails = getBadgeDetails();
     badgeDetails.status = "Publish";
@@ -4891,7 +4837,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     }
   };
 
-
   const handleUnpublish = async () => {
     const badgeDetails = getBadgeDetails();
     badgeDetails.status = "Draft";
@@ -4922,7 +4867,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     setIsSaved(false);
     setIsModified(false);
   };
-
+ 
   // const handleProductSelection = (component, pageId, selectedProduct) => {
   //   if (component === "singleBanner") {
   //     setSingleBannerState((prevState) => ({
@@ -5034,8 +4979,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //   }
   // };
 
-
-
+ 
+  
   const handleProductSelection = (component, pageId, selectedProduct) => {
     if (component === "singleBanner") {
       setSingleBannerState((prevState) => ({
@@ -5208,9 +5153,9 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   };
 
 
-
+   
   // ths is old getBadgeDetails working for normal  icon
-
+    
   // const getBadgeDetails = () => {
   //   let badgeDetails = {};
 
@@ -5311,12 +5256,14 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
 
   const getBadgeDetails = () => {
     let badgeDetails = {};
-
+  
+    console.log(" badgeDetails inside getBadgeDetails :",badgeDetails);
+    
     const extractId = (gid) => {
       const parts = gid.split('/');
       return parts.length > 1 ? parts[parts.length - 1] : gid;
     };
-
+  
     const prefixIconName = (iconName) => {
       if (!iconName.startsWith("Lia")) {
         return "Lia" + iconName;
@@ -5329,7 +5276,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       }
       return iconName;
     };
-
+  
     if (badgeType === "single-banner") {
       badgeDetails = {
         badge_name: badgeName,
@@ -5405,11 +5352,11 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         })),
       };
     }
-
+  
     return badgeDetails;
   };
 
-
+ 
 
   return (
     <Frame>
@@ -5501,7 +5448,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       </Stack>
 
                       {badgeType === "single-banner" && (
-
+                     
                         <SingleBanner
                           {...singleBannerState}
                           setTitle={(value) => {
@@ -5564,7 +5511,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       {badgeType === "icon-block" && (
                         <>
                           {iconBlockPages.map((page, index) => (
-
+                          
                             <IconBlock
                               key={page.id}
                               pageId={page.id}
@@ -5683,7 +5630,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       {badgeType === "payment-icons" && (
                         <>
                           {paymentIconsPages.map((page, index) => (
-
+                    
                             <PaymentIcons
                               key={page.id}
                               pageId={page.id}
@@ -5796,7 +5743,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                           </div>
                         </>
                       )}
-                      {/* <div className="translations-section">
+                      <div className="translations-section">
                         <Stack>
                           <Stack.Item>
                             <span className="Polaris-TextStyle--variationStrong">Translations</span>
@@ -5810,7 +5757,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       </div>
                       <Button fullWidth onClick={() => { }}>
                         Add translation
-                      </Button> */}
+                      </Button>
                       <div style={{ textAlign: "center" }}>
                         <button
                           className="Polaris-Button Polaris-Button--outline Polaris-Button--fullWidth"

@@ -55,7 +55,7 @@ class CreateBadgesTable extends Migration
         Schema::create('badges', function (Blueprint $table) {
             $table->id();  // This creates an auto-incrementing BIGINT UNSIGNED primary key
             $table->string('badge_name'); // Name of the badge
-            $table->enum('badge_type', ['Single Banner', 'Icon Block', 'Payment Icons']); // Badge type
+            $table->enum('badge_type', ['single-banner', 'icon-block', 'payment-icons']); // Badge type
             $table->enum('status', ['Draft', 'Publish'])->default('Draft'); // Status
             
             $table->timestamps(); // created_at and updated_at timestamps
