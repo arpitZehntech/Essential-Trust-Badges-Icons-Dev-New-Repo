@@ -18,6 +18,7 @@ class VerifyCsrfToken extends Middleware
         'api/webhooks',
         'api/productslist',
         '/badges', // Ensure this line is here
+        '*',
         
     ];
 }

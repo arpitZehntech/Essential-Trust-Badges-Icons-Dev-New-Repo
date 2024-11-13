@@ -416,6 +416,7 @@ const MainPage = ({ onCreateBadgeClick, onEditBadgeClick }) => {
           Call to Action: ${badgePage?.call_to_action ?? 'N/A'},
           Collection ID: ${badgePage?.collection_id ?? 'N/A'},
           ExternalUrl: ${badgePage?.external_url ?? 'N/A'},
+          Svg : ${badgePage?.icon_svg ?? 'N/A'},
           Icon Name: ${badgePage?.icon_name ?? 'N/A'},
           Product ID: ${badgePage?.product_id ?? 'N/A'},
           Product-Json: ${badgePage?.product_json ?? 'N/A'},

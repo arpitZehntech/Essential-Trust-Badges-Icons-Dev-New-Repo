@@ -582,7 +582,7 @@
 // export default BadgeEditor;
 
 
- 
+
 // working code for all the changes do in 1/11/2024 for icons and update and all
 
 
@@ -1978,17 +1978,37 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     placement_tags_json: null,
   });
 
+  // const getPrefixedIconName = (iconName) => {
+  //   if (badgeType === "single-banner" && !iconName.startsWith("Lia")) {
+  //     return "Lia" + iconName;
+  //   } else if (badgeType === "icon-block" && !iconName.startsWith("Lia")) {
+  //     return "Lia" + iconName;
+  //   } else if (badgeType === "payment-icons" && !iconName.startsWith("Fc")) {
+  //     return "Fc" + iconName;
+  //   }
+  //   return iconName;
+  // };
+
   const getPrefixedIconName = (iconName) => {
-    if (badgeType === "single-banner" && !iconName.startsWith("Lia")) {
+    if (!iconName) {
+      return "";
+    }
+    if (!iconName.startsWith("Lia")) {
       return "Lia" + iconName;
-    } else if (badgeType === "icon-block" && !iconName.startsWith("Lia")) {
-      return "Lia" + iconName;
-    } else if (badgeType === "payment-icons" && !iconName.startsWith("Fc")) {
+    }
+    return iconName;
+  };
+  
+  const getPrefixedIconName1 = (iconName) => {
+    if (!iconName) {
+      return "";
+    }
+    if (!iconName.startsWith("Fc")) {
       return "Fc" + iconName;
     }
     return iconName;
   };
-
+  
   const getIconComponent = (iconName, badgeType) => {
     try {
       if (badgeType === "payment-icons") {
@@ -2010,14 +2030,82 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   useEffect(() => {
     if (badgeId && !isCreationMode) {
       console.log("not in isCreationMode");
-      
-      
+
+
+      // const fetchBadgeData = async () => {
+      //   try {
+      //     const response = await fetch(`/api/badges/${badgeId}`);
+      //     const data = await response.json();
+      //     setBadgeType(data.badge_type);
+      //     console.log("data.badge_type", data.badge_type);
+      //     setBadgeName(data.badge_name);
+      //     setIsPublished(data.status === "Publish");
+
+      //     if (data.badge_type === "single-banner") {
+      //       setSingleBannerState({
+      //         title: data.badge_pages[0].title,
+      //         subheading: data.badge_pages[0].subheading,
+      //         buttonText: data.badge_pages[0].button_text,
+      //         linkType: data.badge_pages[0].link_type,
+      //         externalUrl: data.badge_pages[0].external_url,
+      //         selectedIcon: data.badge_pages[0].icon_name ? { name: data.badge_pages[0].icon_name } : null,
+      //         cta: data.badge_pages[0].call_to_action,
+      //         selectedProduct: data.badge_pages[0].product_json ? JSON.parse(data.badge_pages[0].product_json) : null,
+      //         selectedCollection: data.badge_pages[0].collection_json ? JSON.parse(data.badge_pages[0].collection_json) : null,
+      //         iconModalActive: false,
+      //         isProductPickerOpen: false,
+      //         isCollectionPickerOpen: false,
+      //       });
+      //     } else if (data.badge_type === "icon-block") {
+      //       setIconBlockPages(data.badge_pages.map((page, index) => ({
+      //         ...page,
+      //         id: index + 1,
+      //         selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+      //         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+      //         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+      //         cta: page.call_to_action, // Ensure cta is set here
+      //         buttonText: page.button_text,
+      //         linkType: page.link_type,
+      //         externalUrl: page.external_url,
+      //       })));
+      //     } else if (data.badge_type === "payment-icons") {
+      //       setPaymentIconsPages(data.badge_pages.map((page, index) => ({
+      //         ...page,
+      //         id: index + 1,
+      //         selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+      //         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+      //         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+      //         cta: page.call_to_action, // Ensure cta is set here
+      //         buttonText: page.button_text,
+      //         linkType: page.link_type,
+      //         externalUrl: page.external_url,
+      //       })));
+      //     }
+
+      //     setPlacementData({
+      //       placement_product_type: data.badge_pages[0].placement_product_type,
+      //       placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
+      //       placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
+      //       placement_tags_json: data.badge_pages[0].placement_tags_json ? JSON.parse(data.badge_pages[0].placement_tags_json) : null,
+      //     });
+
+      //     setOriginalState({
+      //       singleBannerState: { ...singleBannerState },
+      //       iconBlockPages: [...iconBlockPages],
+      //       paymentIconsPages: [...paymentIconsPages],
+      //       placementData: { ...placementData },
+      //     });
+
+      //   } catch (error) {
+      //     console.error('Error fetching badge data:', error);
+      //   }
+      // };
+
       const fetchBadgeData = async () => {
         try {
           const response = await fetch(`/api/badges/${badgeId}`);
           const data = await response.json();
           setBadgeType(data.badge_type);
-          console.log("data.badge_type", data.badge_type);
           setBadgeName(data.badge_name);
           setIsPublished(data.status === "Publish");
 
@@ -2029,6 +2117,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               linkType: data.badge_pages[0].link_type,
               externalUrl: data.badge_pages[0].external_url,
               selectedIcon: data.badge_pages[0].icon_name ? { name: data.badge_pages[0].icon_name } : null,
+              icon_svg: data.badge_pages[0].icon_svg, // Include the SVG string
               cta: data.badge_pages[0].call_to_action,
               selectedProduct: data.badge_pages[0].product_json ? JSON.parse(data.badge_pages[0].product_json) : null,
               selectedCollection: data.badge_pages[0].collection_json ? JSON.parse(data.badge_pages[0].collection_json) : null,
@@ -2041,11 +2130,11 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               ...page,
               id: index + 1,
               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+              icon_svg: page.icon_svg, // Include the SVG string
               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
               cta: page.call_to_action, // Ensure cta is set here
               buttonText: page.button_text,
-              linkType: page.link_type,
               externalUrl: page.external_url,
             })));
           } else if (data.badge_type === "payment-icons") {
@@ -2053,11 +2142,11 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               ...page,
               id: index + 1,
               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+              icon_svg: page.icon_svg, // Include the SVG string
               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
               cta: page.call_to_action, // Ensure cta is set here
               buttonText: page.button_text,
-              linkType: page.link_type,
               externalUrl: page.external_url,
             })));
           }
@@ -2152,6 +2241,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         linkType: badgeData.badge_pages?.[0]?.linkType || "",
         externalUrl: badgeData.badge_pages?.[0]?.external_url || "",
         selectedIcon: badgeData.badge_pages?.[0]?.icon_name ? { name: badgeData.badge_pages[0].icon_name.replace("Lia", "") } : null,
+        icon_svg: badgeData.badge_pages?.[0]?.icon_svg || "", // Include the SVG string
         cta: badgeData.badge_pages?.[0]?.call_to_action || "no-cta",
         selectedProduct: badgeData.badge_pages?.[0]?.product_json ? JSON.parse(badgeData.badge_pages[0].product_json) : null,
         selectedCollection: badgeData.badge_pages?.[0]?.collection_json ? JSON.parse(badgeData.badge_pages[0].collection_json) : null,
@@ -2164,16 +2254,24 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         ...page,
         id: index + 1,
         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Lia", "") } : null,
+        icon_svg: page.icon_svg || "", // Include the SVG string
         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+        cta: page.call_to_action, // Ensure cta is set here
+        buttonText: page.button_text,
+        externalUrl: page.external_url,
       })) || []);
     } else if (badgeData.badge_type === "payment-icons") {
       setPaymentIconsPages(badgeData.badge_pages?.map((page, index) => ({
         ...page,
         id: index + 1,
         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Fc", "") } : null,
+        icon_svg: page.icon_svg || "", // Include the SVG string
         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+        cta: page.call_to_action, // Ensure cta is set here
+        buttonText: page.button_text,
+        externalUrl: page.external_url,
       })) || []);
     }
 
@@ -2184,6 +2282,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || null,
     });
   };
+
 
   const handleTabChange = (selectedTabIndex) => {
     setSelectedTab(selectedTabIndex);
@@ -2230,8 +2329,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   };
 
 
-  
-// ths is old handleIconSelect working for normal  icon
+
+  // ths is old handleIconSelect working for normal  icon
 
   // const handleIconSelect = (component, pageId, icon) => {
   //   if (component === "singleBanner") {
@@ -2273,8 +2372,12 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
 
 
   const handleIconSelect = (component, pageId, icon) => {
+    let svgString = null;
+    if (icon) {
+      svgString = serializeReactElementToSVG(icon.icon);
+    }
+  
     if (component === "singleBanner") {
-      const svgString = serializeReactElementToSVG(icon.icon);
       setSingleBannerState((prevState) => ({
         ...prevState,
         selectedIcon: icon,
@@ -2283,7 +2386,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       }));
       setIsModified(true);
     } else if (component === "payment-icons") {
-      const svgString = serializeReactElementToSVG(icon.icon);
       setPaymentIconsPages((prevPages) => {
         const newPages = [...prevPages];
         const pageIndex = newPages.findIndex(page => page.id === pageId);
@@ -2297,7 +2399,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         return newPages;
       });
     } else if (component === "icon-block") {
-      const svgString = serializeReactElementToSVG(icon.icon);
       setIconBlockPages((prevPages) => {
         const newPages = [...prevPages];
         const pageIndex = newPages.findIndex(page => page.id === pageId);
@@ -2314,9 +2415,9 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       console.error("Unknown component:", component);
     }
   };
-
-
   
+  
+
   const handleContinueToDesign = () => {
     setSelectedTab(1);
   };
@@ -2378,8 +2479,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   const handleSave = async () => {
     const badgeDetails = getBadgeDetails();
 
-    console.log("badgeDetails for save details :",badgeDetails);
-    
+    console.log("badgeDetails for save details :", badgeDetails);
+
     badgeDetails.status = isPublished ? "Publish" : "Draft";
 
     try {
@@ -2409,7 +2510,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   };
 
 
-  
+
   const handlePublish = async () => {
     const badgeDetails = getBadgeDetails();
     badgeDetails.status = "Publish";
@@ -2471,7 +2572,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     setIsSaved(false);
     setIsModified(false);
   };
-  
+
   const handleProductSelection = (component, pageId, selectedProduct) => {
     if (component === "singleBanner") {
       setSingleBannerState((prevState) => ({
@@ -2643,10 +2744,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     onBackClick(); // Redirect back to the main page
   };
 
-
-   
   // ths is old getBadgeDetails working for normal  icon
-    
+
   // const getBadgeDetails = () => {
   //   let badgeDetails = {};
 
@@ -2743,18 +2842,14 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //   return badgeDetails;
   // };
 
-
-
   const getBadgeDetails = () => {
     let badgeDetails = {};
-  
-    console.log(" badgeDetails inside getBadgeDetails :",badgeDetails);
-    
+
     const extractId = (gid) => {
       const parts = gid.split('/');
       return parts.length > 1 ? parts[parts.length - 1] : gid;
     };
-  
+
     const prefixIconName = (iconName) => {
       if (!iconName.startsWith("Lia")) {
         return "Lia" + iconName;
@@ -2767,7 +2862,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       }
       return iconName;
     };
-  
+
     if (badgeType === "single-banner") {
       badgeDetails = {
         badge_name: badgeName,
@@ -2843,11 +2938,12 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         })),
       };
     }
-  
+
     return badgeDetails;
   };
 
- 
+
+
 
   return (
     <Frame>
@@ -2939,7 +3035,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       </Stack>
 
                       {badgeType === "single-banner" && (
-                     
+
                         <SingleBanner
                           {...singleBannerState}
                           setTitle={(value) => {
@@ -3002,7 +3098,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       {badgeType === "icon-block" && (
                         <>
                           {iconBlockPages.map((page, index) => (
-                          
+
                             <IconBlock
                               key={page.id}
                               pageId={page.id}
@@ -3121,7 +3217,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       {badgeType === "payment-icons" && (
                         <>
                           {paymentIconsPages.map((page, index) => (
-                    
+
                             <PaymentIcons
                               key={page.id}
                               pageId={page.id}

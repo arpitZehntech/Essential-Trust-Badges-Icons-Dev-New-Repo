@@ -5,10 +5,16 @@
 </script> {% endcomment %}
 
 <script>
-    const APP_URL = "https://course-trinity-scholarship-philadelphia.trycloudflare.com/";
+    const APP_URL = "https://eg-distribute-sufficient-determining.trycloudflare.com/";
     var shop_url = '{{ shop.url }}';
+    var shop_name = '{{ shop.name }}';
     const SHOP_URL = shop_url.replace('https://','');
+    console.log("shop_url ;",shop_url);
+    var collectionId = '{{ collection.id }}';
+    console.log("collectionId ;",collectionId);
+    
 </script>
 
-<!-- Add data attributes for product_id -->
+<!-- Add data attributes for product_id and collection_id -->
 <div data-product-id="{{ product.id }}"></div>
+{% comment %} <div data-collection-id="{{ collection.id }}"></div> {% endcomment %}

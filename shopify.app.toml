@@ -3,7 +3,7 @@
 client_id = "3c71d8066fd873dfafb10a06b22b8ca0"
 name = "Essential-Trust-badges-icons"
 handle = "essential-trust-badges-icons"
-application_url = "https://course-trinity-scholarship-philadelphia.trycloudflare.com"
+application_url = "https://eg-distribute-sufficient-determining.trycloudflare.com"
 embedded = true
 
 [build]
@@ -16,9 +16,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://course-trinity-scholarship-philadelphia.trycloudflare.com/auth/callback",
-  "https://course-trinity-scholarship-philadelphia.trycloudflare.com/auth/shopify/callback",
-  "https://course-trinity-scholarship-philadelphia.trycloudflare.com/api/auth/callback"
+  "https://eg-distribute-sufficient-determining.trycloudflare.com/auth/callback",
+  "https://eg-distribute-sufficient-determining.trycloudflare.com/auth/shopify/callback",
+  "https://eg-distribute-sufficient-determining.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

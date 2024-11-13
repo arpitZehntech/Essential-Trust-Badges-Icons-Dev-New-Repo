@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\ShopifyController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,3 +27,6 @@ Route::delete('/badges/{id}', [BadgeController::class, 'destroy']); // Add this 
 Route::get('/badges/{id}', [BadgeController::class, 'show']);
 
 Route::get('/front-end/badges/published', [BadgeController::class, 'getPublishedBadges']);
+
+
+Route::get('/shopify/product/{productId}', [ShopifyController::class, 'getProductById']);
