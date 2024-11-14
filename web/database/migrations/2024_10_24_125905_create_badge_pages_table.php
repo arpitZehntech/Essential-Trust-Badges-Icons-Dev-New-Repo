@@ -75,7 +75,8 @@ class CreateBadgePagesTable extends Migration
             $table->string('placement_product_type')->nullable(); // Placement product type
             $table->json('placement_product_json')->nullable(); // Placement product JSON data
             $table->json('placement_collection_json')->nullable(); // Placement collection JSON data
-            $table->json('placement_tags_json')->nullable(); // Placement tags JSON data
+            // $table->json('placement_tags_json')->nullable(); // Placement tags JSON data
+            $table->text('placement_tags_json')->nullable(); // Placement tags JSON data (changed to text)
             $table->timestamps(); // created_at and updated_at timestamps
         });
     }

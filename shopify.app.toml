@@ -3,7 +3,7 @@
 client_id = "3c71d8066fd873dfafb10a06b22b8ca0"
 name = "Essential-Trust-badges-icons"
 handle = "essential-trust-badges-icons"
-application_url = "https://modules-noble-tear-salary.trycloudflare.com"
+application_url = "https://trusted-admit-suggesting-magical.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products"
 
 [auth]
 redirect_urls = [
-  "https://modules-noble-tear-salary.trycloudflare.com/auth/callback",
-  "https://modules-noble-tear-salary.trycloudflare.com/auth/shopify/callback",
-  "https://modules-noble-tear-salary.trycloudflare.com/api/auth/callback"
+  "https://trusted-admit-suggesting-magical.trycloudflare.com/auth/callback",
+  "https://trusted-admit-suggesting-magical.trycloudflare.com/auth/shopify/callback",
+  "https://trusted-admit-suggesting-magical.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

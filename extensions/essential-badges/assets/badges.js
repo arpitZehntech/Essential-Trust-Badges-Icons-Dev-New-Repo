@@ -976,11 +976,6 @@
 //                             console.log("No badge pages found for badge:", badge); // Log if no badge pages
 //                         }
 
-//                         // Add badge container to the page
-//                         const productForm = document.querySelector('.product-form');
-//                         if (productForm) {
-//                             productForm.appendChild(badgeContainer); // Append badge container to the product form
-//                         }
 //                     });
 //                 } else {
 //                     console.log("No published badges found."); // Log if no badges are found
@@ -1024,10 +1019,10 @@
 //         console.log("Filtered badges:", filteredBadges);
 
 //         // Clear existing badges
-//         const productForm = document.querySelector('.product-form');
-//         if (productForm) {
-//             productForm.innerHTML = ''; // Clear existing content
-//         }
+//         // const productForm = document.querySelector('.product-form');
+//         // if (productForm) {
+//         //     productForm.innerHTML = ''; // Clear existing content
+//         // }
 
 //         // Display the filtered badges
 //         if (filteredBadges.length > 0) {
@@ -1225,12 +1220,1543 @@
 
 
 
+// document.addEventListener("DOMContentLoaded", function () {
 
+//     var prodIds = [];
+//     var collIds = [];
+//     var placeProdTypes = [];
 
+//     // Function to fetch published badges
+//     function fetchPublishedBadges() {
+//         return fetch(`${APP_URL}api/front-end/badges/published`)
+//             .then(response => {
+//                 if (!response.ok) {
+//                     throw new Error('Network response was not ok: ' + response.statusText);
+//                 }
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 console.log("Fetched data:", data); // Log the fetched data
+//                 if (data && data.length > 0) {
+//                     data.forEach(badge => {
+//                         const badgePages = badge.badge_pages; // Ensure correct property name
+//                         console.log("Badge pages:", badgePages); // Log the badge pages
 
-// this is working code for get the collection id of selected product
+//                         // Create badge container
+//                         const badgeContainer = document.createElement('div');
+//                         badgeContainer.style.marginBottom = '40px';
 
+//                         // Badge Type
+//                         const badgeType = document.createElement('p');
+//                         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//                         badgeContainer.appendChild(badgeType);
+
+//                         // Loop through each page and display additional fields
+//                         if (badgePages && badgePages.length > 0) {
+//                             badgePages.forEach(page => {
+//                                 console.log("Processing page:", page); // Log each page
+
+//                                 // Create the main container div
+//                                 const containerDiv = document.createElement('div');
+//                                 containerDiv.style.width = '100%';
+//                                 containerDiv.style.padding = '16px';
+//                                 containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//                                 containerDiv.style.borderRadius = '8px';
+//                                 containerDiv.style.display = 'flex';
+//                                 containerDiv.style.justifyContent = 'space-between';
+//                                 containerDiv.style.alignItems = 'center';
+//                                 containerDiv.style.gap = '10px';
+//                                 containerDiv.style.position = 'relative';
+//                                 containerDiv.style.marginTop = '20px';
+//                                 containerDiv.style.marginBottom = '20px';
+//                                 containerDiv.style.background = 'rgb(255, 255, 255)';
+
+//                                 // Create the icon container div
+//                                 const iconContainer = document.createElement('div');
+//                                 iconContainer.innerHTML = page.icon_svg;  // Inject the SVG string as HTML
+//                                 containerDiv.appendChild(iconContainer);
+
+//                                 // Create the text container div
+//                                 const textContainer = document.createElement('div');
+//                                 textContainer.id = 'text_container';
+//                                 textContainer.style.display = 'flex';
+//                                 textContainer.style.flexDirection = 'column';
+//                                 textContainer.style.justifyContent = 'flex-start';
+//                                 textContainer.style.alignItems = 'flex-start';
+//                                 textContainer.style.flex = '1';
+//                                 textContainer.style.gap = '2px';
+
+//                                 // Create the title span
+//                                 const title = document.createElement('span');
+//                                 title.id = 'title';
+//                                 title.style.display = 'block';
+//                                 title.style.fontWeight = '600';
+//                                 title.style.fontSize = '16px';
+//                                 title.style.color = '#202223';
+//                                 title.style.margin = '0';
+//                                 title.style.lineHeight = '1';
+//                                 title.style.wordWrap = 'break-word';
+//                                 title.style.maxWidth = '100%';
+//                                 title.innerText = page.title || 'No Title';
+
+//                                 // Create the subheading span
+//                                 const subheading = document.createElement('span');
+//                                 subheading.id = 'subheading';
+//                                 subheading.style.display = 'block';
+//                                 subheading.style.fontSize = '14px';
+//                                 subheading.style.color = '#96a4b6';
+//                                 subheading.style.fontWeight = '400';
+//                                 subheading.style.margin = '0';
+//                                 subheading.style.textAlign = 'left';
+//                                 subheading.style.lineHeight = '1';
+//                                 subheading.style.wordWrap = 'break-word';
+//                                 subheading.style.maxWidth = '100%';
+//                                 subheading.innerText = page.subheading || 'No Subheading';
+
+//                                 // Append the title and subheading to the text container
+//                                 textContainer.appendChild(title);
+//                                 textContainer.appendChild(subheading);
+
+//                                 // Function to unescape and parse JSON
+//                                 function parseJson(jsonString) {
+//                                     try {
+//                                         // First, unescape the string twice and remove the outer quotes
+//                                         let unescapedJson = jsonString.replace(/\\"/g, '"').replace(/\\"/g, '"');
+//                                         unescapedJson = unescapedJson.slice(1, -1); // Remove the outer quotes
+
+//                                         // Now try to parse the unescaped JSON
+//                                         return JSON.parse(unescapedJson);
+//                                     } catch (error) {
+//                                         console.error('Error parsing JSON:', error); // Log the error for debugging
+//                                         return null;
+//                                     }
+//                                 }
+
+//                                 // Check if the product data exists
+//                                 if (page.placement_product_json) {
+//                                     const productData = parseJson(page.placement_product_json);
+//                                     if (productData) {
+//                                         // Extract product IDs (if available)
+//                                         const productIds = productData.map(product => product.id.split('/').pop());
+//                                         prodIds.push(...productIds);
+
+//                                         // Log the IDs or a fallback message if no IDs exist
+//                                         console.log(`From Placement Product JSON ID(s): ${productIds.join(', ') || 'No ID'}`);
+//                                     } else {
+//                                         console.log('Error parsing JSON: Invalid format');
+//                                     }
+//                                 } else {
+//                                     console.log('From Placement Product JSON ID: No data available');
+//                                 }
+
+//                                 // Check if the collection data exists
+//                                 if (page.placement_collection_json) {
+//                                     const collectionData = parseJson(page.placement_collection_json);
+//                                     if (collectionData) {
+//                                         // Extract collection IDs (if available)
+//                                         const collectionIds = collectionData.map(collection => collection.id.split('/').pop());
+//                                         collIds.push(...collectionIds);
+
+//                                         // Log the IDs or a fallback message if no IDs exist
+//                                         console.log(`From Placement Collection JSON ID(s): ${collectionIds.join(', ') || 'No ID'}`);
+//                                     } else {
+//                                         console.log('Error parsing JSON: Invalid format');
+//                                     }
+//                                 } else {
+//                                     console.log('From Placement Collection JSON ID: No data available');
+//                                 }
+
+//                                 // Log the placement product type
+//                                 const placeProdType = page.placement_product_type || 'No Type';
+//                                 placeProdTypes.push(placeProdType);
+//                                 console.log(`Placement Product Type: ${placeProdType}`);
+
+//                                 // Create the CTA button
+//                                 const ctaButton = document.createElement('a');
+//                                 ctaButton.href = '#';
+//                                 ctaButton.id = 'cta-button';
+//                                 ctaButton.target = '_blank';
+//                                 ctaButton.style.textDecoration = 'none';
+//                                 ctaButton.style.flexShrink = '0';
+//                                 ctaButton.style.margin = '0';
+//                                 ctaButton.style.border = 'none';
+//                                 ctaButton.style.fontWeight = '600';
+//                                 ctaButton.style.padding = '10px 16px';
+//                                 ctaButton.style.display = 'flex';
+//                                 ctaButton.style.alignItems = 'center';
+//                                 ctaButton.style.justifyContent = 'center';
+//                                 ctaButton.style.fontSize = '14px';
+//                                 ctaButton.style.backgroundColor = '#202223';
+//                                 ctaButton.style.color = '#fafafa';
+//                                 ctaButton.style.borderRadius = '4px';
+//                                 ctaButton.style.cursor = 'pointer';
+//                                 ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//                                 ctaButton.innerText = page.button_text || 'Shop Now';
+
+//                                 // Append the icon container, text container, and CTA button to the main container
+//                                 containerDiv.appendChild(iconContainer);
+//                                 containerDiv.appendChild(textContainer);
+//                                 containerDiv.appendChild(ctaButton);
+
+//                                 // Append the container to the badge container
+//                                 badgeContainer.appendChild(containerDiv);
+//                             });
+//                         } else {
+//                             console.log("No badge pages found for badge:", badge); // Log if no badge pages
+//                         }
+
+               
+//                     });
+//                 } else {
+//                     console.log("No published badges found."); // Log if no badges are found
+//                     // alert('No published badges found.');
+//                 }
+
+//                 // Return the fetched data for further processing
+//                 return data;
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching badge data:', error);
+//                 // alert('Error fetching badge data: ' + error.message);
+//             });
+//     }
+
+//     // Function to get the current product ID
+//     function getProductId() {
+//         const productElement = document.querySelector('[data-product-id]');
+//         return productElement ? productElement.getAttribute('data-product-id') : null;
+//     }
+
+//     // Function to filter and display badges based on product ID and placement type
+//     function filterAndDisplayBadges(data) {
+//         const productId = getProductId();
+//         console.log("Current product ID:", productId);
+
+//         // Filter badges based on product ID and placement type
+//         const filteredBadges = data.filter(badge => {
+//             const badgePages = badge.badge_pages;
+//             return badgePages.some(page => {
+//                 const placeProdType = page.placement_product_type;
+//                 const productIds = prodIds.includes(productId);
+//                 const collectionIds = collIds.includes(productId);
+
+//                 return (placeProdType === 'allProducts') ||
+//                        (placeProdType === 'specificProducts' && productIds) ||
+//                        (placeProdType === 'specificCollections' && collectionIds);
+//             });
+//         });
+
+//         console.log("Filtered badges:", filteredBadges);
+
+//         // Clear existing badges
+//         const productForm = document.querySelector('.product-form');
+//         if (productForm) {
+//             // Remove only the badge containers, not the entire content
+//             const badgeContainers = productForm.querySelectorAll('.badge-container');
+//             badgeContainers.forEach(container => container.remove());
+//         }
+
+//         // Display the filtered badges
+//         if (filteredBadges.length > 0) {
+//             filteredBadges.forEach(badge => {
+//                 const badgePages = badge.badge_pages;
+//                 const productForm = document.querySelector('.product-form');
+
+//                 if (productForm) {
+//                     const badgeContainer = createBadgeContainer(badge);
+//                     badgeContainer.classList.add('badge-container'); // Add a class for easy removal later
+//                     productForm.appendChild(badgeContainer);
+
+//                     if (badgePages && badgePages.length > 0) {
+//                         badgePages.forEach(page => {
+//                             const containerDiv = createIconBlock(badge, page);
+//                             badgeContainer.appendChild(containerDiv);
+
+//                             if (badge.badge_type.includes('icon-block') || badge.badge_type.includes('payment-icons')) {
+//                                 renderIconsBlock(badgeContainer, page);
+//                             }
+//                         });
+//                     }
+//                 }
+//             });
+//         } else {
+//             // alert('No published badges found for the current product.');
+//         }
+//     }
+
+//     // Function to create the badge container
+//     function createBadgeContainer(badge) {
+//         const badgeContainer = document.createElement('div');
+//         badgeContainer.style.marginBottom = '40px';
+
+//         // Badge Type
+//         const badgeType = document.createElement('p');
+//         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//         badgeContainer.appendChild(badgeType);
+
+//         return badgeContainer;
+//     }
+
+//     // Function to create the main container div for icons
+//     function createIconBlock(badge, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '16px';
+//         containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//         containerDiv.style.borderRadius = '8px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-between';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.gap = '10px';
+//         containerDiv.style.position = 'relative';
+//         containerDiv.style.marginTop = '20px';
+//         containerDiv.style.marginBottom = '20px';
+//         containerDiv.style.background = 'rgb(255, 255, 255)';
+
+//         const iconContainer = document.createElement('div');
+//         iconContainer.innerHTML = page.icon_svg;
+//         containerDiv.appendChild(iconContainer);
+
+//         const textContainer = createTextContainer(page);
+//         containerDiv.appendChild(textContainer);
+
+//         const ctaButton = createCtaButton(page);
+//         containerDiv.appendChild(ctaButton);
+
+//         return containerDiv;
+//     }
+
+//     // Function to create the text container
+//     function createTextContainer(page) {
+//         const textContainer = document.createElement('div');
+//         textContainer.id = 'text_container';
+//         textContainer.style.display = 'flex';
+//         textContainer.style.flexDirection = 'column';
+//         textContainer.style.justifyContent = 'flex-start';
+//         textContainer.style.alignItems = 'flex-start';
+//         textContainer.style.flex = '1';
+//         textContainer.style.gap = '2px';
+
+//         const title = document.createElement('span');
+//         title.id = 'title';
+//         title.style.display = 'block';
+//         title.style.fontWeight = '600';
+//         title.style.fontSize = '16px';
+//         title.style.color = '#202223';
+//         title.style.margin = '0';
+//         title.style.lineHeight = '1';
+//         title.style.wordWrap = 'break-word';
+//         title.style.maxWidth = '100%';
+//         title.innerText = page.title || 'No Title';
+
+//         const subheading = document.createElement('span');
+//         subheading.id = 'subheading';
+//         subheading.style.display = 'block';
+//         subheading.style.fontSize = '14px';
+//         subheading.style.color = '#96a4b6';
+//         subheading.style.fontWeight = '400';
+//         subheading.style.margin = '0';
+//         subheading.style.textAlign = 'left';
+//         subheading.style.lineHeight = '1';
+//         subheading.style.wordWrap = 'break-word';
+//         subheading.style.maxWidth = '100%';
+//         subheading.innerText = page.subheading || 'No Subheading';
+
+//         textContainer.appendChild(title);
+//         textContainer.appendChild(subheading);
+
+//         return textContainer;
+//     }
+
+//     // Function to create the CTA button
+//     function createCtaButton(page) {
+//         const ctaButton = document.createElement('a');
+//         ctaButton.href = '#';
+//         ctaButton.id = 'cta-button';
+//         ctaButton.target = '_blank';
+//         ctaButton.style.textDecoration = 'none';
+//         ctaButton.style.flexShrink = '0';
+//         ctaButton.style.margin = '0';
+//         ctaButton.style.border = 'none';
+//         ctaButton.style.fontWeight = '600';
+//         ctaButton.style.padding = '10px 16px';
+//         ctaButton.style.display = 'flex';
+//         ctaButton.style.alignItems = 'center';
+//         ctaButton.style.justifyContent = 'center';
+//         ctaButton.style.fontSize = '14px';
+//         ctaButton.style.backgroundColor = '#202223';
+//         ctaButton.style.color = '#fafafa';
+//         ctaButton.style.borderRadius = '4px';
+//         ctaButton.style.cursor = 'pointer';
+//         ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//         ctaButton.innerText = page.button_text || 'Shop Now';
+
+//         return ctaButton;
+//     }
+
+//     // Function to render icons block for 'icon-block' or 'payment-icons' types
+//     function renderIconsBlock(container, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '20px';
+//         containerDiv.style.backgroundColor = '#f7f7f7';
+//         containerDiv.style.borderRadius = '10px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-around';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.margin = '20px 0';
+//         containerDiv.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+
+//         page.badge_pages.forEach(badge => {
+//             const badgeContainer = document.createElement('div');
+//             badgeContainer.style.textAlign = 'center';
+
+//             const icon = document.createElement('img');
+//             icon.src = badge.icon_svg;
+//             icon.style.width = '50px';
+//             icon.style.marginBottom = '10px';
+//             badgeContainer.appendChild(icon);
+
+//             const title = document.createElement('h3');
+//             title.innerText = badge.title || 'No Title';
+//             badgeContainer.appendChild(title);
+
+//             const subheading = document.createElement('p');
+//             subheading.innerText = badge.subheading || 'No Subheading';
+//             badgeContainer.appendChild(subheading);
+
+//             const button = document.createElement('a');
+//             button.innerText = 'Shop now';
+//             button.href = '#';
+//             badgeContainer.appendChild(button);
+
+//             containerDiv.appendChild(badgeContainer);
+//         });
+
+//         container.appendChild(containerDiv);
+//     }
+
+//     // Call the function to fetch and process badges
+//     fetchPublishedBadges().then(data => {
+//         filterAndDisplayBadges(data);
+//     });
+
+//     // Log the collected product and collection IDs
+//     console.log("Product IDs database:", prodIds);
+//     console.log("Collection IDs database:", collIds);
+//     console.log("Placement Product Types database:", placeProdTypes);
+// });
+
+// document.addEventListener("DOMContentLoaded", function () {
+
+//     var prodIds = [];
+//     var collIds = [];
+//     var placeProdTypes = [];
+
+//     // Function to fetch published badges
+//     function fetchPublishedBadges() {
+//         return fetch(`${APP_URL}api/front-end/badges/published`)
+//             .then(response => {
+//                 if (!response.ok) {
+//                     throw new Error('Network response was not ok: ' + response.statusText);
+//                 }
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 console.log("Fetched data:", data); // Log the fetched data
+//                 if (data && data.length > 0) {
+//                     data.forEach(badge => {
+//                         const badgePages = badge.badge_pages; // Ensure correct property name
+//                         console.log("Badge pages:", badgePages); // Log the badge pages
+
+//                         // Create badge container
+//                         const badgeContainer = document.createElement('div');
+//                         badgeContainer.style.marginBottom = '40px';
+
+//                         // Badge Type
+//                         const badgeType = document.createElement('p');
+//                         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//                         badgeContainer.appendChild(badgeType);
+
+//                         // Loop through each page and display additional fields
+//                         if (badgePages && badgePages.length > 0) {
+//                             badgePages.forEach(page => {
+//                                 console.log("Processing page:", page); // Log each page
+
+//                                 // Create the main container div
+//                                 const containerDiv = document.createElement('div');
+//                                 containerDiv.style.width = '100%';
+//                                 containerDiv.style.padding = '16px';
+//                                 containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//                                 containerDiv.style.borderRadius = '8px';
+//                                 containerDiv.style.display = 'flex';
+//                                 containerDiv.style.justifyContent = 'space-between';
+//                                 containerDiv.style.alignItems = 'center';
+//                                 containerDiv.style.gap = '10px';
+//                                 containerDiv.style.position = 'relative';
+//                                 containerDiv.style.marginTop = '20px';
+//                                 containerDiv.style.marginBottom = '20px';
+//                                 containerDiv.style.background = 'rgb(255, 255, 255)';
+
+//                                 // Create the icon container div
+//                                 const iconContainer = document.createElement('div');
+//                                 iconContainer.innerHTML = page.icon_svg;  // Inject the SVG string as HTML
+//                                 containerDiv.appendChild(iconContainer);
+
+//                                 // Create the text container div
+//                                 const textContainer = document.createElement('div');
+//                                 textContainer.id = 'text_container';
+//                                 textContainer.style.display = 'flex';
+//                                 textContainer.style.flexDirection = 'column';
+//                                 textContainer.style.justifyContent = 'flex-start';
+//                                 textContainer.style.alignItems = 'flex-start';
+//                                 textContainer.style.flex = '1';
+//                                 textContainer.style.gap = '2px';
+
+//                                 // Create the title span
+//                                 const title = document.createElement('span');
+//                                 title.id = 'title';
+//                                 title.style.display = 'block';
+//                                 title.style.fontWeight = '600';
+//                                 title.style.fontSize = '16px';
+//                                 title.style.color = '#202223';
+//                                 title.style.margin = '0';
+//                                 title.style.lineHeight = '1';
+//                                 title.style.wordWrap = 'break-word';
+//                                 title.style.maxWidth = '100%';
+//                                 title.innerText = page.title || 'No Title';
+
+//                                 // Create the subheading span
+//                                 const subheading = document.createElement('span');
+//                                 subheading.id = 'subheading';
+//                                 subheading.style.display = 'block';
+//                                 subheading.style.fontSize = '14px';
+//                                 subheading.style.color = '#96a4b6';
+//                                 subheading.style.fontWeight = '400';
+//                                 subheading.style.margin = '0';
+//                                 subheading.style.textAlign = 'left';
+//                                 subheading.style.lineHeight = '1';
+//                                 subheading.style.wordWrap = 'break-word';
+//                                 subheading.style.maxWidth = '100%';
+//                                 subheading.innerText = page.subheading || 'No Subheading';
+
+//                                 // Append the title and subheading to the text container
+//                                 textContainer.appendChild(title);
+//                                 textContainer.appendChild(subheading);
+
+//                                 // Function to unescape and parse JSON
+//                                 function parseJson(jsonString) {
+//                                     try {
+//                                         // First, unescape the string twice and remove the outer quotes
+//                                         let unescapedJson = jsonString.replace(/\\"/g, '"').replace(/\\"/g, '"');
+//                                         unescapedJson = unescapedJson.slice(1, -1); // Remove the outer quotes
+
+//                                         // Now try to parse the unescaped JSON
+//                                         return JSON.parse(unescapedJson);
+//                                     } catch (error) {
+//                                         console.error('Error parsing JSON:', error); // Log the error for debugging
+//                                         return null;
+//                                     }
+//                                 }
+
+//                                 // Check if the product data exists
+//                                 if (page.placement_product_json) {
+//                                     const productData = parseJson(page.placement_product_json);
+//                                     if (productData) {
+//                                         // Extract product IDs (if available)
+//                                         const productIds = productData.map(product => product.id.split('/').pop());
+//                                         prodIds.push(...productIds);
+
+//                                         // Log the IDs or a fallback message if no IDs exist
+//                                         console.log(`From Placement Product JSON ID(s): ${productIds.join(', ') || 'No ID'}`);
+//                                     } else {
+//                                         console.log('Error parsing JSON: Invalid format');
+//                                     }
+//                                 } else {
+//                                     console.log('From Placement Product JSON ID: No data available');
+//                                 }
+
+//                                 // Check if the collection data exists
+//                                 if (page.placement_collection_json) {
+//                                     const collectionData = parseJson(page.placement_collection_json);
+//                                     if (collectionData) {
+//                                         // Extract collection IDs (if available)
+//                                         const collectionIds = collectionData.map(collection => collection.id.split('/').pop());
+//                                         collIds.push(...collectionIds);
+
+//                                         // Log the IDs or a fallback message if no IDs exist
+//                                         console.log(`From Placement Collection JSON ID(s): ${collectionIds.join(', ') || 'No ID'}`);
+//                                     } else {
+//                                         console.log('Error parsing JSON: Invalid format');
+//                                     }
+//                                 } else {
+//                                     console.log('From Placement Collection JSON ID: No data available');
+//                                 }
+
+//                                 // Log the placement product type
+//                                 const placeProdType = page.placement_product_type || 'No Type';
+//                                 placeProdTypes.push(placeProdType);
+//                                 console.log(`Placement Product Type: ${placeProdType}`);
+
+//                                 // Create the CTA button
+//                                 const ctaButton = document.createElement('a');
+//                                 ctaButton.href = '#';
+//                                 ctaButton.id = 'cta-button';
+//                                 ctaButton.target = '_blank';
+//                                 ctaButton.style.textDecoration = 'none';
+//                                 ctaButton.style.flexShrink = '0';
+//                                 ctaButton.style.margin = '0';
+//                                 ctaButton.style.border = 'none';
+//                                 ctaButton.style.fontWeight = '600';
+//                                 ctaButton.style.padding = '10px 16px';
+//                                 ctaButton.style.display = 'flex';
+//                                 ctaButton.style.alignItems = 'center';
+//                                 ctaButton.style.justifyContent = 'center';
+//                                 ctaButton.style.fontSize = '14px';
+//                                 ctaButton.style.backgroundColor = '#202223';
+//                                 ctaButton.style.color = '#fafafa';
+//                                 ctaButton.style.borderRadius = '4px';
+//                                 ctaButton.style.cursor = 'pointer';
+//                                 ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//                                 ctaButton.innerText = page.button_text || 'Shop Now';
+
+//                                 // Append the icon container, text container, and CTA button to the main container
+//                                 containerDiv.appendChild(iconContainer);
+//                                 containerDiv.appendChild(textContainer);
+//                                 containerDiv.appendChild(ctaButton);
+
+//                                 // Append the container to the badge container
+//                                 badgeContainer.appendChild(containerDiv);
+//                             });
+//                         } else {
+//                             console.log("No badge pages found for badge:", badge); // Log if no badge pages
+//                         }
+
+//                     });
+//                 } else {
+//                     console.log("No published badges found."); // Log if no badges are found
+//                     // alert('No published badges found.');
+//                 }
+
+//                 // Return the fetched data for further processing
+//                 return data;
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching badge data:', error);
+//                 // alert('Error fetching badge data: ' + error.message);
+//             });
+//     }
+
+//     // Function to get the current product ID
+//     function getProductId() {
+//         const productElement = document.querySelector('[data-product-id]');
+//         return productElement ? productElement.getAttribute('data-product-id') : null;
+//     }
+
+//     // Function to fetch collections for the given product ID
+//     async function fetchCollectionsForProduct(productId) {
+//         // Ensure APP_URL and SHOP_URL are properly defined globally
+//         const endpoint = `${APP_URL}api/getProductCollectionId/${productId}?shop=${SHOP_URL}`;
+
+//         try {
+//             const response = await fetch(endpoint);
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok');
+//             }
+//             const collectionIds = await response.json();
+//             console.log("Collection IDs:", collectionIds);
+//             return collectionIds;
+//         } catch (error) {
+//             console.error('Failed to fetch collections:', error);
+//             return [];
+//         }
+//     }
+
+//     // Function to filter and display badges based on product ID and placement type
+//     async function filterAndDisplayBadges(data) {
+//         const productId = getProductId();
+//         console.log("Current product ID:", productId);
+
+//         // Fetch collections for the product
+//         const collectionIds = await fetchCollectionsForProduct(productId);
+
+//         // Fetch tags for the product
+//         const tags = document.querySelector('[data-product-tags]')?.getAttribute('data-product-tags') || '';
+//         const productTags = tags.split(',').map(tag => tag.trim());
+//         console.log("Product Tags:", productTags);
+
+//         // Filter badges based on product ID, collection IDs, and tags
+//         const filteredBadges = data.filter(badge => {
+//             const badgePages = badge.badge_pages;
+//             return badgePages.some(page => {
+//                 const placeProdType = page.placement_product_type;
+//                 const productIds = prodIds.includes(productId);
+//                 const collectionIdsMatch = collectionIds.some(collectionId => collIds.includes(collectionId));
+//                 const tagsMatch = productTags.some(tag => page.tags.includes(tag));
+
+//                 return (placeProdType === 'allProducts') ||
+//                        (placeProdType === 'specificProducts' && productIds) ||
+//                        (placeProdType === 'specificCollections' && collectionIdsMatch) ||
+//                        (placeProdType === 'specificTags' && tagsMatch);
+//             });
+//         });
+
+//         console.log("Filtered badges:", filteredBadges);
+
+//         // Clear existing badges
+//         const productForm = document.querySelector('.product-form');
+//         if (productForm) {
+//             // Remove only the badge containers, not the entire content
+//             const badgeContainers = productForm.querySelectorAll('.badge-container');
+//             badgeContainers.forEach(container => container.remove());
+//         }
+
+//         // Display the filtered badges
+//         if (filteredBadges.length > 0) {
+//             filteredBadges.forEach(badge => {
+//                 const badgePages = badge.badge_pages;
+//                 const productForm = document.querySelector('.product-form');
+
+//                 if (productForm) {
+//                     const badgeContainer = createBadgeContainer(badge);
+//                     badgeContainer.classList.add('badge-container'); // Add a class for easy removal later
+//                     productForm.appendChild(badgeContainer);
+
+//                     if (badgePages && badgePages.length > 0) {
+//                         badgePages.forEach(page => {
+//                             const containerDiv = createIconBlock(badge, page);
+//                             badgeContainer.appendChild(containerDiv);
+
+//                             if (badge.badge_type.includes('icon-block') || badge.badge_type.includes('payment-icons')) {
+//                                 renderIconsBlock(badgeContainer, page);
+//                             }
+//                         });
+//                     }
+//                 }
+//             });
+//         } else {
+//             // alert('No published badges found for the current product.');
+//         }
+//     }
+
+//     // Function to create the badge container
+//     function createBadgeContainer(badge) {
+//         const badgeContainer = document.createElement('div');
+//         badgeContainer.style.marginBottom = '40px';
+
+//         // Badge Type
+//         const badgeType = document.createElement('p');
+//         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//         badgeContainer.appendChild(badgeType);
+
+//         return badgeContainer;
+//     }
+
+//     // Function to create the main container div for icons
+//     function createIconBlock(badge, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '16px';
+//         containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//         containerDiv.style.borderRadius = '8px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-between';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.gap = '10px';
+//         containerDiv.style.position = 'relative';
+//         containerDiv.style.marginTop = '20px';
+//         containerDiv.style.marginBottom = '20px';
+//         containerDiv.style.background = 'rgb(255, 255, 255)';
+
+//         const iconContainer = document.createElement('div');
+//         iconContainer.innerHTML = page.icon_svg;
+//         containerDiv.appendChild(iconContainer);
+
+//         const textContainer = createTextContainer(page);
+//         containerDiv.appendChild(textContainer);
+
+//         const ctaButton = createCtaButton(page);
+//         containerDiv.appendChild(ctaButton);
+
+//         return containerDiv;
+//     }
+
+//     // Function to create the text container
+//     function createTextContainer(page) {
+//         const textContainer = document.createElement('div');
+//         textContainer.id = 'text_container';
+//         textContainer.style.display = 'flex';
+//         textContainer.style.flexDirection = 'column';
+//         textContainer.style.justifyContent = 'flex-start';
+//         textContainer.style.alignItems = 'flex-start';
+//         textContainer.style.flex = '1';
+//         textContainer.style.gap = '2px';
+
+//         const title = document.createElement('span');
+//         title.id = 'title';
+//         title.style.display = 'block';
+//         title.style.fontWeight = '600';
+//         title.style.fontSize = '16px';
+//         title.style.color = '#202223';
+//         title.style.margin = '0';
+//         title.style.lineHeight = '1';
+//         title.style.wordWrap = 'break-word';
+//         title.style.maxWidth = '100%';
+//         title.innerText = page.title || 'No Title';
+
+//         const subheading = document.createElement('span');
+//         subheading.id = 'subheading';
+//         subheading.style.display = 'block';
+//         subheading.style.fontSize = '14px';
+//         subheading.style.color = '#96a4b6';
+//         subheading.style.fontWeight = '400';
+//         subheading.style.margin = '0';
+//         subheading.style.textAlign = 'left';
+//         subheading.style.lineHeight = '1';
+//         subheading.style.wordWrap = 'break-word';
+//         subheading.style.maxWidth = '100%';
+//         subheading.innerText = page.subheading || 'No Subheading';
+
+//         textContainer.appendChild(title);
+//         textContainer.appendChild(subheading);
+
+//         return textContainer;
+//     }
+
+//     // Function to create the CTA button
+//     function createCtaButton(page) {
+//         const ctaButton = document.createElement('a');
+//         ctaButton.href = '#';
+//         ctaButton.id = 'cta-button';
+//         ctaButton.target = '_blank';
+//         ctaButton.style.textDecoration = 'none';
+//         ctaButton.style.flexShrink = '0';
+//         ctaButton.style.margin = '0';
+//         ctaButton.style.border = 'none';
+//         ctaButton.style.fontWeight = '600';
+//         ctaButton.style.padding = '10px 16px';
+//         ctaButton.style.display = 'flex';
+//         ctaButton.style.alignItems = 'center';
+//         ctaButton.style.justifyContent = 'center';
+//         ctaButton.style.fontSize = '14px';
+//         ctaButton.style.backgroundColor = '#202223';
+//         ctaButton.style.color = '#fafafa';
+//         ctaButton.style.borderRadius = '4px';
+//         ctaButton.style.cursor = 'pointer';
+//         ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//         ctaButton.innerText = page.button_text || 'Shop Now';
+
+//         return ctaButton;
+//     }
+
+//     // Function to render icons block for 'icon-block' or 'payment-icons' types
+//     function renderIconsBlock(container, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '20px';
+//         containerDiv.style.backgroundColor = '#f7f7f7';
+//         containerDiv.style.borderRadius = '10px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-around';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.margin = '20px 0';
+//         containerDiv.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+
+//         page.badge_pages.forEach(badge => {
+//             const badgeContainer = document.createElement('div');
+//             badgeContainer.style.textAlign = 'center';
+
+//             const icon = document.createElement('img');
+//             icon.src = badge.icon_svg;
+//             icon.style.width = '50px';
+//             icon.style.marginBottom = '10px';
+//             badgeContainer.appendChild(icon);
+
+//             const title = document.createElement('h3');
+//             title.innerText = badge.title || 'No Title';
+//             badgeContainer.appendChild(title);
+
+//             const subheading = document.createElement('p');
+//             subheading.innerText = badge.subheading || 'No Subheading';
+//             badgeContainer.appendChild(subheading);
+
+//             const button = document.createElement('a');
+//             button.innerText = 'Shop now';
+//             button.href = '#';
+//             badgeContainer.appendChild(button);
+
+//             containerDiv.appendChild(badgeContainer);
+//         });
+
+//         container.appendChild(containerDiv);
+//     }
+
+//     // Call the function to fetch and process badges
+//     fetchPublishedBadges().then(data => {
+//         filterAndDisplayBadges(data);
+//     });
+
+//     // Log the collected product and collection IDs
+//     console.log("Product IDs database:", prodIds);
+//     console.log("Collection IDs database:", collIds);
+//     console.log("Placement Product Types database:", placeProdTypes);
+// });
+
+// document.addEventListener("DOMContentLoaded", function () {
+
+//     var prodIds = [];
+//     var collIds = [];
+//     var placeProdTypes = [];
+
+//     // Function to fetch published badges
+//     function fetchPublishedBadges() {
+//         return fetch(`${APP_URL}api/front-end/badges/published`)
+//             .then(response => {
+//                 if (!response.ok) {
+//                     throw new Error('Network response was not ok: ' + response.statusText);
+//                 }
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 console.log("Fetched data:", data); // Log the fetched data
+//                 if (data && data.length > 0) {
+//                     data.forEach(badge => {
+//                         const badgePages = badge.badge_pages; // Ensure correct property name
+//                         console.log("Badge pages:", badgePages); // Log the badge pages
+
+//                         // Create badge container
+//                         const badgeContainer = document.createElement('div');
+//                         badgeContainer.style.marginBottom = '40px';
+
+//                         // Badge Type
+//                         const badgeType = document.createElement('p');
+//                         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//                         badgeContainer.appendChild(badgeType);
+
+//                         // Loop through each page and display additional fields
+//                         if (badgePages && badgePages.length > 0) {
+//                             badgePages.forEach(page => {
+//                                 console.log("Processing page:", page); // Log each page
+
+//                                                              // Create the main container div
+//                                                              const containerDiv = document.createElement('div');
+//                                                              containerDiv.style.width = '100%';
+//                                                              containerDiv.style.padding = '16px';
+//                                                              containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//                                                              containerDiv.style.borderRadius = '8px';
+//                                                              containerDiv.style.display = 'flex';
+//                                                              containerDiv.style.justifyContent = 'space-between';
+//                                                              containerDiv.style.alignItems = 'center';
+//                                                              containerDiv.style.gap = '10px';
+//                                                              containerDiv.style.position = 'relative';
+//                                                              containerDiv.style.marginTop = '20px';
+//                                                              containerDiv.style.marginBottom = '20px';
+//                                                              containerDiv.style.background = 'rgb(255, 255, 255)';
+                             
+//                                                              // Create the icon container div
+//                                                              const iconContainer = document.createElement('div');
+//                                                              iconContainer.innerHTML = page.icon_svg;  // Inject the SVG string as HTML
+//                                                              containerDiv.appendChild(iconContainer);
+                             
+//                                                              // Create the text container div
+//                                                              const textContainer = document.createElement('div');
+//                                                              textContainer.id = 'text_container';
+//                                                              textContainer.style.display = 'flex';
+//                                                              textContainer.style.flexDirection = 'column';
+//                                                              textContainer.style.justifyContent = 'flex-start';
+//                                                              textContainer.style.alignItems = 'flex-start';
+//                                                              textContainer.style.flex = '1';
+//                                                              textContainer.style.gap = '2px';
+                             
+//                                                              // Create the title span
+//                                                              const title = document.createElement('span');
+//                                                              title.id = 'title';
+//                                                              title.style.display = 'block';
+//                                                              title.style.fontWeight = '600';
+//                                                              title.style.fontSize = '16px';
+//                                                              title.style.color = '#202223';
+//                                                              title.style.margin = '0';
+//                                                              title.style.lineHeight = '1';
+//                                                              title.style.wordWrap = 'break-word';
+//                                                              title.style.maxWidth = '100%';
+//                                                              title.innerText = page.title || 'No Title';
+                             
+//                                                              // Create the subheading span
+//                                                              const subheading = document.createElement('span');
+//                                                              subheading.id = 'subheading';
+//                                                              subheading.style.display = 'block';
+//                                                              subheading.style.fontSize = '14px';
+//                                                              subheading.style.color = '#96a4b6';
+//                                                              subheading.style.fontWeight = '400';
+//                                                              subheading.style.margin = '0';
+//                                                              subheading.style.textAlign = 'left';
+//                                                              subheading.style.lineHeight = '1';
+//                                                              subheading.style.wordWrap = 'break-word';
+//                                                              subheading.style.maxWidth = '100%';
+//                                                              subheading.innerText = page.subheading || 'No Subheading';
+                             
+//                                                              // Append the title and subheading to the text container
+//                                                              textContainer.appendChild(title);
+//                                                              textContainer.appendChild(subheading);
+                             
+//                                                              // Function to unescape and parse JSON
+//                                                              function parseJson(jsonString) {
+//                                                                  try {
+//                                                                      // First, unescape the string twice and remove the outer quotes
+//                                                                      let unescapedJson = jsonString.replace(/\\"/g, '"').replace(/\\"/g, '"');
+//                                                                      unescapedJson = unescapedJson.slice(1, -1); // Remove the outer quotes
+                             
+//                                                                      // Now try to parse the unescaped JSON
+//                                                                      return JSON.parse(unescapedJson);
+//                                                                  } catch (error) {
+//                                                                      console.error('Error parsing JSON:', error); // Log the error for debugging
+//                                                                      return null;
+//                                                                  }
+//                                                              }
+                             
+//                                                              // Check if the product data exists
+//                                                              if (page.placement_product_json) {
+//                                                                  const productData = parseJson(page.placement_product_json);
+//                                                                  if (productData) {
+//                                                                      // Extract product IDs (if available)
+//                                                                      const productIds = productData.map(product => product.id.split('/').pop());
+//                                                                      prodIds.push(...productIds);
+                             
+//                                                                      // Log the IDs or a fallback message if no IDs exist
+//                                                                      console.log(`From Placement Product JSON ID(s): ${productIds.join(', ') || 'No ID'}`);
+//                                                                  } else {
+//                                                                      console.log('Error parsing JSON: Invalid format');
+//                                                                  }
+//                                                              } else {
+//                                                                  console.log('From Placement Product JSON ID: No data available');
+//                                                              }
+                             
+//                                                              // Check if the collection data exists
+//                                                              if (page.placement_collection_json) {
+//                                                                  const collectionData = parseJson(page.placement_collection_json);
+//                                                                  if (collectionData) {
+//                                                                      // Extract collection IDs (if available)
+//                                                                      const collectionIds = collectionData.map(collection => collection.id.split('/').pop());
+//                                                                      collIds.push(...collectionIds);
+                             
+//                                                                      // Log the IDs or a fallback message if no IDs exist
+//                                                                      console.log(`From Placement Collection JSON ID(s): ${collectionIds.join(', ') || 'No ID'}`);
+//                                                                  } else {
+//                                                                      console.log('Error parsing JSON: Invalid format');
+//                                                                  }
+//                                                              } else {
+//                                                                  console.log('From Placement Collection JSON ID: No data available');
+//                                                              }
+                             
+//                                                              // Log the placement product type
+//                                                              const placeProdType = page.placement_product_type || 'No Type';
+//                                                              placeProdTypes.push(placeProdType);
+//                                                              console.log(`Placement Product Type: ${placeProdType}`);
+                             
+//                                                              // Create the CTA button
+//                                                              const ctaButton = document.createElement('a');
+//                                                              ctaButton.href = '#';
+//                                                              ctaButton.id = 'cta-button';
+//                                                              ctaButton.target = '_blank';
+//                                                              ctaButton.style.textDecoration = 'none';
+//                                                              ctaButton.style.flexShrink = '0';
+//                                                              ctaButton.style.margin = '0';
+//                                                              ctaButton.style.border = 'none';
+//                                                              ctaButton.style.fontWeight = '600';
+//                                                              ctaButton.style.padding = '10px 16px';
+//                                                              ctaButton.style.display = 'flex';
+//                                                              ctaButton.style.alignItems = 'center';
+//                                                              ctaButton.style.justifyContent = 'center';
+//                                                              ctaButton.style.fontSize = '14px';
+//                                                              ctaButton.style.backgroundColor = '#202223';
+//                                                              ctaButton.style.color = '#fafafa';
+//                                                              ctaButton.style.borderRadius = '4px';
+//                                                              ctaButton.style.cursor = 'pointer';
+//                                                              ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//                                                              ctaButton.innerText = page.button_text || 'Shop Now';
+                             
+//                                                              // Append the icon container, text container, and CTA button to the main container
+//                                                              containerDiv.appendChild(iconContainer);
+//                                                              containerDiv.appendChild(textContainer);
+//                                                              containerDiv.appendChild(ctaButton);
+                             
+//                                                              // Append the container to the badge container
+//                                                              badgeContainer.appendChild(containerDiv);
+//                                                          });
+//                                                      } else {
+//                                                          console.log("No badge pages found for badge:", badge); // Log if no badge pages
+//                                                      }
+                             
+//                                                  });
+//                                              } else {
+//                                                  console.log("No published badges found."); // Log if no badges are found
+//                                                  // alert('No published badges found.');
+//                                              }
+                             
+//                                              // Return the fetched data for further processing
+//                                              return data;
+//                                          })
+//                                          .catch(error => {
+//                                              console.error('Error fetching badge data:', error);
+//                                              // alert('Error fetching badge data: ' + error.message);
+//                                          });
+//                                  }
+                             
+//                                  // Function to get the current product ID
+//                                  function getProductId() {
+//                                      const productElement = document.querySelector('[data-product-id]');
+//                                      return productElement ? productElement.getAttribute('data-product-id') : null;
+//                                  }
+                             
+//                                  // Function to fetch collections for the given product ID
+//                                  async function fetchCollectionsForProduct(productId) {
+//                                      // Ensure APP_URL and SHOP_URL are properly defined globally
+//                                      const endpoint = `${APP_URL}api/getProductCollectionId/${productId}?shop=${SHOP_URL}`;
+                             
+//                                      try {
+//                                          const response = await fetch(endpoint);
+//                                          if (!response.ok) {
+//                                              throw new Error('Network response was not ok');
+//                                          }
+//                                          const collectionIds = await response.json();
+//                                          console.log("Collection IDs:", collectionIds);
+//                                          return collectionIds;
+//                                      } catch (error) {
+//                                          console.error('Failed to fetch collections:', error);
+//                                          return [];
+//                                      }
+//                                  }
+                             
+//                                  // Function to filter and display badges based on product ID and placement type
+//                                  async function filterAndDisplayBadges(data) {
+//                                      const productId = getProductId();
+//                                      console.log("Current product ID:", productId);
+                             
+//                                      // Fetch collections for the product
+//                                      const collectionIds = await fetchCollectionsForProduct(productId);
+                             
+//                                      // Fetch tags for the product
+//                                      const tags = document.querySelector('[data-product-tags]')?.getAttribute('data-product-tags') || '';
+//                                      const productTags = tags.split(',').map(tag => tag.trim());
+//                                      console.log("Product Tags:", productTags);
+                             
+//                                      // Filter badges based on product ID, collection IDs, and tags
+//                                      const filteredBadges = data.filter(badge => {
+//                                          const badgePages = badge.badge_pages;
+//                                          return badgePages.some(page => {
+//                                              const placeProdType = page.placement_product_type;
+//                                              const productIds = prodIds.includes(productId);
+//                                              const collectionIdsMatch = collectionIds.some(collectionId => collIds.includes(collectionId));
+//                                              const tagsMatch = productTags.some(tag => page.tags && page.tags.includes(tag));
+                             
+//                                              return (placeProdType === 'allProducts') ||
+//                                                     (placeProdType === 'specificProducts' && productIds) ||
+//                                                     (placeProdType === 'specificCollections' && collectionIdsMatch) ||
+//                                                     (placeProdType === 'specificTags' && tagsMatch);
+//                                          });
+//                                      });
+                             
+//                                      console.log("Filtered badges:", filteredBadges);
+                             
+//                                      // Clear existing badges
+//                                      const productForm = document.querySelector('.product-form');
+//                                      if (productForm) {
+//                                          // Remove only the badge containers, not the entire content
+//                                          const badgeContainers = productForm.querySelectorAll('.badge-container');
+//                                          badgeContainers.forEach(container => container.remove());
+//                                      }
+                             
+//                                      // Display the filtered badges
+//                                      if (filteredBadges.length > 0) {
+//                                          filteredBadges.forEach(badge => {
+//                                              const badgePages = badge.badge_pages;
+//                                              const productForm = document.querySelector('.product-form');
+                             
+//                                              if (productForm) {
+//                                                  const badgeContainer = createBadgeContainer(badge);
+//                                                  badgeContainer.classList.add('badge-container'); // Add a class for easy removal later
+//                                                  productForm.appendChild(badgeContainer);
+                             
+//                                                  if (badgePages && badgePages.length > 0) {
+//                                                      badgePages.forEach(page => {
+//                                                          const containerDiv = createIconBlock(badge, page);
+//                                                          badgeContainer.appendChild(containerDiv);
+                             
+//                                                          if (badge.badge_type.includes('icon-block') || badge.badge_type.includes('payment-icons')) {
+//                                                              renderIconsBlock(badgeContainer, page);
+//                                                          }
+//                                                      });
+//                                                  }
+//                                              }
+//                                          });
+//                                      } else {
+//                                          // alert('No published badges found for the current product.');
+//                                      }
+//                                  }
+                             
+//                                  // Function to create the badge container
+//                                  function createBadgeContainer(badge) {
+//                                      const badgeContainer = document.createElement('div');
+//                                      badgeContainer.style.marginBottom = '40px';
+                             
+//                                      // Badge Type
+//                                      const badgeType = document.createElement('p');
+//                                      badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//                                      badgeContainer.appendChild(badgeType);
+                             
+//                                      return badgeContainer;
+//                                  }
+                             
+//                                  // Function to create the main container div for icons
+//                                  function createIconBlock(badge, page) {
+//                                      const containerDiv = document.createElement('div');
+//                                      containerDiv.style.width = '100%';
+//                                      containerDiv.style.padding = '16px';
+//                                      containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//                                      containerDiv.style.borderRadius = '8px';
+//                                      containerDiv.style.display = 'flex';
+//                                      containerDiv.style.justifyContent = 'space-between';
+//                                      containerDiv.style.alignItems = 'center';
+//                                      containerDiv.style.gap = '10px';
+//                                      containerDiv.style.position = 'relative';
+//                                      containerDiv.style.marginTop = '20px';
+//                                      containerDiv.style.marginBottom = '20px';
+//                                      containerDiv.style.background = 'rgb(255, 255, 255)';
+                             
+//                                      const iconContainer = document.createElement('div');
+//                                      iconContainer.innerHTML = page.icon_svg;
+//                                      containerDiv.appendChild(iconContainer);
+                             
+//                                      const textContainer = createTextContainer(page);
+//                                      containerDiv.appendChild(textContainer);
+                             
+//                                      const ctaButton = createCtaButton(page);
+//                                      containerDiv.appendChild(ctaButton);
+                             
+//                                      return containerDiv;
+//                                  }
+                             
+//                                  // Function to create the text container
+//                                  function createTextContainer(page) {
+//                                      const textContainer = document.createElement('div');
+//                                      textContainer.id = 'text_container';
+//                                      textContainer.style.display = 'flex';
+//                                      textContainer.style.flexDirection = 'column';
+//                                      textContainer.style.justifyContent = 'flex-start';
+//                                      textContainer.style.alignItems = 'flex-start';
+//                                      textContainer.style.flex = '1';
+//                                      textContainer.style.gap = '2px';
+                             
+//                                      const title = document.createElement('span');
+//                                      title.id = 'title';
+//                                      title.style.display = 'block';
+//                                      title.style.fontWeight = '600';
+//                                      title.style.fontSize = '16px';
+//                                      title.style.color = '#202223';
+//                                      title.style.margin = '0';
+//                                      title.style.lineHeight = '1';
+//                                      title.style.wordWrap = 'break-word';
+//                                      title.style.maxWidth = '100%';
+//                                      title.innerText = page.title || 'No Title';
+                             
+//                                      const subheading = document.createElement('span');
+//                                      subheading.id = 'subheading';
+//                                      subheading.style.display = 'block';
+//                                      subheading.style.fontSize = '14px';
+//                                      subheading.style.color = '#96a4b6';
+//                                      subheading.style.fontWeight = '400';
+//                                      subheading.style.margin = '0';
+//                                      subheading.style.textAlign = 'left';
+//                                      subheading.style.lineHeight = '1';
+//                                      subheading.style.wordWrap = 'break-word';
+//                                      subheading.style.maxWidth = '100%';
+//                                      subheading.innerText = page.subheading || 'No Subheading';
+                             
+//                                      textContainer.appendChild(title);
+//                                      textContainer.appendChild(subheading);
+                             
+//                                      return textContainer;
+//                                  }
+                             
+//                                  // Function to create the CTA button
+//                                  function createCtaButton(page) {
+//                                      const ctaButton = document.createElement('a');
+//                                      ctaButton.href = '#';
+//                                      ctaButton.id = 'cta-button';
+//                                      ctaButton.target = '_blank';
+//                                      ctaButton.style.textDecoration = 'none';
+//                                      ctaButton.style.flexShrink = '0';
+//                                      ctaButton.style.margin = '0';
+//                                      ctaButton.style.border = 'none';
+//                                      ctaButton.style.fontWeight = '600';
+//                                      ctaButton.style.padding = '10px 16px';
+//                                      ctaButton.style.display = 'flex';
+//                                      ctaButton.style.alignItems = 'center';
+//                                      ctaButton.style.justifyContent = 'center';
+//                                      ctaButton.style.fontSize = '14px';
+//                                      ctaButton.style.backgroundColor = '#202223';
+//                                      ctaButton.style.color = '#fafafa';
+//                                      ctaButton.style.borderRadius = '4px';
+//                                      ctaButton.style.cursor = 'pointer';
+//                                      ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//                                      ctaButton.innerText = page.button_text || 'Shop Now';
+                             
+//                                      return ctaButton;
+//                                  }
+                             
+//                                  // Function to render icons block for 'icon-block' or 'payment-icons' types
+//                                  function renderIconsBlock(container, page) {
+//                                      const containerDiv = document.createElement('div');
+//                                      containerDiv.style.width = '100%';
+//                                      containerDiv.style.padding = '20px';
+//                                      containerDiv.style.backgroundColor = '#f7f7f7';
+//                                      containerDiv.style.borderRadius = '10px';
+//                                      containerDiv.style.display = 'flex';
+//                                      containerDiv.style.justifyContent = 'space-around';
+//                                      containerDiv.style.alignItems = 'center';
+//                                      containerDiv.style.margin = '20px 0';
+//                                      containerDiv.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                             
+//                                      page.badge_pages.forEach(badge => {
+//                                          const badgeContainer = document.createElement('div');
+//                                          badgeContainer.style.textAlign = 'center';
+                             
+//                                          const icon = document.createElement('img');
+//                                          icon.src = badge.icon_svg;
+//                                          icon.style.width = '50px';
+//                                          icon.style.marginBottom = '10px';
+//                                          badgeContainer.appendChild(icon);
+                             
+//                                          const title = document.createElement('h3');
+//                                          title.innerText = badge.title || 'No Title';
+//                                          badgeContainer.appendChild(title);
+                             
+//                                          const subheading = document.createElement('p');
+//                                          subheading.innerText = badge.subheading || 'No Subheading';
+//                                          badgeContainer.appendChild(subheading);
+                             
+//                                          const button = document.createElement('a');
+//                                          button.innerText = 'Shop now';
+//                                          button.href = '#';
+//                                          badgeContainer.appendChild(button);
+                             
+//                                          containerDiv.appendChild(badgeContainer);
+//                                      });
+                             
+//                                      container.appendChild(containerDiv);
+//                                  }
+                             
+//                                  // Call the function to fetch and process badges
+//                                  fetchPublishedBadges().then(data => {
+//                                      filterAndDisplayBadges(data);
+//                                  });
+                             
+//                                  // Log the collected product and collection IDs
+//                                  console.log("Product IDs database:", prodIds);
+//                                  console.log("Collection IDs database:", collIds);
+//                                  console.log("Placement Product Types database:", placeProdTypes);
+//                              });
+                             
 document.addEventListener("DOMContentLoaded", function () {
+
+    var prodIds = [];
+    var collIds = [];
+    var placeProdTypes = [];
+
+    // Function to fetch published badges
+    function fetchPublishedBadges() {
+        return fetch(`${APP_URL}api/front-end/badges/published`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Fetched data:", data); // Log the fetched data
+                if (data && data.length > 0) {
+                    data.forEach(badge => {
+                        const badgePages = badge.badge_pages; // Ensure correct property name
+                        console.log("Badge pages:", badgePages); // Log the badge pages
+
+                        // Create badge container
+                        const badgeContainer = document.createElement('div');
+                        badgeContainer.style.marginBottom = '40px';
+
+                        // Badge Type
+                        const badgeType = document.createElement('p');
+                        badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+                        badgeContainer.appendChild(badgeType);
+
+                        // Loop through each page and display additional fields
+                        if (badgePages && badgePages.length > 0) {
+                            badgePages.forEach(page => {
+                                console.log("Processing page:", page); // Log each page
+
+                                // Create the main container div
+                                const containerDiv = document.createElement('div');
+                                containerDiv.style.width = '100%';
+                                containerDiv.style.padding = '16px';
+                                containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+                                containerDiv.style.borderRadius = '8px';
+                                containerDiv.style.display = 'flex';
+                                containerDiv.style.justifyContent = 'space-between';
+                                containerDiv.style.alignItems = 'center';
+                                containerDiv.style.gap = '10px';
+                                containerDiv.style.position = 'relative';
+                                containerDiv.style.marginTop = '20px';
+                                containerDiv.style.marginBottom = '20px';
+                                containerDiv.style.background = 'rgb(255, 255, 255)';
+
+                                // Create the icon container div
+                                const iconContainer = document.createElement('div');
+                                iconContainer.innerHTML = page.icon_svg;  // Inject the SVG string as HTML
+                                containerDiv.appendChild(iconContainer);
+
+                                // Create the text container div
+                                const textContainer = document.createElement('div');
+                                textContainer.id = 'text_container';
+                                textContainer.style.display = 'flex';
+                                textContainer.style.flexDirection = 'column';
+                                textContainer.style.justifyContent = 'flex-start';
+                                textContainer.style.alignItems = 'flex-start';
+                                textContainer.style.flex = '1';
+                                textContainer.style.gap = '2px';
+
+                                // Create the title span
+                                const title = document.createElement('span');
+                                title.id = 'title';
+                                title.style.display = 'block';
+                                title.style.fontWeight = '600';
+                                title.style.fontSize = '16px';
+                                title.style.color = '#202223';
+                                title.style.margin = '0';
+                                title.style.lineHeight = '1';
+                                title.style.wordWrap = 'break-word';
+                                title.style.maxWidth = '100%';
+                                title.innerText = page.title || 'No Title';
+
+                                // Create the subheading span
+                                const subheading = document.createElement('span');
+                                subheading.id = 'subheading';
+                                subheading.style.display = 'block';
+                                subheading.style.fontSize = '14px';
+                                subheading.style.color = '#96a4b6';
+                                subheading.style.fontWeight = '400';
+                                subheading.style.margin = '0';
+                                subheading.style.textAlign = 'left';
+                                subheading.style.lineHeight = '1';
+                                subheading.style.wordWrap = 'break-word';
+                                subheading.style.maxWidth = '100%';
+                                subheading.innerText = page.subheading || 'No Subheading';
+
+                                // Append the title and subheading to the text container
+                                textContainer.appendChild(title);
+                                textContainer.appendChild(subheading);
+
+                                // Function to unescape and parse JSON
+                                function parseJson(jsonString) {
+                                    try {
+                                        // First, unescape the string twice and remove the outer quotes
+                                        let unescapedJson = jsonString.replace(/\\"/g, '"').replace(/\\"/g, '"');
+                                        unescapedJson = unescapedJson.slice(1, -1); // Remove the outer quotes
+
+                                        // Now try to parse the unescaped JSON
+                                        return JSON.parse(unescapedJson);
+                                    } catch (error) {
+                                        console.error('Error parsing JSON:', error); // Log the error for debugging
+                                        return null;
+                                    }
+                                }
+
+                                // Check if the product data exists
+                                if (page.placement_product_json) {
+                                    const productData = parseJson(page.placement_product_json);
+                                    if (productData) {
+                                        // Extract product IDs (if available)
+                                        const productIds = productData.map(product => product.id.split('/').pop());
+                                        prodIds.push(...productIds);
+
+                                        // Log the IDs or a fallback message if no IDs exist
+                                        console.log(`From Placement Product JSON ID(s): ${productIds.join(', ') || 'No ID'}`);
+                                    } else {
+                                        console.log('Error parsing JSON: Invalid format');
+                                    }
+                                } else {
+                                    console.log('From Placement Product JSON ID: No data available');
+                                }
+
+                                // Check if the collection data exists
+                                if (page.placement_collection_json) {
+                                    const collectionData = parseJson(page.placement_collection_json);
+                                    if (collectionData) {
+                                        // Extract collection IDs (if available)
+                                        const collectionIds = collectionData.map(collection => collection.id.split('/').pop());
+                                        collIds.push(...collectionIds);
+
+                                        // Log the IDs or a fallback message if no IDs exist
+                                        console.log(`From Placement Collection JSON ID(s): ${collectionIds.join(', ') || 'No ID'}`);
+                                    } else {
+                                        console.log('Error parsing JSON: Invalid format');
+                                    }
+                                } else {
+                                    console.log('From Placement Collection JSON ID: No data available');
+                                }
+
+                                // Log the placement product type
+                                const placeProdType = page.placement_product_type || 'No Type';
+                                placeProdTypes.push(placeProdType);
+                                console.log(`Placement Product Type: ${placeProdType}`);
+
+                                // Create the CTA button
+                                const ctaButton = document.createElement('a');
+                                ctaButton.href = '#';
+                                ctaButton.id = 'cta-button';
+                                ctaButton.target = '_blank';
+                                ctaButton.style.textDecoration = 'none';
+                                ctaButton.style.flexShrink = '0';
+                                ctaButton.style.margin = '0';
+                                ctaButton.style.border = 'none';
+                                ctaButton.style.fontWeight = '600';
+                                ctaButton.style.padding = '10px 16px';
+                                ctaButton.style.display = 'flex';
+                                ctaButton.style.alignItems = 'center';
+                                ctaButton.style.justifyContent = 'center';
+                                ctaButton.style.fontSize = '14px';
+                                ctaButton.style.backgroundColor = '#202223';
+                                ctaButton.style.color = '#fafafa';
+                                ctaButton.style.borderRadius = '4px';
+                                ctaButton.style.cursor = 'pointer';
+                                ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+                                ctaButton.innerText = page.button_text || 'Shop Now';
+
+                                // Append the icon container, text container, and CTA button to the main container
+                                containerDiv.appendChild(iconContainer);
+                                containerDiv.appendChild(textContainer);
+                                containerDiv.appendChild(ctaButton);
+
+                                // Append the container to the badge container
+                                badgeContainer.appendChild(containerDiv);
+                            });
+                        } else {
+                            console.log("No badge pages found for badge:", badge); // Log if no badge pages
+                        }
+
+                    });
+                } else {
+                    console.log("No published badges found."); // Log if no badges are found
+                    // alert('No published badges found.');
+                }
+
+                // Return the fetched data for further processing
+                return data;
+            })
+            .catch(error => {
+                console.error('Error fetching badge data:', error);
+                // alert('Error fetching badge data: ' + error.message);
+            });
+    }
+
     // Function to get the current product ID
     function getProductId() {
         const productElement = document.querySelector('[data-product-id]');
@@ -1249,28 +2775,1020 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             const collectionIds = await response.json();
             console.log("Collection IDs:", collectionIds);
-            // You can now use the collectionIds as needed, for example, display them or process further
+            return collectionIds;
         } catch (error) {
             console.error('Failed to fetch collections:', error);
+            return [];
         }
     }
 
-    // Get the product ID from the theme
-    const productId = getProductId();
+    // Function to filter and display badges based on product ID and placement type
+    async function filterAndDisplayBadges(data) {
+        const productId = getProductId();
+        console.log("Current product ID:", productId);
 
-    if (productId) {
         // Fetch collections for the product
-        fetchCollectionsForProduct(productId);
-    } else {
-        console.error('Product ID not found');
+        const collectionIds = await fetchCollectionsForProduct(productId);
+
+        // Fetch tags for the product
+        const tags = document.querySelector('[data-product-tags]')?.getAttribute('data-product-tags') || '';
+        const productTags = tags.split(',').map(tag => tag.trim());
+        console.log("Product Tags:", productTags);
+
+        // Filter badges based on product ID, collection IDs, and tags
+        const filteredBadges = data.filter(badge => {
+            const badgePages = badge.badge_pages;
+            return badgePages.some(page => {
+                const placeProdType = page.placement_product_type;
+                const productIds = prodIds.includes(productId);
+                const collectionIdsMatch = collectionIds.some(collectionId => collIds.includes(collectionId));
+                const tagsMatch = productTags.some(tag => {
+                    const pageTags = page.placement_tags_json ? page.placement_tags_json.split(',').map(tag => tag.trim()) : [];
+                    return pageTags.includes(tag);
+                });
+
+                return (placeProdType === 'allProducts') ||
+                       (placeProdType === 'specificProducts' && productIds) ||
+                       (placeProdType === 'specificCollections' && collectionIdsMatch) ||
+                       (placeProdType === 'specificTags' && tagsMatch);
+            });
+        });
+
+        console.log("Filtered badges:", filteredBadges);
+
+        // Clear existing badges
+        const productForm = document.querySelector('.product-form');
+        if (productForm) {
+            // Remove only the badge containers, not the entire content
+            const badgeContainers = productForm.querySelectorAll('.badge-container');
+            badgeContainers.forEach(container => container.remove());
+        }
+
+        // Display the filtered badges
+        if (filteredBadges.length > 0) {
+            filteredBadges.forEach(badge => {
+                const badgePages = badge.badge_pages;
+                const productForm = document.querySelector('.product-form');
+
+                if (productForm) {
+                    const badgeContainer = createBadgeContainer(badge);
+                    badgeContainer.classList.add('badge-container'); // Add a class for easy removal later
+                    productForm.appendChild(badgeContainer);
+
+                    if (badgePages && badgePages.length > 0) {
+                        badgePages.forEach(page => {
+                            const containerDiv = createIconBlock(badge, page);
+                            badgeContainer.appendChild(containerDiv);
+
+                            if (badge.badge_type.includes('icon-block') || badge.badge_type.includes('payment-icons')) {
+                                renderIconsBlock(badgeContainer, page);
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            // alert('No published badges found for the current product.');
+        }
     }
+
+    // Function to create the badge container
+    function createBadgeContainer(badge) {
+        const badgeContainer = document.createElement('div');
+        badgeContainer.style.marginBottom = '40px';
+
+        // Badge Type
+        const badgeType = document.createElement('p');
+        badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+        badgeContainer.appendChild(badgeType);
+
+        return badgeContainer;
+    }
+
+    // Function to create the main container div for icons
+    function createIconBlock(badge, page) {
+        const containerDiv = document.createElement('div');
+        containerDiv.style.width = '100%';
+        containerDiv.style.padding = '16px';
+        containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+        containerDiv.style.borderRadius = '8px';
+        containerDiv.style.display = 'flex';
+        containerDiv.style.justifyContent = 'space-between';
+        containerDiv.style.alignItems = 'center';
+        containerDiv.style.gap = '10px';
+        containerDiv.style.position = 'relative';
+        containerDiv.style.marginTop = '20px';
+        containerDiv.style.marginBottom = '20px';
+        containerDiv.style.background = 'rgb(255, 255, 255)';
+
+        const iconContainer = document.createElement('div');
+        iconContainer.innerHTML = page.icon_svg;
+        containerDiv.appendChild(iconContainer);
+
+        const textContainer = createTextContainer(page);
+        containerDiv.appendChild(textContainer);
+
+        const ctaButton = createCtaButton(page);
+        containerDiv.appendChild(ctaButton);
+
+        return containerDiv;
+    }
+
+    // Function to create the text container
+    function createTextContainer(page) {
+        const textContainer = document.createElement('div');
+        textContainer.id = 'text_container';
+        textContainer.style.display = 'flex';
+        textContainer.style.flexDirection = 'column';
+        textContainer.style.justifyContent = 'flex-start';
+        textContainer.style.alignItems = 'flex-start';
+        textContainer.style.flex = '1';
+        textContainer.style.gap = '2px';
+
+        const title = document.createElement('span');
+        title.id = 'title';
+        title.style.display = 'block';
+        title.style.fontWeight = '600';
+        title.style.fontSize = '16px';
+        title.style.color = '#202223';
+        title.style.margin = '0';
+        title.style.lineHeight = '1';
+        title.style.wordWrap = 'break-word';
+        title.style.maxWidth = '100%';
+        title.innerText = page.title || 'No Title';
+
+        const subheading = document.createElement('span');
+        subheading.id = 'subheading';
+        subheading.style.display = 'block';
+        subheading.style.fontSize = '14px';
+        subheading.style.color = '#96a4b6';
+        subheading.style.fontWeight = '400';
+        subheading.style.margin = '0';
+        subheading.style.textAlign = 'left';
+        subheading.style.lineHeight = '1';
+        subheading.style.wordWrap = 'break-word';
+        subheading.style.maxWidth = '100%';
+        subheading.innerText = page.subheading || 'No Subheading';
+
+        textContainer.appendChild(title);
+        textContainer.appendChild(subheading);
+
+        return textContainer;
+    }
+
+    // Function to create the CTA button
+    function createCtaButton(page) {
+        const ctaButton = document.createElement('a');
+        ctaButton.href = '#';
+        ctaButton.id = 'cta-button';
+        ctaButton.target = '_blank';
+        ctaButton.style.textDecoration = 'none';
+        ctaButton.style.flexShrink = '0';
+        ctaButton.style.margin = '0';
+        ctaButton.style.border = 'none';
+        ctaButton.style.fontWeight = '600';
+        ctaButton.style.padding = '10px 16px';
+        ctaButton.style.display = 'flex';
+        ctaButton.style.alignItems = 'center';
+        ctaButton.style.justifyContent = 'center';
+        ctaButton.style.fontSize = '14px';
+        ctaButton.style.backgroundColor = '#202223';
+        ctaButton.style.color = '#fafafa';
+        ctaButton.style.borderRadius = '4px';
+        ctaButton.style.cursor = 'pointer';
+        ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+        ctaButton.innerText = page.button_text || 'Shop Now';
+
+        return ctaButton;
+    }
+
+    // Function to render icons block for 'icon-block' or 'payment-icons' types
+    function renderIconsBlock(container, page) {
+        const containerDiv = document.createElement('div');
+        containerDiv.style.width = '100%';
+        containerDiv.style.padding = '20px';
+        containerDiv.style.backgroundColor = '#f7f7f7';
+        containerDiv.style.borderRadius = '10px';
+        containerDiv.style.display = 'flex';
+        containerDiv.style.justifyContent = 'space-around';
+        containerDiv.style.alignItems = 'center';
+        containerDiv.style.margin = '20px 0';
+        containerDiv.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+
+        page.badge_pages.forEach(badge => {
+            const badgeContainer = document.createElement('div');
+            badgeContainer.style.textAlign = 'center';
+
+            const icon = document.createElement('img');
+            icon.src = badge.icon_svg;
+            icon.style.width = '50px';
+            icon.style.marginBottom = '10px';
+            badgeContainer.appendChild(icon);
+
+            const title = document.createElement('h3');
+            title.innerText = badge.title || 'No Title';
+            badgeContainer.appendChild(title);
+
+            const subheading = document.createElement('p');
+            subheading.innerText = badge.subheading || 'No Subheading';
+            badgeContainer.appendChild(subheading);
+
+            const button = document.createElement('a');
+            button.innerText = 'Shop now';
+            button.href = '#';
+            badgeContainer.appendChild(button);
+
+            containerDiv.appendChild(badgeContainer);
+        });
+
+        container.appendChild(containerDiv);
+    }
+
+    // Call the function to fetch and process badges
+    fetchPublishedBadges().then(data => {
+        filterAndDisplayBadges(data);
+    });
+
+    // Log the collected product and collection IDs
+    console.log("Product IDs database:", prodIds);
+    console.log("Collection IDs database:", collIds);
+    console.log("Placement Product Types database:", placeProdTypes);
 });
+
+
+
+
+// this is working code for get the collection id of selected product
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     // Function to get the current product ID
+//     function getProductId() {
+//         const productElement = document.querySelector('[data-product-id]');
+//         return productElement ? productElement.getAttribute('data-product-id') : null;
+//     }
+
+//     // Function to fetch collections for the given product ID
+//     async function fetchCollectionsForProduct(productId) {
+//         // Ensure APP_URL and SHOP_URL are properly defined globally
+//         const endpoint = `${APP_URL}api/getProductCollectionId/${productId}?shop=${SHOP_URL}`;
+
+//         try {
+//             const response = await fetch(endpoint);
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok');
+//             }
+//             const collectionIds = await response.json();
+//             console.log("Collection IDs:", collectionIds);
+//             // You can now use the collectionIds as needed, for example, display them or process further
+//         } catch (error) {
+//             console.error('Failed to fetch collections:', error);
+//         }
+//     }
+
+//     // Get the product ID from the theme
+//     const productId = getProductId();
+
+//     if (productId) {
+//         // Fetch collections for the product
+//         fetchCollectionsForProduct(productId);
+//     } else {
+//         console.error('Product ID not found');
+//     }
+// });
+
+
 
 
 // testing code on 14-11-2024  fro complete the badge.js part of this app
 
 
+// document.addEventListener("DOMContentLoaded", function () {
 
+//     var prodIds = [];
+//     var collIds = [];
+//     var placeProdTypes = [];
+
+//     // Function to fetch published badges
+//     function fetchPublishedBadges() {
+//         return fetch(`${APP_URL}api/front-end/badges/published`)
+//             .then(response => {
+//                 if (!response.ok) {
+//                     throw new Error('Network response was not ok: ' + response.statusText);
+//                 }
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 console.log("Fetched data:", data); // Log the fetched data
+//                 if (data && data.length > 0) {
+//                     data.forEach(badge => {
+//                         const badgePages = badge.badge_pages; // Ensure correct property name
+//                         console.log("Badge pages:", badgePages); // Log the badge pages
+
+//                         // Create badge container
+//                         const badgeContainer = document.createElement('div');
+//                         badgeContainer.style.marginBottom = '40px';
+
+//                         // Badge Type
+//                         const badgeType = document.createElement('p');
+//                         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//                         badgeContainer.appendChild(badgeType);
+
+//                         // Loop through each page and display additional fields
+//                         if (badgePages && badgePages.length > 0) {
+//                             badgePages.forEach(page => {
+//                                 console.log("Processing page:", page); // Log each page
+
+//                                 // Create the main container div
+//                                 const containerDiv = document.createElement('div');
+//                                 containerDiv.style.width = '100%';
+//                                 containerDiv.style.padding = '16px';
+//                                 containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//                                 containerDiv.style.borderRadius = '8px';
+//                                 containerDiv.style.display = 'flex';
+//                                 containerDiv.style.justifyContent = 'space-between';
+//                                 containerDiv.style.alignItems = 'center';
+//                                 containerDiv.style.gap = '10px';
+//                                 containerDiv.style.position = 'relative';
+//                                 containerDiv.style.marginTop = '20px';
+//                                 containerDiv.style.marginBottom = '20px';
+//                                 containerDiv.style.background = 'rgb(255, 255, 255)';
+
+//                                 // Create the icon container div
+//                                 const iconContainer = document.createElement('div');
+//                                 iconContainer.innerHTML = page.icon_svg;  // Inject the SVG string as HTML
+//                                 containerDiv.appendChild(iconContainer);
+
+//                                 // Create the text container div
+//                                 const textContainer = document.createElement('div');
+//                                 textContainer.id = 'text_container';
+//                                 textContainer.style.display = 'flex';
+//                                 textContainer.style.flexDirection = 'column';
+//                                 textContainer.style.justifyContent = 'flex-start';
+//                                 textContainer.style.alignItems = 'flex-start';
+//                                 textContainer.style.flex = '1';
+//                                 textContainer.style.gap = '2px';
+
+//                                 // Create the title span
+//                                 const title = document.createElement('span');
+//                                 title.id = 'title';
+//                                 title.style.display = 'block';
+//                                 title.style.fontWeight = '600';
+//                                 title.style.fontSize = '16px';
+//                                 title.style.color = '#202223';
+//                                 title.style.margin = '0';
+//                                 title.style.lineHeight = '1';
+//                                 title.style.wordWrap = 'break-word';
+//                                 title.style.maxWidth = '100%';
+//                                 title.innerText = page.title || 'No Title';
+
+//                                 // Create the subheading span
+//                                 const subheading = document.createElement('span');
+//                                 subheading.id = 'subheading';
+//                                 subheading.style.display = 'block';
+//                                 subheading.style.fontSize = '14px';
+//                                 subheading.style.color = '#96a4b6';
+//                                 subheading.style.fontWeight = '400';
+//                                 subheading.style.margin = '0';
+//                                 subheading.style.textAlign = 'left';
+//                                 subheading.style.lineHeight = '1';
+//                                 subheading.style.wordWrap = 'break-word';
+//                                 subheading.style.maxWidth = '100%';
+//                                 subheading.innerText = page.subheading || 'No Subheading';
+
+//                                 // Append the title and subheading to the text container
+//                                 textContainer.appendChild(title);
+//                                 textContainer.appendChild(subheading);
+
+//                                 // Function to unescape and parse JSON
+//                                 function parseJson(jsonString) {
+//                                     try {
+//                                         // First, unescape the string twice and remove the outer quotes
+//                                         let unescapedJson = jsonString.replace(/\\"/g, '"').replace(/\\"/g, '"');
+//                                         unescapedJson = unescapedJson.slice(1, -1); // Remove the outer quotes
+
+//                                         // Now try to parse the unescaped JSON
+//                                         return JSON.parse(unescapedJson);
+//                                     } catch (error) {
+//                                         console.error('Error parsing JSON:', error); // Log the error for debugging
+//                                         return null;
+//                                     }
+//                                 }
+
+//                                 // Check if the product data exists
+//                                 if (page.placement_product_json) {
+//                                     const productData = parseJson(page.placement_product_json);
+//                                     if (productData) {
+//                                         // Extract product IDs (if available)
+//                                         const productIds = productData.map(product => product.id.split('/').pop());
+//                                         prodIds.push(...productIds);
+
+//                                         // Log the IDs or a fallback message if no IDs exist
+//                                         console.log(`From Placement Product JSON ID(s): ${productIds.join(', ') || 'No ID'}`);
+//                                     } else {
+//                                         console.log('Error parsing JSON: Invalid format');
+//                                     }
+//                                 } else {
+//                                     console.log('From Placement Product JSON ID: No data available');
+//                                 }
+
+//                                 // Check if the collection data exists
+//                                 if (page.placement_collection_json) {
+//                                     const collectionData = parseJson(page.placement_collection_json);
+//                                     if (collectionData) {
+//                                         // Extract collection IDs (if available)
+//                                         const collectionIds = collectionData.map(collection => collection.id.split('/').pop());
+//                                         collIds.push(...collectionIds);
+
+//                                         // Log the IDs or a fallback message if no IDs exist
+//                                         console.log(`From Placement Collection JSON ID(s): ${collectionIds.join(', ') || 'No ID'}`);
+//                                     } else {
+//                                         console.log('Error parsing JSON: Invalid format');
+//                                     }
+//                                 } else {
+//                                     console.log('From Placement Collection JSON ID: No data available');
+//                                 }
+
+//                                 // Log the placement product type
+//                                 const placeProdType = page.placement_product_type || 'No Type';
+//                                 placeProdTypes.push(placeProdType);
+//                                 console.log(`Placement Product Type: ${placeProdType}`);
+
+//                                 // Create the CTA button
+//                                 const ctaButton = document.createElement('a');
+//                                 ctaButton.href = '#';
+//                                 ctaButton.id = 'cta-button';
+//                                 ctaButton.target = '_blank';
+//                                 ctaButton.style.textDecoration = 'none';
+//                                 ctaButton.style.flexShrink = '0';
+//                                 ctaButton.style.margin = '0';
+//                                 ctaButton.style.border = 'none';
+//                                 ctaButton.style.fontWeight = '600';
+//                                 ctaButton.style.padding = '10px 16px';
+//                                 ctaButton.style.display = 'flex';
+//                                 ctaButton.style.alignItems = 'center';
+//                                 ctaButton.style.justifyContent = 'center';
+//                                 ctaButton.style.fontSize = '14px';
+//                                 ctaButton.style.backgroundColor = '#202223';
+//                                 ctaButton.style.color = '#fafafa';
+//                                 ctaButton.style.borderRadius = '4px';
+//                                 ctaButton.style.cursor = 'pointer';
+//                                 ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//                                 ctaButton.innerText = page.button_text || 'Shop Now';
+
+//                                 // Append the icon container, text container, and CTA button to the main container
+//                                 containerDiv.appendChild(iconContainer);
+//                                 containerDiv.appendChild(textContainer);
+//                                 containerDiv.appendChild(ctaButton);
+
+//                                 // Append the container to the badge container
+//                                 badgeContainer.appendChild(containerDiv);
+//                             });
+//                         } else {
+//                             console.log("No badge pages found for badge:", badge); // Log if no badge pages
+//                         }
+
+//                     });
+//                 } else {
+//                     console.log("No published badges found."); // Log if no badges are found
+//                     // alert('No published badges found.');
+//                 }
+
+//                 // Return the fetched data for further processing
+//                 return data;
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching badge data:', error);
+//                 // alert('Error fetching badge data: ' + error.message);
+//             });
+//     }
+
+//     // Function to get the current product ID
+//     function getProductId() {
+//         const productElement = document.querySelector('[data-product-id]');
+//         return productElement ? productElement.getAttribute('data-product-id') : null;
+//     }
+
+//     // Function to fetch collections for the given product ID
+//     async function fetchCollectionsForProduct(productId) {
+//         // Ensure APP_URL and SHOP_URL are properly defined globally
+//         const endpoint = `${APP_URL}api/getProductCollectionId/${productId}?shop=${SHOP_URL}`;
+
+//         try {
+//             const response = await fetch(endpoint);
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok');
+//             }
+//             const collectionIds = await response.json();
+//             console.log("Collection IDs:", collectionIds);
+//             return collectionIds;
+//         } catch (error) {
+//             console.error('Failed to fetch collections:', error);
+//             return [];
+//         }
+//     }
+
+//     // Function to filter and display badges based on product ID and placement type
+//     async function filterAndDisplayBadges(data) {
+//         const productId = getProductId();
+//         console.log("Current product ID:", productId);
+
+//         // Fetch collections for the product
+//         const collectionIds = await fetchCollectionsForProduct(productId);
+
+//         // Filter badges based on product ID and placement type
+//         const filteredBadges = data.filter(badge => {
+//             const badgePages = badge.badge_pages;
+//             return badgePages.some(page => {
+//                 const placeProdType = page.placement_product_type;
+//                 const productIds = prodIds.includes(productId);
+//                 const collectionIdsMatch = collectionIds.some(collectionId => collIds.includes(collectionId));
+
+//                 return (placeProdType === 'allProducts') ||
+//                        (placeProdType === 'specificProducts' && productIds) ||
+//                        (placeProdType === 'specificCollections' && collectionIdsMatch);
+//             });
+//         });
+
+//         console.log("Filtered badges:", filteredBadges);
+
+//         // Clear existing badges
+//         const productForm = document.querySelector('.product-form');
+//         if (productForm) {
+//             // Remove only the badge containers, not the entire content
+//             const badgeContainers = productForm.querySelectorAll('.badge-container');
+//             badgeContainers.forEach(container => container.remove());
+//         }
+
+//         // Display the filtered badges
+//         if (filteredBadges.length > 0) {
+//             filteredBadges.forEach(badge => {
+//                 const badgePages = badge.badge_pages;
+//                 const productForm = document.querySelector('.product-form');
+
+//                 if (productForm) {
+//                     const badgeContainer = createBadgeContainer(badge);
+//                     badgeContainer.classList.add('badge-container'); // Add a class for easy removal later
+//                     productForm.appendChild(badgeContainer);
+
+//                     if (badgePages && badgePages.length > 0) {
+//                         badgePages.forEach(page => {
+//                             const containerDiv = createIconBlock(badge, page);
+//                             badgeContainer.appendChild(containerDiv);
+
+//                             if (badge.badge_type.includes('icon-block') || badge.badge_type.includes('payment-icons')) {
+//                                 renderIconsBlock(badgeContainer, page);
+//                             }
+//                         });
+//                     }
+//                 }
+//             });
+//         } else {
+//             // alert('No published badges found for the current product.');
+//         }
+//     }
+
+//     // Function to create the badge container
+//     function createBadgeContainer(badge) {
+//         const badgeContainer = document.createElement('div');
+//         badgeContainer.style.marginBottom = '40px';
+
+//         // Badge Type
+//         const badgeType = document.createElement('p');
+//         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//         badgeContainer.appendChild(badgeType);
+
+//         return badgeContainer;
+//     }
+
+//     // Function to create the main container div for icons
+//     function createIconBlock(badge, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '16px';
+//         containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//         containerDiv.style.borderRadius = '8px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-between';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.gap = '10px';
+//         containerDiv.style.position = 'relative';
+//         containerDiv.style.marginTop = '20px';
+//         containerDiv.style.marginBottom = '20px';
+//         containerDiv.style.background = 'rgb(255, 255, 255)';
+
+//         const iconContainer = document.createElement('div');
+//         iconContainer.innerHTML = page.icon_svg;
+//         containerDiv.appendChild(iconContainer);
+
+//         const textContainer = createTextContainer(page);
+//         containerDiv.appendChild(textContainer);
+
+//         const ctaButton = createCtaButton(page);
+//         containerDiv.appendChild(ctaButton);
+
+//         return containerDiv;
+//     }
+
+//     // Function to create the text container
+//     function createTextContainer(page) {
+//         const textContainer = document.createElement('div');
+//         textContainer.id = 'text_container';
+//         textContainer.style.display = 'flex';
+//         textContainer.style.flexDirection = 'column';
+//         textContainer.style.justifyContent = 'flex-start';
+//         textContainer.style.alignItems = 'flex-start';
+//         textContainer.style.flex = '1';
+//         textContainer.style.gap = '2px';
+
+//         const title = document.createElement('span');
+//         title.id = 'title';
+//         title.style.display = 'block';
+//         title.style.fontWeight = '600';
+//         title.style.fontSize = '16px';
+//         title.style.color = '#202223';
+//         title.style.margin = '0';
+//         title.style.lineHeight = '1';
+//         title.style.wordWrap = 'break-word';
+//         title.style.maxWidth = '100%';
+//         title.innerText = page.title || 'No Title';
+
+//         const subheading = document.createElement('span');
+//         subheading.id = 'subheading';
+//         subheading.style.display = 'block';
+//         subheading.style.fontSize = '14px';
+//         subheading.style.color = '#96a4b6';
+//         subheading.style.fontWeight = '400';
+//         subheading.style.margin = '0';
+//         subheading.style.textAlign = 'left';
+//         subheading.style.lineHeight = '1';
+//         subheading.style.wordWrap = 'break-word';
+//         subheading.style.maxWidth = '100%';
+//         subheading.innerText = page.subheading || 'No Subheading';
+
+//         textContainer.appendChild(title);
+//         textContainer.appendChild(subheading);
+
+//         return textContainer;
+//     }
+
+//     // Function to create the CTA button
+//     function createCtaButton(page) {
+//         const ctaButton = document.createElement('a');
+//         ctaButton.href = '#';
+//         ctaButton.id = 'cta-button';
+//         ctaButton.target = '_blank';
+//         ctaButton.style.textDecoration = 'none';
+//         ctaButton.style.flexShrink = '0';
+//         ctaButton.style.margin = '0';
+//         ctaButton.style.border = 'none';
+//         ctaButton.style.fontWeight = '600';
+//         ctaButton.style.padding = '10px 16px';
+//         ctaButton.style.display = 'flex';
+//         ctaButton.style.alignItems = 'center';
+//         ctaButton.style.justifyContent = 'center';
+//         ctaButton.style.fontSize = '14px';
+//         ctaButton.style.backgroundColor = '#202223';
+//         ctaButton.style.color = '#fafafa';
+//         ctaButton.style.borderRadius = '4px';
+//         ctaButton.style.cursor = 'pointer';
+//         ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//         ctaButton.innerText = page.button_text || 'Shop Now';
+
+//         return ctaButton;
+//     }
+
+//     // Function to render icons block for 'icon-block' or 'payment-icons' types
+//     function renderIconsBlock(container, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '20px';
+//         containerDiv.style.backgroundColor = '#f7f7f7';
+//         containerDiv.style.borderRadius = '10px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-around';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.margin = '20px 0';
+//         containerDiv.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+
+//         page.badge_pages.forEach(badge => {
+//             const badgeContainer = document.createElement('div');
+//             badgeContainer.style.textAlign = 'center';
+
+//             const icon = document.createElement('img');
+//             icon.src = badge.icon_svg;
+//             icon.style.width = '50px';
+//             icon.style.marginBottom = '10px';
+//             badgeContainer.appendChild(icon);
+
+//             const title = document.createElement('h3');
+//             title.innerText = badge.title || 'No Title';
+//             badgeContainer.appendChild(title);
+
+//             const subheading = document.createElement('p');
+//             subheading.innerText = badge.subheading || 'No Subheading';
+//             badgeContainer.appendChild(subheading);
+
+//             const button = document.createElement('a');
+//             button.innerText = 'Shop now';
+//             button.href = '#';
+//             badgeContainer.appendChild(button);
+
+//             containerDiv.appendChild(badgeContainer);
+//         });
+
+//         container.appendChild(containerDiv);
+//     }
+
+//     // Call the function to fetch and process badges
+//     fetchPublishedBadges().then(data => {
+//         filterAndDisplayBadges(data);
+//     });
+
+//     // Log the collected product and collection IDs
+//     console.log("Product IDs database:", prodIds);
+//     console.log("Collection IDs database:", collIds);
+//     console.log("Placement Product Types database:", placeProdTypes);
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     var prodIds = [];
+//     var collIds = [];
+//     var placeProdTypes = [];
+
+//     // Function to fetch published badges
+//     async function fetchPublishedBadges() {
+//         try {
+//             const response = await fetch(`${APP_URL}api/front-end/badges/published`);
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok: ' + response.statusText);
+//             }
+//             const data = await response.json();
+//             console.log("Fetched data:", data);
+//             return data;
+//         } catch (error) {
+//             console.error('Error fetching badge data:', error);
+//             return [];
+//         }
+//     }
+
+//     // Function to get the current product ID
+//     function getProductId() {
+//         const productElement = document.querySelector('[data-product-id]');
+//         return productElement ? productElement.getAttribute('data-product-id') : null;
+//     }
+
+//     // Function to fetch collections for the given product ID
+//     async function fetchCollectionsForProduct(productId) {    
+//         const endpoint = `${APP_URL}api/getProductCollectionId/${productId}?shop=${SHOP_URL}`;
+//         try {
+//             const response = await fetch(endpoint);
+//             if (!response.ok) {
+//                 throw new Error('Network response was not ok');
+//             }
+//             const collectionIds = await response.json();
+//             console.log("Collection IDs:", collectionIds);
+//             return collectionIds;
+//         } catch (error) {
+//             console.error('Failed to fetch collections:', error);
+//             return [];
+//         }
+//     }
+
+//     // Function to filter and display badges based on product ID and placement type
+//     async function filterAndDisplayBadges(data) {
+//         const productId = getProductId();
+//         console.log("Current product ID:", productId);
+
+//         if (!productId) {
+//             console.error('Product ID not found');
+//             return;
+//         }
+
+//         const collectionIds = await fetchCollectionsForProduct(productId);
+
+//         // Filter badges based on product ID and placement type
+//         const filteredBadges = data.filter(badge => {
+//             const badgePages = badge.badge_pages;
+//             return badgePages.some(page => {
+//                 const placeProdType = page.placement_product_type;
+//                 const productIds = prodIds.includes(productId);
+//                 const collIdsMatch = collectionIds.some(id => collIds.includes(id));
+
+//                 return (placeProdType === 'allProducts') ||
+//                        (placeProdType === 'specificProducts' && productIds) ||
+//                        (placeProdType === 'specificCollections' && collIdsMatch);
+//             });
+//         });
+
+//         console.log("Filtered badges:", filteredBadges);
+
+//         // Clear existing badges
+//         const productForm = document.querySelector('.product-form');
+//         if (productForm) {
+//             productForm.innerHTML = ''; // Clear existing content
+//         }
+
+//         // Display the filtered badges
+//         if (filteredBadges.length > 0) {
+//             filteredBadges.forEach(badge => {
+//                 const badgePages = badge.badge_pages;
+//                 const productForm = document.querySelector('.product-form');
+
+//                 if (productForm) {
+//                     const badgeContainer = createBadgeContainer(badge);
+//                     productForm.appendChild(badgeContainer);
+
+//                     if (badgePages && badgePages.length > 0) {
+//                         badgePages.forEach(page => {
+//                             const containerDiv = createIconBlock(badge, page);
+//                             badgeContainer.appendChild(containerDiv);
+
+//                             if (badge.badge_type.includes('icon-block') || badge.badge_type.includes('payment-icons')) {
+//                                 renderIconsBlock(badgeContainer, page);
+//                             }
+//                         });
+//                     }
+//                 }
+//             });
+//         } else {
+//             console.log('No published badges found for the current product.');
+//         }
+//     }
+
+//     // Function to create the badge container
+//     function createBadgeContainer(badge) {
+//         const badgeContainer = document.createElement('div');
+//         badgeContainer.style.marginBottom = '40px';
+
+//         // Badge Type
+//         const badgeType = document.createElement('p');
+//         badgeType.innerText = `Badge Type: ${badge.badge_type || 'No Type'}`;
+//         badgeContainer.appendChild(badgeType);
+
+//         return badgeContainer;
+//     }
+
+//     // Function to create the main container div for icons
+//     function createIconBlock(badge, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '16px';
+//         containerDiv.style.border = '1px solid rgb(197, 200, 209)';
+//         containerDiv.style.borderRadius = '8px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-between';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.gap = '10px';
+//         containerDiv.style.position = 'relative';
+//         containerDiv.style.marginTop = '20px';
+//         containerDiv.style.marginBottom = '20px';
+//         containerDiv.style.background = 'rgb(255, 255, 255)';
+
+//         const iconContainer = document.createElement('div');
+//         iconContainer.innerHTML = page.icon_svg;
+//         containerDiv.appendChild(iconContainer);
+
+//         const textContainer = createTextContainer(page);
+//         containerDiv.appendChild(textContainer);
+
+//         const ctaButton = createCtaButton(page);
+//         containerDiv.appendChild(ctaButton);
+
+//         return containerDiv;
+//     }
+
+//     // Function to create the text container
+//     function createTextContainer(page) {
+//         const textContainer = document.createElement('div');
+//         textContainer.id = 'text_container';
+//         textContainer.style.display = 'flex';
+//         textContainer.style.flexDirection = 'column';
+//         textContainer.style.justifyContent = 'flex-start';
+//         textContainer.style.alignItems = 'flex-start';
+//         textContainer.style.flex = '1';
+//         textContainer.style.gap = '2px';
+
+//         const title = document.createElement('span');
+//         title.id = 'title';
+//         title.style.display = 'block';
+//         title.style.fontWeight = '600';
+//         title.style.fontSize = '16px';
+//         title.style.color = '#202223';
+//         title.style.margin = '0';
+//         title.style.lineHeight = '1';
+//         title.style.wordWrap = 'break-word';
+//         title.style.maxWidth = '100%';
+//         title.innerText = page.title || 'No Title';
+
+//         const subheading = document.createElement('span');
+//         subheading.id = 'subheading';
+//         subheading.style.display = 'block';
+//         subheading.style.fontSize = '14px';
+//         subheading.style.color = '#96a4b6';
+//         subheading.style.fontWeight = '400';
+//         subheading.style.margin = '0';
+//         subheading.style.textAlign = 'left';
+//         subheading.style.lineHeight = '1';
+//         subheading.style.wordWrap = 'break-word';
+//         subheading.style.maxWidth = '100%';
+//         subheading.innerText = page.subheading || 'No Subheading';
+
+//         textContainer.appendChild(title);
+//         textContainer.appendChild(subheading);
+
+//         return textContainer;
+//     }
+
+//     // Function to create the CTA button
+//     function createCtaButton(page) {
+//         const ctaButton = document.createElement('a');
+//         ctaButton.href = '#';
+//         ctaButton.id = 'cta-button';
+//         ctaButton.target = '_blank';
+//         ctaButton.style.textDecoration = 'none';
+//         ctaButton.style.flexShrink = '0';
+//         ctaButton.style.margin = '0';
+//         ctaButton.style.border = 'none';
+//         ctaButton.style.fontWeight = '600';
+//         ctaButton.style.padding = '10px 16px';
+//         ctaButton.style.display = 'flex';
+//         ctaButton.style.alignItems = 'center';
+//         ctaButton.style.justifyContent = 'center';
+//         ctaButton.style.fontSize = '14px';
+//         ctaButton.style.backgroundColor = '#202223';
+//         ctaButton.style.color = '#fafafa';
+//         ctaButton.style.borderRadius = '4px';
+//         ctaButton.style.cursor = 'pointer';
+//         ctaButton.style.transition = 'background-color 0.2s ease-in-out';
+//         ctaButton.innerText = page.button_text || 'Shop Now';
+
+//         return ctaButton;
+//     }
+
+//     // Function to render icons block for 'icon-block' or 'payment-icons' types
+//     function renderIconsBlock(container, page) {
+//         const containerDiv = document.createElement('div');
+//         containerDiv.style.width = '100%';
+//         containerDiv.style.padding = '20px';
+//         containerDiv.style.backgroundColor = '#f7f7f7';
+//         containerDiv.style.borderRadius = '10px';
+//         containerDiv.style.display = 'flex';
+//         containerDiv.style.justifyContent = 'space-around';
+//         containerDiv.style.alignItems = 'center';
+//         containerDiv.style.margin = '20px 0';
+//         containerDiv.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+
+//         page.badge_pages.forEach(badge => {
+//             const badgeContainer = document.createElement('div');
+//             badgeContainer.style.textAlign = 'center';
+
+//             const icon = document.createElement('img');
+//             icon.src = badge.icon_svg;
+//             icon.style.width = '50px';
+//             icon.style.marginBottom = '10px';
+//             badgeContainer.appendChild(icon);
+
+//             const title = document.createElement('h3');
+//             title.innerText = badge.title || 'No Title';
+//             badgeContainer.appendChild(title);
+
+//             const subheading = document.createElement('p');
+//             subheading.innerText = badge.subheading || 'No Subheading';
+//             badgeContainer.appendChild(subheading);
+
+//             const button = document.createElement('a');
+//             button.innerText = 'Shop now';
+//             button.href = '#';
+//             badgeContainer.appendChild(button);
+
+//             containerDiv.appendChild(badgeContainer);
+//         });
+
+//         container.appendChild(containerDiv);
+//     }
+
+//     // Call the function to fetch and process badges
+//     fetchPublishedBadges().then(data => {
+//         filterAndDisplayBadges(data);
+//     });
+
+//     // Log the collected product and collection IDs
+//     console.log("Product IDs database:", prodIds);
+//     console.log("Collection IDs database:", collIds);
+//     console.log("Placement Product Types database:", placeProdTypes);
+// });
 
 
 

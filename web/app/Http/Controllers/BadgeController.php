@@ -616,7 +616,8 @@ class BadgeController extends Controller
             'badge_pages.*.placement_product_type' => 'nullable|string',
             'badge_pages.*.placement_product_json' => 'nullable|string',
             'badge_pages.*.placement_collection_json' => 'nullable|string',
-            'badge_pages.*.placement_tags_json' => 'nullable|string',
+            // 'badge_pages.*.placement_tags_json' => 'nullable|string',
+            'badge_pages.*.placement_tags_json' => 'nullable|string', // Changed to string
         ]);
 
         try {

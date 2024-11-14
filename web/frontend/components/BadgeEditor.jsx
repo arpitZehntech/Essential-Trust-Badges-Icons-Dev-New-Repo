@@ -1881,10 +1881,8 @@
 
 
 
-// NEW CODE  but old code from gpt 8/11/2024 before this above is working code
 
-
-
+//   working code at 14-11-2024 
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -2032,80 +2030,12 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     return Icon ? <Icon size={32} /> : null;
   };
 
+  const ensureString = (value) => {
+    return Array.isArray(value) ? value.join(', ') : value;
+  };
+  
   useEffect(() => {
     if (badgeId && !isCreationMode) {
-      console.log("not in isCreationMode");
-
-
-      // const fetchBadgeData = async () => {
-      //   try {
-      //     const response = await fetch(`/api/badges/${badgeId}`);
-      //     const data = await response.json();
-      //     setBadgeType(data.badge_type);
-      //     console.log("data.badge_type", data.badge_type);
-      //     setBadgeName(data.badge_name);
-      //     setIsPublished(data.status === "Publish");
-
-      //     if (data.badge_type === "single-banner") {
-      //       setSingleBannerState({
-      //         title: data.badge_pages[0].title,
-      //         subheading: data.badge_pages[0].subheading,
-      //         buttonText: data.badge_pages[0].button_text,
-      //         linkType: data.badge_pages[0].link_type,
-      //         externalUrl: data.badge_pages[0].external_url,
-      //         selectedIcon: data.badge_pages[0].icon_name ? { name: data.badge_pages[0].icon_name } : null,
-      //         cta: data.badge_pages[0].call_to_action,
-      //         selectedProduct: data.badge_pages[0].product_json ? JSON.parse(data.badge_pages[0].product_json) : null,
-      //         selectedCollection: data.badge_pages[0].collection_json ? JSON.parse(data.badge_pages[0].collection_json) : null,
-      //         iconModalActive: false,
-      //         isProductPickerOpen: false,
-      //         isCollectionPickerOpen: false,
-      //       });
-      //     } else if (data.badge_type === "icon-block") {
-      //       setIconBlockPages(data.badge_pages.map((page, index) => ({
-      //         ...page,
-      //         id: index + 1,
-      //         selectedIcon: page.icon_name ? { name: page.icon_name } : null,
-      //         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
-      //         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-      //         cta: page.call_to_action, // Ensure cta is set here
-      //         buttonText: page.button_text,
-      //         linkType: page.link_type,
-      //         externalUrl: page.external_url,
-      //       })));
-      //     } else if (data.badge_type === "payment-icons") {
-      //       setPaymentIconsPages(data.badge_pages.map((page, index) => ({
-      //         ...page,
-      //         id: index + 1,
-      //         selectedIcon: page.icon_name ? { name: page.icon_name } : null,
-      //         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
-      //         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-      //         cta: page.call_to_action, // Ensure cta is set here
-      //         buttonText: page.button_text,
-      //         linkType: page.link_type,
-      //         externalUrl: page.external_url,
-      //       })));
-      //     }
-
-      //     setPlacementData({
-      //       placement_product_type: data.badge_pages[0].placement_product_type,
-      //       placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
-      //       placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
-      //       placement_tags_json: data.badge_pages[0].placement_tags_json ? JSON.parse(data.badge_pages[0].placement_tags_json) : null,
-      //     });
-
-      //     setOriginalState({
-      //       singleBannerState: { ...singleBannerState },
-      //       iconBlockPages: [...iconBlockPages],
-      //       paymentIconsPages: [...paymentIconsPages],
-      //       placementData: { ...placementData },
-      //     });
-
-      //   } catch (error) {
-      //     console.error('Error fetching badge data:', error);
-      //   }
-      // };
-
       const fetchBadgeData = async () => {
         try {
           const response = await fetch(`/api/badges/${badgeId}`);
@@ -2160,7 +2090,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
             placement_product_type: data.badge_pages[0].placement_product_type,
             placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
             placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
-            placement_tags_json: data.badge_pages[0].placement_tags_json ? JSON.parse(data.badge_pages[0].placement_tags_json) : null,
+            // placement_tags_json: data.badge_pages[0].placement_tags_json ? JSON.parse(data.badge_pages[0].placement_tags_json) : null,
+            placement_tags_json: data.badge_pages[0].placement_tags_json || '', // Changed to string
           });
 
           setOriginalState({
@@ -2227,7 +2158,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         placement_product_type: 'allProducts',
         placement_product_json: null,
         placement_collection_json: null,
-        placement_tags_json: null,
+        // placement_tags_json: null,
+        placement_tags_json: '', // Changed to string
       });
     }
   }, [badgeId, isCreationMode]);
@@ -2284,7 +2216,9 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       placement_product_type: badgeData.badge_pages?.[0]?.placement_product_type || 'allProducts',
       placement_product_json: badgeData.badge_pages?.[0]?.placement_product_json || null,
       placement_collection_json: badgeData.badge_pages?.[0]?.placement_collection_json || null,
-      placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || null,
+      // placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || null,
+      placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || '', // Changed to string
+
     });
   };
 
@@ -2333,8 +2267,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     }
   };
 
-
-
   // ths is old handleIconSelect working for normal  icon
 
   // const handleIconSelect = (component, pageId, icon) => {
@@ -2373,7 +2305,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //     console.error("Unknown component:", component);
   //   }
   // };
-
 
 
   const handleIconSelect = (component, pageId, icon) => {
@@ -2420,7 +2351,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       console.error("Unknown component:", component);
     }
   };
-  
   
 
   const handleContinueToDesign = () => {
@@ -2513,8 +2443,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       console.error('Error saving badge:', error);
     }
   };
-
-
 
   const handlePublish = async () => {
     const badgeDetails = getBadgeDetails();
@@ -2848,7 +2776,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   // };
 
 
-
   const getBadgeDetails = () => {
     let badgeDetails = {};
 
@@ -2898,7 +2825,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
             placement_product_type: placementData.placement_product_type,
             placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
             placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-            placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+            // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+            placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
           },
         ],
       };
@@ -2920,7 +2848,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           placement_product_type: placementData.placement_product_type,
           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-          placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+          // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+          placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
         })),
       };
     } else if (badgeType === "payment-icons") {
@@ -2941,7 +2870,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           placement_product_type: placementData.placement_product_type,
           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-          placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+          // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+          placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
         })),
       };
     }
@@ -3480,12 +3410,4 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
 }
 
 export default BadgeEditor;
-
-
-
-
-
-
-
-
 

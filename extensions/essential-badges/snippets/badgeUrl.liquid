@@ -1,9 +1,9 @@
 <script>
-    const APP_URL = "https://modules-noble-tear-salary.trycloudflare.com/";
+    const APP_URL = "https://gen-corner-takes-options.trycloudflare.com/";
     var shop_url = '{{ shop.url }}';
     var shop_name = '{{ shop.name }}';
     const SHOP_URL = shop_url.replace('https://','');
-    console.log("shop_url ;",shop_url);
+    console.log("shop_url123 :",shop_url);
     
     var tags = '{{ product.tags }}';
     console.log("tags ;",tags);
@@ -12,6 +12,10 @@
     console.log("handle ;",handle);
 </script>
 
-<!-- Add data attributes for product_id  -->
-<div data-product-id="{{ product.id }}"></div>
+
+<!-- Add data attributes for product_id and product_tags -->
+
+<div data-product-id="{{ product.id }}" data-product-tags="{{ product.tags | join: ',' }}"></div>
+
+
 

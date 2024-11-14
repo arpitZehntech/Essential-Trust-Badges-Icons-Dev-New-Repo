@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\ShopifyController;
 use App\Http\Controllers\ProductListController;
+use App\Http\Controllers\TagController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -39,3 +40,8 @@ Route::get('/getProductCollectionId/{productId}', [ProductListController::class,
 Route::get('/collections/{collectionId}/products', [ProductListController::class, 'getCollectionProducts']);
 
 Route::get('/products/{productId}/collections', [ProductListController::class, 'getProductCollections']);
+
+
+
+Route::get('/tags', [TagController::class, 'getAllTags']);
+
