@@ -1308,7 +1308,7 @@
 
 
 
-// testing code for select multiple product and colection for button shop now 
+// testing code for select multiple product and colection for button shop now bu in this one issue it is not save the all the product and collection like when user click on select product then it clcik on collection selection then it remove the product 
 
 // import React, { useState } from 'react';
 // import {

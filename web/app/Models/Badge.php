@@ -45,6 +45,7 @@ class Badge extends Model
         'badge_name',
         'badge_type',
         'status',
+        'shop',
     ];
 
     // Define the relationship: A Badge has many BadgePages

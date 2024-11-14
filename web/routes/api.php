@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\ShopifyController;
+use App\Http\Controllers\ProductListController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,5 +29,13 @@ Route::get('/badges/{id}', [BadgeController::class, 'show']);
 
 Route::get('/front-end/badges/published', [BadgeController::class, 'getPublishedBadges']);
 
+Route::get('/getProductCollectionId/{productId}', [ProductListController::class, 'getProductById']);
 
-Route::get('/shopify/product/{productId}', [ShopifyController::class, 'getProductById']);
+// Route::get('/shopify/product/{productId}', [ShopifyController::class, 'getProductById']);
+
+// Route::get('/collections-with-products', [ProductListController::class, 'getCollectionsWithProducts']);
+
+
+Route::get('/collections/{collectionId}/products', [ProductListController::class, 'getCollectionProducts']);
+
+Route::get('/products/{productId}/collections', [ProductListController::class, 'getProductCollections']);

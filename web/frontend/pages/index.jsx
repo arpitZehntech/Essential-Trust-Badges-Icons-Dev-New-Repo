@@ -522,6 +522,9 @@ export default function HomePage() {
     <Page narrowWidth>
       <TitleBar title={t("HomePage.title")} primaryAction={null} />
       <Layout>
+      {/* <Layout.Section>
+     
+      </Layout.Section> */}
         <Layout.Section>
           {!showBadgeTypePage && !showBadgeEditor ? (
             <MainPage onCreateBadgeClick={handleCreateBadgeClick} onEditBadgeClick={handleEditBadgeClick} />

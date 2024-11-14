@@ -9,3 +9,4 @@ class Session extends Model
 {
     use HasFactory;
 }
+

@@ -61,7 +61,7 @@ function ProductCardList({ onSelectProduct }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/productslist"); // Adjust the API route if necessary
+        const response = await fetch("/api/"); // Adjust the API route if necessary
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

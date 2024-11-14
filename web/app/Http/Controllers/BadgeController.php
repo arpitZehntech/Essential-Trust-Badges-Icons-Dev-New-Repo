@@ -620,7 +620,11 @@ class BadgeController extends Controller
         ]);
 
         try {
+
+      
             $badge = Badge::create([
+             
+                // 'shop' => $shop,
                 'badge_name' => $validatedData['badge_name'],
                 'badge_type' => $validatedData['badge_type'],
                 'status' => $validatedData['status'],
@@ -660,8 +664,12 @@ class BadgeController extends Controller
         ]);
 
         try {
+
+
             $badge = Badge::with('badgePages')->findOrFail($id);
             $badge->update([
+       
+                // 'shop' => $shop,
                 'badge_name' => $validatedData['badge_name'],
                 'badge_type' => $validatedData['badge_type'],
                 'status' => $validatedData['status'],
@@ -681,11 +689,123 @@ class BadgeController extends Controller
         }
     }
 
+
+
+    //     public function store(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'badge_name' => 'nullable|string|max:255',
+    //         'badge_type' => 'nullable|string|max:255',
+    //         'status' => 'nullable|string|in:Draft,Publish',
+    //         'badge_pages' => 'array',
+    //         'badge_pages.*.title' => 'string|nullable',
+    //         'badge_pages.*.subheading' => 'string|nullable',
+    //         'badge_pages.*.icon_name' => 'string|nullable',
+    //         'badge_pages.*.icon_svg' => 'string|nullable', // Add validation for icon_svg
+    //         'badge_pages.*.call_to_action' => 'string|nullable',
+    //         'badge_pages.*.button_text' => 'string|nullable',
+    //         'badge_pages.*.product_json' => 'nullable|string',
+    //         'badge_pages.*.collection_json' => 'nullable|string',
+    //         'badge_pages.*.external_url' => 'nullable|string',
+    //         'badge_pages.*.placement_product_type' => 'nullable|string',
+    //         'badge_pages.*.placement_product_json' => 'nullable|string',
+    //         'badge_pages.*.placement_collection_json' => 'nullable|string',
+    //         'badge_pages.*.placement_tags_json' => 'nullable|string',
+    //     ]);
+
+    //     try {
+    //          // Retrieve Shopify session either from the request or Session model
+    //          $session = session('shopifySession'); // Laravel session storage, assuming it's set earlier
+    //          if (!$session) {
+    //              return response()->json(['error' => 'Shopify session is missing'], 400);
+    //          }
+
+    //          $userId = $session->id();
+    //          $shop = $session->getShop(); // Assuming session has a method to get the shop name
+
+    //         $badge = Badge::create([
+    //             'user_id' => $userId,
+    //             'shop' => $shop,
+    //             'badge_name' => $validatedData['badge_name'],
+    //             'badge_type' => $validatedData['badge_type'],
+    //             'status' => $validatedData['status'],
+    //         ]);
+
+    //         foreach ($validatedData['badge_pages'] as $pageData) {
+    //             $badge->badgePages()->create($pageData);
+    //         }
+
+    //         return response()->json(['message' => 'Badge created successfully'], 201);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error creating badge: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Unable to create badge'], 500);
+    //     }
+    // }
+
+    // public function update(Request $request, $id)
+    // {
+    //     $validatedData = $request->validate([
+    //         'badge_name' => 'nullable|string|max:255',
+    //         'badge_type' => 'nullable|string|max:255',
+    //         'status' => 'nullable|string|in:Draft,Publish',
+    //         'badge_pages' => 'array',
+    //         'badge_pages.*.title' => 'string|nullable',
+    //         'badge_pages.*.subheading' => 'string|nullable',
+    //         'badge_pages.*.icon_name' => 'string|nullable',
+    //         'badge_pages.*.icon_svg' => 'string|nullable', // Add validation for icon_svg
+    //         'badge_pages.*.call_to_action' => 'string|nullable',
+    //         'badge_pages.*.button_text' => 'string|nullable',
+    //         'badge_pages.*.product_json' => 'nullable|string',
+    //         'badge_pages.*.collection_json' => 'nullable|string',
+    //         'badge_pages.*.external_url' => 'nullable|string',
+    //         'badge_pages.*.placement_product_type' => 'nullable|string',
+    //         'badge_pages.*.placement_product_json' => 'nullable|string',
+    //         'badge_pages.*.placement_collection_json' => 'nullable|string',
+    //         'badge_pages.*.placement_tags_json' => 'nullable|string',
+    //     ]);
+
+    //     try {
+    //         // Retrieve Shopify session from Laravel session storage
+    //         $session = session('shopifySession'); // Assuming the session is stored in Laravel session
+    //         if (!$session) {
+    //             return response()->json(['error' => 'Shopify session is missing'], 400);
+    //         }
+
+    //         $userId = $session->id();
+    //         $shop = $session->getShop();
+
+    //         $badge = Badge::with('badgePages')->findOrFail($id);
+    //         $badge->update([
+    //             'user_id' => $userId,
+    //             'shop' => $shop,
+    //             'badge_name' => $validatedData['badge_name'],
+    //             'badge_type' => $validatedData['badge_type'],
+    //             'status' => $validatedData['status'],
+    //         ]);
+
+    //         if (isset($validatedData['badge_pages'])) {
+    //             $badge->badgePages()->delete();
+    //             foreach ($validatedData['badge_pages'] as $pageData) {
+    //                 $badge->badgePages()->create($pageData);
+    //             }
+    //         }
+
+    //         return response()->json(['message' => 'Badge updated successfully'], 200);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error updating badge: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Unable to update badge'], 500);
+    //     }
+    // }
+
+
+
+
+
     public function getPublishedBadges()
     {
         try {
             // Fetch badges with status 'publish' and their associated pages
-            $badges = Badge::with(['badgePages' => function($query) {
+            $badges = Badge::with(['badgePages' => function ($query) {
                 // $query->where('status', 'publish');
             }])->where('status', 'publish')->get();
 
@@ -697,135 +817,6 @@ class BadgeController extends Controller
             return response()->json(['error' => 'Unable to fetch badges: ' . $e->getMessage()], 500);
         }
     }
-
-    // public function getPublishedBadges(Request $request)
-    // {
-    //     try {
-    //         // Fetch badges with status 'publish' and their associated pages
-    //         $badges = Badge::with('badgePages')->where('status', 'publish')->get();
-    //         // return $badges;
-    //         // Log the fetched badges
-    //         Log::info('Fetched badges:', $badges->toArray());
-
-    //         // Filter badges based on placement_product_type
-    //         $filteredBadges = $badges->filter(function ($badge) use ($request) {
-    //             $placementType = $badge->badgePages->first()->placement_product_type;
-
-    //             // Log the placement type and request parameters
-    //             Log::info('Placement type:', ['type' => $placementType, 'product_id' => $request->product_id, 'collection_id' => $request->collection_id]);
-
-    //             if ($placementType === 'allProducts') {
-    //                 return true; // Show on all products
-    //             } elseif ($placementType === 'specificProducts') {
-    //                 $productIds = $this->extractIds($badge->badgePages->first()->placement_product_json);
-    //                 // Log the extracted product IDs
-    //                 Log::info('Extracted product IDs:', $productIds);
-    //                 return in_array($request->product_id, $productIds); // Show on specific products
-    //             } elseif ($placementType === 'specificCollections') {
-    //                 $collectionIds = $this->extractIds($badge->badgePages->first()->placement_collection_json);
-    //                 // Log the extracted collection IDs
-    //                 Log::info('Extracted collection IDs:', $collectionIds);
-    //                 return in_array($request->collection_id, $collectionIds); // Show on specific collections
-    //             }
-
-    //             return false;
-    //         });
-
-
-    //         return $filteredBadges;
-
-    //         // Log the filtered badges
-    //         Log::info('Filtered badges:', $filteredBadges->toArray());
-
-    //         // Return the filtered badges as JSON response
-    //         return response()->json($filteredBadges);
-    //     } catch (\Exception $e) {
-    //         // Log the error and return a JSON response with the error message
-    //         Log::error('Error fetching badges: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Unable to fetch badges: ' . $e->getMessage()], 500);
-    //     }
-    // }
-
-    // // Helper function to extract IDs from JSON
-    // private function extractIds($json)
-    // {
-    //     $data = json_decode($json, true);
-    //     $ids = [];
-
-    //     if (is_array($data)) {
-    //         foreach ($data as $item) {
-    //             if (isset($item['id'])) {
-    //                 $ids[] = $this->extractIdFromGid($item['id']);
-    //             }
-    //         }
-    //     }
-
-    //     return $ids;
-    // }
-
-    // // Helper function to extract the ID from the GID
-    // private function extractIdFromGid($gid)
-    // {
-    //     $parts = explode('/', $gid);
-    //     return end($parts);
-    // }
-
-    // public function getPublishedBadges(Request $request)
-    // {
-    //     try {
-    //         // Log the incoming request parameters
-    //         Log::info('Incoming request parameters:', $request->all());
-    
-    //         // Fetch badges with status 'publish' and their associated pages
-    //         $badgesQuery = Badge::with('badgePages')->where('status', 'publish');
-    
-    //         // Log the initial query
-    //         Log::info('Initial badges query:', [$badgesQuery->toSql(), $badgesQuery->getBindings()]);
-    
-    //         // Filter badges based on placement_product_type
-    //         if ($request->has('product_id')) {
-    //             Log::info('Product ID present in request:', ['product_id' => $request->product_id]);
-    
-    //             $badgesQuery->whereHas('badgePages', function ($query) use ($request) {
-    //                 $query->where(function ($query) use ($request) {
-    //                     $query->where('placement_product_type', 'allProducts')
-    //                         ->orWhere(function ($query) use ($request) {
-    //                             $query->where('placement_product_type', 'specificProducts')
-    //                                 ->whereJsonContains('placement_product_json', ['id' => 'gid://shopify/Product/' . $request->product_id]);
-    //                         })
-    //                         ->orWhere(function ($query) use ($request) {
-    //                             $query->where('placement_product_type', 'specificCollections')
-    //                                 ->whereJsonContains('placement_collection_json', ['id' => 'gid://shopify/Collection/' . $request->collection_id]);
-    //                         });
-    //                 });
-    //             });
-    
-    //             // Log the filtered query
-    //             Log::info('Filtered badges query:', [$badgesQuery->get(), $badgesQuery->getBindings()]);
-    //         }
-    
-    //         $badges = $badgesQuery->get();
-    
-    //         // Log the fetched badges
-    //         Log::info('Fetched badges:', $badges->toArray());
-    
-    //         // Check if any badges were fetched
-    //         if ($badges->isEmpty()) {
-    //             Log::info('No badges found for the given criteria.');
-    //         }
-    
-    //         // Return the fetched badges as JSON response
-    //         return response()->json($badges);
-    //     } catch (\Exception $e) {
-    //         // Log the error and return a JSON response with the error message
-    //         Log::error('Error fetching badges: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Unable to fetch badges: ' . $e->getMessage()], 500);
-    //     }
-    // }
-    
-    
-
-
 
     public function destroy($id)
     {
@@ -841,4 +832,3 @@ class BadgeController extends Controller
         }
     }
 }
-

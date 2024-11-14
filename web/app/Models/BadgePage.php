@@ -33,6 +33,7 @@
     
 // }
 
+
 // NEW CODE  but old code from gpt 7/11/2024 before this above is working code
 
 
@@ -50,7 +51,7 @@ class BadgePage extends Model
         'title',
         'subheading',
         'icon_name',
-        'icon_svg', // Add this line
+        'icon_svg', 
         'call_to_action',
         'button_text',
         'product_id',

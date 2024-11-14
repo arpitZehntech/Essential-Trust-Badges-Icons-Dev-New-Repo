@@ -1,20 +1,17 @@
-{% comment %} <script>
-    const APP_URL = "https://packed-jewellery-celebration-mali.trycloudflare.com/";
-    var shop_url = '{{ shop.url }}';
-    const SHOP_URL = shop_url.replace('https://',''); 
-</script> {% endcomment %}
-
 <script>
-    const APP_URL = "https://eg-distribute-sufficient-determining.trycloudflare.com/";
+    const APP_URL = "https://modules-noble-tear-salary.trycloudflare.com/";
     var shop_url = '{{ shop.url }}';
     var shop_name = '{{ shop.name }}';
     const SHOP_URL = shop_url.replace('https://','');
     console.log("shop_url ;",shop_url);
-    var collectionId = '{{ collection.id }}';
-    console.log("collectionId ;",collectionId);
     
+    var tags = '{{ product.tags }}';
+    console.log("tags ;",tags);
+
+    var handle = '{{ product.handle }}';
+    console.log("handle ;",handle);
 </script>
 
-<!-- Add data attributes for product_id and collection_id -->
+<!-- Add data attributes for product_id  -->
 <div data-product-id="{{ product.id }}"></div>
-{% comment %} <div data-collection-id="{{ collection.id }}"></div> {% endcomment %}
+

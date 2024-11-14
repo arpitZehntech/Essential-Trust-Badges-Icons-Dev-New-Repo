@@ -147,7 +147,23 @@ Route::post('/api/webhooks', function (Request $request) {
 });
 
 
+
 Route::get('/api/productslist', [ProductListController::class, 'getProducts'])->middleware('shopify.auth');
 
 Route::get('/badges', [BadgeController::class, 'index']);
 
+Route::post('/api/badges', [BadgeController::class, 'store']);
+
+// Route to handle badge creation
+// Route::post('/api/badges', function (Request $request) {
+//     /** @var AuthSession $authSession */
+//     $controller = new BadgeController();
+//     $session = $request->get('shopifySession'); // Get session from request
+    
+//     // Extract user ID and shop from the session
+//     // $userId = $session->id(); // Get the session's user ID
+//     $shop = $session->getShop(); // Get the shop associated with the session
+//     return $shop;
+//     // Call the 'store' method on the controller, passing the request and session data
+//     return $controller->store($request, $userId, $shop);
+// })->middleware('shopify.auth');

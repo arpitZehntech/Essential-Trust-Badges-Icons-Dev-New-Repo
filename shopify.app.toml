@@ -3,22 +3,23 @@
 client_id = "3c71d8066fd873dfafb10a06b22b8ca0"
 name = "Essential-Trust-badges-icons"
 handle = "essential-trust-badges-icons"
-application_url = "https://eg-distribute-sufficient-determining.trycloudflare.com"
+application_url = "https://modules-noble-tear-salary.trycloudflare.com"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
 dev_store_url = "zehntech-store1.myshopify.com"
+include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "write_products,read_products"
 
 [auth]
 redirect_urls = [
-  "https://eg-distribute-sufficient-determining.trycloudflare.com/auth/callback",
-  "https://eg-distribute-sufficient-determining.trycloudflare.com/auth/shopify/callback",
-  "https://eg-distribute-sufficient-determining.trycloudflare.com/api/auth/callback"
+  "https://modules-noble-tear-salary.trycloudflare.com/auth/callback",
+  "https://modules-noble-tear-salary.trycloudflare.com/auth/shopify/callback",
+  "https://modules-noble-tear-salary.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

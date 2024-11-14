@@ -1880,7 +1880,9 @@
 
 
 
+
 // NEW CODE  but old code from gpt 8/11/2024 before this above is working code
+
 
 
 
@@ -1912,17 +1914,20 @@ import Placement from './Placement';
 import * as icons from 'react-icons/lia';
 import * as icons1 from 'react-icons/fc';
 import serializeReactElementToSVG from './utils';
+import { useAuthenticatedFetch } from "../hooks";
 
+ 
 
 function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeData }) {
   const [selectedTab, setSelectedTab] = useState(0);
   const [badgeType, setBadgeType] = useState("single-banner");
   const [badgeName, setBadgeName] = useState("Your badge");
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(false); 
   const [isPublished, setIsPublished] = useState(false);
   const [toastActive, setToastActive] = useState(false);
   const [isModified, setIsModified] = useState(false);
   const [originalState, setOriginalState] = useState({});
+  const fetch = useAuthenticatedFetch();
 
   const [singleBannerState, setSingleBannerState] = useState({
     title: "Free Shipping",
@@ -2842,6 +2847,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //   return badgeDetails;
   // };
 
+
+
   const getBadgeDetails = () => {
     let badgeDetails = {};
 
@@ -2941,8 +2948,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
 
     return badgeDetails;
   };
-
-
 
 
   return (
@@ -3475,3 +3480,12 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
 }
 
 export default BadgeEditor;
+
+
+
+
+
+
+
+
+
