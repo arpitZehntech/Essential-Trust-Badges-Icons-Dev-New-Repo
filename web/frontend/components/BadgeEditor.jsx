@@ -3265,7 +3265,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                           </div>
                         </>
                       )}
-                      <div className="translations-section">
+                      {/* <div className="translations-section">
                         <Stack>
                           <Stack.Item>
                             <span className="Polaris-TextStyle--variationStrong">Translations</span>
@@ -3279,7 +3279,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       </div>
                       <Button fullWidth onClick={() => { }}>
                         Add translation
-                      </Button>
+                      </Button> */}
                       <div style={{ textAlign: "center" }}>
                         <button
                           className="Polaris-Button Polaris-Button--outline Polaris-Button--fullWidth"
@@ -3381,7 +3381,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                     <div key={index} className="badge-output-page hVFYFW">
                       {page.selectedIcon ? (
                         <div className="badge-icon iubCKx">
-                          {IconComponent(getPrefixedIconName(page.selectedIcon.name), badgeType)}
+                          {IconComponent(getPrefixedIconName1(page.selectedIcon.name), badgeType)}
                         </div>
                       ) : (
                         <div className="icon-placeholder"></div>
