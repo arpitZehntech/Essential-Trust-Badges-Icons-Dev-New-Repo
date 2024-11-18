@@ -1,6 +1,6 @@
-/* MainPage.css */
+/* working code 16-11-2024 */
 
-.emptyStateMargin {
+/* .emptyStateMargin {
     padding: 28px 0px 0px;
 }
 
@@ -9,11 +9,9 @@
     padding: 0 !important;
     max-width: 62.375rem !important;
     width: 100% !important;
-    /* Allow full width on smaller screens */
     overflow-x: hidden !important;
-    /* Prevent horizontal scrolling */
     border-radius: var(--p-border-radius-2) !important;
-    /* Add border-radius */
+
 }
 
 @media (min-width: 10.625em) {
@@ -32,7 +30,6 @@
     }
 }
 
-/* Add a media query for responsiveness */
 @media (max-width: 600px) {
     .Polaris-Text--subdued {
         padding-top: 4px !important;
@@ -50,9 +47,6 @@
 .heading {
     margin-bottom: 3px !important;
 }
-
-
-/* css for data table for result from database*/
 
 .left-header,
 .right-header {
@@ -101,4 +95,108 @@
 .warnigText
 {
   padding: 20px;
+} */
+
+
+
+/* working code 16-11-2024  adding comments  */
+
+
+.emptyStateMargin {
+  padding: 28px 0px 0px; /* Add padding to the top of the empty state margin */
+}
+
+.Polaris-Page {
+  margin: 0 auto !important; /* Center the page horizontally */
+  padding: 0 !important; /* Remove padding */
+  max-width: 62.375rem !important; /* Set maximum width */
+  width: 100% !important; /* Allow full width on smaller screens */
+  overflow-x: hidden !important; /* Prevent horizontal scrolling */
+  border-radius: var(--p-border-radius-2) !important; /* Add border-radius */
+}
+
+@media (min-width: 10.625em) {
+  .Polaris-Card {
+      border-radius: var(--p-border-radius-2); /* Add border-radius to cards on larger screens */
+  }
+}
+
+.Polaris-Page__Content {
+  padding-top: 0px !important; /* Remove top padding from page content */
+}
+
+@media (min-width: 30.625em) {
+  .Polaris-Page {
+      padding: 0 var(--p-space-3) !important; /* Add padding to the page on medium screens */
+  }
+}
+
+/* Add a media query for responsiveness */
+@media (max-width: 600px) {
+  .Polaris-Text--subdued {
+      padding-top: 4px !important; /* Add top padding to subdued text on small screens */
+  }
+}
+
+.Polaris-Text--subdued {
+  padding: 0px 0px 24px; /* Add bottom padding to subdued text */
+}
+
+.Polaris-Button {
+  padding: 7px 16px; /* Add padding to buttons */
+}
+
+.heading {
+  margin-bottom: 3px !important; /* Add bottom margin to headings */
+}
+
+/* CSS for data table for results from the database */
+
+.left-header,
+.right-header {
+font-weight: 600; /* Make header text bold */
+padding: 16px 20px; /* Add padding to headers */
+}
+
+.left-header {
+text-align: left; /* Align left header text to the left */
+}
+
+.right-header {
+text-align: right; /* Align right header text to the right */
+}
+
+.body-row {
+border-top: 1px solid #e1e3e5; /* Add top border to body rows */
+}
+
+.left-data,
+.right-data {
+padding: 16px 20px; /* Add padding to data cells */
+border-top: 1px solid #e1e3e5; /* Add top border to data cells */
+}
+
+.left-data {
+text-align: left; /* Align left data text to the left */
+}
+
+.right-data {
+text-align: right; /* Align right data text to the right */
+}
+
+.custom-row {
+display: flex; /* Use flexbox for custom row layout */
+align-items: center; /* Center align items vertically */
+}
+
+.drag-icon {
+margin-right: 8px; /* Add right margin to drag icon */
+}
+
+.title1 {
+margin-left: 8px; /* Add left margin to title */
+}
+
+.warnigText {
+padding: 20px; /* Add padding to warning text */
 }

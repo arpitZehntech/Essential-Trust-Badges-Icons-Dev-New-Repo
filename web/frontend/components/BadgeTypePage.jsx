@@ -153,7 +153,8 @@
 
 // export default BadgeTypePage;
 
-// testing code for database connection save the badges
+
+//  working code 16-11-2024
 
 // import React from 'react';
 // import { Card, Layout } from '@shopify/polaris';
@@ -213,7 +214,7 @@
 //                                         style={{ objectFit: 'cover', objectPosition: 'center center', aspectRatio: '1 / 0.64' }}
 //                                     />
 //                                     <div className="Polaris-TextContainer">
-//                                         <h2 className="Polaris-Text--root Polaris-Text--headingMd">Product page</h2>
+//                                         <h2 className="Polaris-Text--root Polaris-Text--headingMd">Single Banner</h2>
 //                                         <p>Block in product page below add to cart button.</p>
 //                                         <button
 //                                             className="Polaris-Button Polaris-Button--fullWidth"
@@ -244,7 +245,7 @@
 //                                     <div className="Polaris-TextContainer">
 //                                         <div className="Polaris-Stack Polaris-Stack--spacingTight Polaris-Stack--alignmentCenter">
 //                                             <div className="Polaris-Stack__Item">
-//                                                 <h2 className="Polaris-Text--root Polaris-Text--headingMd">Cart page</h2>
+//                                                 <h2 className="Polaris-Text--root Polaris-Text--headingMd">Icon Block</h2>
 //                                             </div>
 //                                             <div className="Polaris-Stack__Item">
 //                                                 <span className="Polaris-Badge Polaris-Badge--statusInfo">
@@ -281,7 +282,7 @@
 //                                         style={{ objectFit: 'contain', objectPosition: 'center center', aspectRatio: '1 / 0.64' }}
 //                                     />
 //                                     <div className="Polaris-TextContainer">
-//                                         <h2 className="Polaris-Text--root Polaris-Text--headingMd">Essential Countdown timer</h2>
+//                                         <h2 className="Polaris-Text--root Polaris-Text--headingMd">Payment Icons</h2>
 //                                         <p>Boost Sales with urgency and Flash Sales!</p>
 //                                         <button
 //                                             className="Polaris-Button Polaris-Button--fullWidth"
@@ -305,6 +306,9 @@
 
 // export default BadgeTypePage;
 
+
+// // working code 16-11-2024  adding comments 
+
 import React from 'react';
 import { Card, Layout } from '@shopify/polaris';
 import './BadgeTypePage.css';
@@ -313,7 +317,9 @@ const BadgeTypePage = ({ onBackClick, onSelectBadgeType }) => {
     return (
         <Layout>
             <Layout.Section>
-                <div className="Polaris-Box flexContainer " style={{ padding: 'var(--p-space-4) var(--p-space-0)' }}>
+                {/* Container for the header section */}
+                <div className="Polaris-Box flexContainer" style={{ padding: 'var(--p-space-4) var(--p-space-0)' }}>
+                    {/* Breadcrumbs section with a back button */}
                     <div className="breadcrumbs">
                         <button
                             className="Polaris-Button"
@@ -329,6 +335,7 @@ const BadgeTypePage = ({ onBackClick, onSelectBadgeType }) => {
                                 justifyContent: 'center',
                             }}
                         >
+                            {/* Back arrow icon */}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -345,26 +352,32 @@ const BadgeTypePage = ({ onBackClick, onSelectBadgeType }) => {
                         </button>
                     </div>
 
+                    {/* Title for the page */}
                     <h1 className="Polaris-Text--root Polaris-Text--headingLg title">
                         Choose badge type
                     </h1>
                 </div>
 
+                {/* Container for the badge type cards */}
                 <div className="Polaris-Stack">
+                    {/* Card for the "Single Banner" badge type */}
                     <div className="Polaris-Stack__Item">
-                        <div className="cardContainer ">
+                        <div className="cardContainer">
                             <Card>
                                 <div className="Polaris-Card__Section">
+                                    {/* Image for the "Single Banner" badge type */}
                                     <img
                                         alt="Product page"
                                         width="100%"
                                         src="https://freeshipping-essential-apps.uk/product_page.svg"
-                                        className="cardImage "
+                                        className="cardImage"
                                         style={{ objectFit: 'cover', objectPosition: 'center center', aspectRatio: '1 / 0.64' }}
                                     />
                                     <div className="Polaris-TextContainer">
+                                        {/* Title and description for the "Single Banner" badge type */}
                                         <h2 className="Polaris-Text--root Polaris-Text--headingMd">Single Banner</h2>
                                         <p>Block in product page below add to cart button.</p>
+                                        {/* Button to select the "Single Banner" badge type */}
                                         <button
                                             className="Polaris-Button Polaris-Button--fullWidth"
                                             type="button"
@@ -380,18 +393,21 @@ const BadgeTypePage = ({ onBackClick, onSelectBadgeType }) => {
                         </div>
                     </div>
 
+                    {/* Card for the "Icon Block" badge type */}
                     <div className="Polaris-Stack__Item">
-                        <div className="cardContainer ">
+                        <div className="cardContainer">
                             <Card>
                                 <div className="Polaris-Card__Section">
+                                    {/* Image for the "Icon Block" badge type */}
                                     <img
                                         width="100%"
                                         alt="Cart page"
                                         src="https://freeshipping-essential-apps.uk/cart_page.svg"
-                                        className="cardImage "
+                                        className="cardImage"
                                         style={{ objectFit: 'cover', objectPosition: 'center center', aspectRatio: '1 / 0.64' }}
                                     />
                                     <div className="Polaris-TextContainer">
+                                        {/* Title, badge, description, and button for the "Icon Block" badge type */}
                                         <div className="Polaris-Stack Polaris-Stack--spacingTight Polaris-Stack--alignmentCenter">
                                             <div className="Polaris-Stack__Item">
                                                 <h2 className="Polaris-Text--root Polaris-Text--headingMd">Icon Block</h2>
@@ -419,18 +435,21 @@ const BadgeTypePage = ({ onBackClick, onSelectBadgeType }) => {
                         </div>
                     </div>
 
+                    {/* Card for the "Payment Icons" badge type */}
                     <div className="Polaris-Stack__Item">
-                        <div className="cardContainer ">
+                        <div className="cardContainer">
                             <Card>
                                 <div className="Polaris-Card__Section">
+                                    {/* Image for the "Payment Icons" badge type */}
                                     <img
                                         alt="Countdown timer"
                                         width="100%"
                                         src="https://rivmorkxomnwzdlytbgv.supabase.co/storage/v1/object/public/public/timer.jpg"
-                                        className="cardImage "
+                                        className="cardImage"
                                         style={{ objectFit: 'contain', objectPosition: 'center center', aspectRatio: '1 / 0.64' }}
                                     />
                                     <div className="Polaris-TextContainer">
+                                        {/* Title, description, and button for the "Payment Icons" badge type */}
                                         <h2 className="Polaris-Text--root Polaris-Text--headingMd">Payment Icons</h2>
                                         <p>Boost Sales with urgency and Flash Sales!</p>
                                         <button

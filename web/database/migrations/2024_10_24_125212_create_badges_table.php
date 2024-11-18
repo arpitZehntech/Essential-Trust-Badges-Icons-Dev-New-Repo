@@ -121,6 +121,58 @@
 // }
 
 
+
+
+
+
+// working code 16-11-2024
+
+// use Illuminate\Database\Migrations\Migration;
+// use Illuminate\Database\Schema\Blueprint;
+// use Illuminate\Support\Facades\Schema;
+
+// class CreateBadgesTable extends Migration
+// {
+//     /**
+//      * Run the migrations.
+//      *
+//      * @return void
+//      */
+//     public function up()
+//     {
+//         Schema::create('badges', function (Blueprint $table) {
+//             $table->id(); // Auto-incrementing BIGINT UNSIGNED primary key
+//             $table->foreign('shop')->references('shop')->on('sessions')->onDelete('cascade');
+//             $table->string('badge_name'); // Name of the badge
+//             $table->enum('badge_type', ['single-banner', 'icon-block', 'payment-icons']); // Badge type
+//             $table->enum('status', ['Draft', 'Publish'])->default('Draft'); // Status
+
+//             $table->timestamps(); // created_at and updated_at timestamps
+
+
+//         });
+//     }
+
+//     /**
+//      * Reverse the migrations.
+//      *
+//      * @return void
+//      */
+//     public function down()
+//     {
+//         Schema::table('badges', function (Blueprint $table) {
+//             // Drop the foreign keys before dropping the table
+//             $table->dropForeign(['user_id']);
+//             $table->dropForeign(['shop']);
+//         });
+//         Schema::dropIfExists('badges');
+//     }
+// }
+
+
+// working code 16-11-2024  adding comments 
+
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -136,14 +188,27 @@ class CreateBadgesTable extends Migration
     {
         Schema::create('badges', function (Blueprint $table) {
             $table->id(); // Auto-incrementing BIGINT UNSIGNED primary key
-            $table->foreign('shop')->references('shop')->on('sessions')->onDelete('cascade');
+            $table->string('shop'); // Shop associated with the badge
+            $table->foreign('shop')->references('shop')->on('sessions')->onDelete('cascade'); // Foreign key reference to the sessions table
             $table->string('badge_name'); // Name of the badge
-            $table->enum('badge_type', ['single-banner', 'icon-block', 'payment-icons']); // Badge type
-            $table->enum('status', ['Draft', 'Publish'])->default('Draft'); // Status
+            $table->enum('badge_type', ['single-banner', 'icon-block', 'payment-icons']); // Badge type (enum with predefined values)
+            $table->enum('status', ['Draft', 'Publish'])->default('Draft'); // Status (enum with predefined values, default is 'Draft')
 
+            $table->string('background_color')->nullable();
+            $table->string('border_color')->nullable();
+            $table->string('title_color')->nullable();
+            $table->string('subheading_color')->nullable();
+            $table->string('icon_color')->nullable();
+            $table->integer('corner_radius')->nullable();
+            $table->integer('border_size')->nullable();
+            $table->integer('title_size')->nullable();
+            $table->integer('subheading_size')->nullable();
+            $table->integer('icon_size')->nullable();
+            $table->string('button_color')->nullable();
+            $table->string('button_text_color')->nullable();
+            $table->integer('button_border_radius')->nullable();
+            $table->integer('button_text_size')->nullable();
             $table->timestamps(); // created_at and updated_at timestamps
-
-
         });
     }
 
@@ -156,9 +221,8 @@ class CreateBadgesTable extends Migration
     {
         Schema::table('badges', function (Blueprint $table) {
             // Drop the foreign keys before dropping the table
-            $table->dropForeign(['user_id']);
             $table->dropForeign(['shop']);
         });
-        Schema::dropIfExists('badges');
+        Schema::dropIfExists('badges'); // Drop the 'badges' table if it exists
     }
 }

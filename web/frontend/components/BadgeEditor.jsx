@@ -1882,7 +1882,2922 @@
 
 
 
-//   working code at 14-11-2024 
+//   working code at 16-11-2024 
+
+// import React, { useState, useEffect } from 'react';
+// import {
+//   Page,
+//   Card,
+//   Tabs,
+//   Button,
+//   FormLayout,
+//   Badge,
+//   RadioButton,
+//   Stack,
+//   Grid,
+//   LegacyCard,
+//   TextField,
+//   Toast,
+//   Frame
+// } from '@shopify/polaris';
+// import './BadgeEditor.css';
+// import SingleBanner from './SingleBanner';
+// import IconBlock from './IconBlock';
+// import PaymentIcons from './PaymentIcons';
+// import IconSelector from './IconSelector';
+// import ProductPicker from './ProductPicker';
+// import CollectionPicker from './CollectionPicker';
+// import Design from './Design';
+// import Placement from './Placement';
+// import * as icons from 'react-icons/lia';
+// import * as icons1 from 'react-icons/fc';
+// import serializeReactElementToSVG from './utils';
+// import { useAuthenticatedFetch } from "../hooks";
+
+
+
+// function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeData }) {
+//   const [selectedTab, setSelectedTab] = useState(0);
+//   const [badgeType, setBadgeType] = useState("single-banner");
+//   const [badgeName, setBadgeName] = useState("Your badge");
+//   const [isSaved, setIsSaved] = useState(false); 
+//   const [isPublished, setIsPublished] = useState(false);
+//   const [toastActive, setToastActive] = useState(false);
+//   const [isModified, setIsModified] = useState(false);
+//   const [originalState, setOriginalState] = useState({});
+//   const fetch = useAuthenticatedFetch();
+
+//   const [singleBannerState, setSingleBannerState] = useState({
+//     title: "Free Shipping",
+//     subheading: "Delivered to Your doorstep, on us!",
+//     buttonText: "Shop Now",
+//     linkType: "",
+//     externalUrl: "",
+//     selectedIcon: null,
+//     cta: "no-cta",
+//     selectedProduct: null,
+//     selectedCollection: null,
+//     iconModalActive: false,
+//     isProductPickerOpen: false,
+//     isCollectionPickerOpen: false,
+//   });
+
+//   const [iconBlockPages, setIconBlockPages] = useState([{
+//     id: 1,
+//     title: "Free Shipping",
+//     subheading: "No Extra Costs",
+//     buttonText: "Shop Now",
+//     linkType: "",
+//     externalUrl: "",
+//     selectedIcon: null,
+//     cta: "no-cta",
+//     selectedProduct: null,
+//     selectedCollection: null,
+//     iconModalActive: false,
+//     isProductPickerOpen: false,
+//     isCollectionPickerOpen: false,
+//   }]);
+
+//   const [paymentIconsPages, setPaymentIconsPages] = useState([{
+//     id: 1,
+//     title: "",
+//     subheading: "",
+//     buttonText: "Shop Now",
+//     linkType: "",
+//     externalUrl: "",
+//     selectedIcon: null,
+//     cta: "no-cta",
+//     selectedProduct: null,
+//     selectedCollection: null,
+//     iconModalActive: false,
+//     isProductPickerOpen: false,
+//     isCollectionPickerOpen: false,
+//   }]);
+
+//   const [placementData, setPlacementData] = useState({
+//     placement_product_type: 'allProducts',
+//     placement_product_json: null,
+//     placement_collection_json: null,
+//     placement_tags_json: null,
+//   });
+
+//   // const getPrefixedIconName = (iconName) => {
+//   //   if (badgeType === "single-banner" && !iconName.startsWith("Lia")) {
+//   //     return "Lia" + iconName;
+//   //   } else if (badgeType === "icon-block" && !iconName.startsWith("Lia")) {
+//   //     return "Lia" + iconName;
+//   //   } else if (badgeType === "payment-icons" && !iconName.startsWith("Fc")) {
+//   //     return "Fc" + iconName;
+//   //   }
+//   //   return iconName;
+//   // };
+
+//   const getPrefixedIconName = (iconName) => {
+//     if (!iconName) {
+//       return "";
+//     }
+//     if (!iconName.startsWith("Lia")) {
+//       return "Lia" + iconName;
+//     }
+//     return iconName;
+//   };
+
+//   const getPrefixedIconName1 = (iconName) => {
+//     if (!iconName) {
+//       return "";
+//     }
+//     if (!iconName.startsWith("Fc")) {
+//       return "Fc" + iconName;
+//     }
+//     return iconName;
+//   };
+
+//   const getIconComponent = (iconName, badgeType) => {
+//     try {
+//       if (badgeType === "payment-icons") {
+//         return icons1[iconName];
+//       } else {
+//         return icons[iconName];
+//       }
+//     } catch (error) {
+//       console.error(`Error importing icon ${iconName}:`, error);
+//       return null;
+//     }
+//   };
+
+//   const IconComponent = (iconName, badgeType) => {
+//     const Icon = getIconComponent(iconName, badgeType);
+//     return Icon ? <Icon size={32} /> : null;
+//   };
+
+//   const ensureString = (value) => {
+//     return Array.isArray(value) ? value.join(', ') : value;
+//   };
+
+//   useEffect(() => {
+//     if (badgeId && !isCreationMode) {
+//       const fetchBadgeData = async () => {
+//         try {
+//           const response = await fetch(`/api/badges/${badgeId}`);
+//           const data = await response.json();
+//           setBadgeType(data.badge_type);
+//           setBadgeName(data.badge_name);
+//           setIsPublished(data.status === "Publish");
+
+//           if (data.badge_type === "single-banner") {
+//             setSingleBannerState({
+//               title: data.badge_pages[0].title,
+//               subheading: data.badge_pages[0].subheading,
+//               buttonText: data.badge_pages[0].button_text,
+//               linkType: data.badge_pages[0].link_type,
+//               externalUrl: data.badge_pages[0].external_url,
+//               selectedIcon: data.badge_pages[0].icon_name ? { name: data.badge_pages[0].icon_name } : null,
+//               icon_svg: data.badge_pages[0].icon_svg, // Include the SVG string
+//               cta: data.badge_pages[0].call_to_action,
+//               selectedProduct: data.badge_pages[0].product_json ? JSON.parse(data.badge_pages[0].product_json) : null,
+//               selectedCollection: data.badge_pages[0].collection_json ? JSON.parse(data.badge_pages[0].collection_json) : null,
+//               iconModalActive: false,
+//               isProductPickerOpen: false,
+//               isCollectionPickerOpen: false,
+//             });
+//           } else if (data.badge_type === "icon-block") {
+//             setIconBlockPages(data.badge_pages.map((page, index) => ({
+//               ...page,
+//               id: index + 1,
+//               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+//               icon_svg: page.icon_svg, // Include the SVG string
+//               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//               cta: page.call_to_action, // Ensure cta is set here
+//               buttonText: page.button_text,
+//               externalUrl: page.external_url,
+//             })));
+//           } else if (data.badge_type === "payment-icons") {
+//             setPaymentIconsPages(data.badge_pages.map((page, index) => ({
+//               ...page,
+//               id: index + 1,
+//               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+//               icon_svg: page.icon_svg, // Include the SVG string
+//               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//               cta: page.call_to_action, // Ensure cta is set here
+//               buttonText: page.button_text,
+//               externalUrl: page.external_url,
+//             })));
+//           }
+
+//           setPlacementData({
+//             placement_product_type: data.badge_pages[0].placement_product_type,
+//             placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
+//             placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
+//             // placement_tags_json: data.badge_pages[0].placement_tags_json ? JSON.parse(data.badge_pages[0].placement_tags_json) : null,
+//             placement_tags_json: data.badge_pages[0].placement_tags_json || '', // Changed to string
+//           });
+
+//           setOriginalState({
+//             singleBannerState: { ...singleBannerState },
+//             iconBlockPages: [...iconBlockPages],
+//             paymentIconsPages: [...paymentIconsPages],
+//             placementData: { ...placementData },
+//           });
+
+//         } catch (error) {
+//           console.error('Error fetching badge data:', error);
+//         }
+//       };
+
+//       fetchBadgeData();
+//     } else if (isCreationMode) {
+//       console.log("in isCreationMode");
+//       setBadgeName("New Badge");
+//       setSingleBannerState({
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       });
+//       setIconBlockPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPaymentIconsPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPlacementData({
+//         placement_product_type: 'allProducts',
+//         placement_product_json: null,
+//         placement_collection_json: null,
+//         // placement_tags_json: null,
+//         placement_tags_json: '', // Changed to string
+//       });
+//     }
+//   }, [badgeId, isCreationMode]);
+
+
+//   const setBadgeDetails = (badgeData) => {
+//     setBadgeName(badgeData.badge_name);
+//     setBadgeType(badgeData.badge_type);
+//     setIsPublished(badgeData.status === "Publish");
+
+//     if (badgeData.badge_type === "single-banner") {
+//       setSingleBannerState({
+//         title: badgeData.badge_pages?.[0]?.title || "Free Shipping",
+//         subheading: badgeData.badge_pages?.[0]?.subheading || "Delivered to Your doorstep, on us!",
+//         buttonText: badgeData.badge_pages?.[0]?.button_text || "Shop Now",
+//         linkType: badgeData.badge_pages?.[0]?.linkType || "",
+//         externalUrl: badgeData.badge_pages?.[0]?.external_url || "",
+//         selectedIcon: badgeData.badge_pages?.[0]?.icon_name ? { name: badgeData.badge_pages[0].icon_name.replace("Lia", "") } : null,
+//         icon_svg: badgeData.badge_pages?.[0]?.icon_svg || "", // Include the SVG string
+//         cta: badgeData.badge_pages?.[0]?.call_to_action || "no-cta",
+//         selectedProduct: badgeData.badge_pages?.[0]?.product_json ? JSON.parse(badgeData.badge_pages[0].product_json) : null,
+//         selectedCollection: badgeData.badge_pages?.[0]?.collection_json ? JSON.parse(badgeData.badge_pages[0].collection_json) : null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       });
+//     } else if (badgeData.badge_type === "icon-block") {
+//       setIconBlockPages(badgeData.badge_pages?.map((page, index) => ({
+//         ...page,
+//         id: index + 1,
+//         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Lia", "") } : null,
+//         icon_svg: page.icon_svg || "", // Include the SVG string
+//         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//         cta: page.call_to_action, // Ensure cta is set here
+//         buttonText: page.button_text,
+//         externalUrl: page.external_url,
+//       })) || []);
+//     } else if (badgeData.badge_type === "payment-icons") {
+//       setPaymentIconsPages(badgeData.badge_pages?.map((page, index) => ({
+//         ...page,
+//         id: index + 1,
+//         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Fc", "") } : null,
+//         icon_svg: page.icon_svg || "", // Include the SVG string
+//         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//         cta: page.call_to_action, // Ensure cta is set here
+//         buttonText: page.button_text,
+//         externalUrl: page.external_url,
+//       })) || []);
+//     }
+
+//     setPlacementData({
+//       placement_product_type: badgeData.badge_pages?.[0]?.placement_product_type || 'allProducts',
+//       placement_product_json: badgeData.badge_pages?.[0]?.placement_product_json || null,
+//       placement_collection_json: badgeData.badge_pages?.[0]?.placement_collection_json || null,
+//       // placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || null,
+//       placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || '', // Changed to string
+
+//     });
+//   };
+
+
+//   const handleTabChange = (selectedTabIndex) => {
+//     setSelectedTab(selectedTabIndex);
+//   };
+
+//   const tabs = [
+//     { id: "content", content: "Content", accessibilityLabel: "Content Tab" },
+//     { id: "design", content: "Design", accessibilityLabel: "Design Tab" },
+//     { id: "placement", content: "Placement", accessibilityLabel: "Placement Tab" },
+//   ];
+
+//   const toggleIconModal = (component, pageId) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         iconModalActive: !prevState.iconModalActive,
+//       }));
+//       setIsModified(true);
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           iconModalActive: !newPages[pageIndex].iconModalActive,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           iconModalActive: !newPages[pageIndex].iconModalActive,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   // ths is old handleIconSelect working for normal  icon
+
+//   // const handleIconSelect = (component, pageId, icon) => {
+//   //   if (component === "singleBanner") {
+//   //     setSingleBannerState((prevState) => ({
+//   //       ...prevState,
+//   //       selectedIcon: icon,
+//   //       iconModalActive: false,
+//   //     }));
+//   //     setIsModified(true);
+//   //   } else if (component === "payment-icons") {
+//   //     setPaymentIconsPages((prevPages) => {
+//   //       const newPages = [...prevPages];
+//   //       const pageIndex = newPages.findIndex(page => page.id === pageId);
+//   //       newPages[pageIndex] = {
+//   //         ...newPages[pageIndex],
+//   //         selectedIcon: icon,
+//   //         iconModalActive: false,
+//   //       };
+//   //       setIsModified(true);
+//   //       return newPages;
+//   //     });
+//   //   } else if (component === "icon-block") {
+//   //     setIconBlockPages((prevPages) => {
+//   //       const newPages = [...prevPages];
+//   //       const pageIndex = newPages.findIndex(page => page.id === pageId);
+//   //       newPages[pageIndex] = {
+//   //         ...newPages[pageIndex],
+//   //         selectedIcon: icon,
+//   //         iconModalActive: false,
+//   //       };
+//   //       setIsModified(true);
+//   //       return newPages;
+//   //     });
+//   //   } else {
+//   //     console.error("Unknown component:", component);
+//   //   }
+//   // };
+
+
+//   const handleIconSelect = (component, pageId, icon) => {
+//     let svgString = null;
+//     if (icon) {
+//       svgString = serializeReactElementToSVG(icon.icon);
+//     }
+
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         selectedIcon: icon,
+//         iconModalActive: false,
+//         icon_svg: svgString, // Add the SVG string
+//       }));
+//       setIsModified(true);
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedIcon: icon,
+//           iconModalActive: false,
+//           icon_svg: svgString, // Add the SVG string
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedIcon: icon,
+//           iconModalActive: false,
+//           icon_svg: svgString, // Add the SVG string
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+
+//   const handleContinueToDesign = () => {
+//     setSelectedTab(1);
+//   };
+
+//   const addIconBlockPage = () => {
+//     setIconBlockPages((prevPages) => [
+//       ...prevPages,
+//       {
+//         id: prevPages.length + 1,
+//         title: "",
+//         subheading: "",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       },
+//     ]);
+//     setIsModified(true);
+//   };
+
+//   const addPaymentIconsPage = () => {
+//     setPaymentIconsPages((prevPages) => [
+//       ...prevPages,
+//       {
+//         id: prevPages.length + 1,
+//         title: "",
+//         subheading: "",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       },
+//     ]);
+//     setIsModified(true);
+//   };
+
+//   const removeIconBlockPage = (pageId) => {
+//     setIconBlockPages((prevPages) => prevPages.filter(page => page.id !== pageId));
+//     setIsModified(true);
+//   };
+
+//   const removePaymentIconsPage = (pageId) => {
+//     setPaymentIconsPages((prevPages) => prevPages.filter(page => page.id !== pageId));
+//     setIsModified(true);
+//   };
+
+//   const handleSave = async () => {
+//     const badgeDetails = getBadgeDetails();
+
+//     console.log("badgeDetails for save details :", badgeDetails);
+
+//     badgeDetails.status = isPublished ? "Publish" : "Draft";
+
+//     try {
+//       const response = await fetch(`/api/badges/${badgeId ? badgeId : ''}`, {
+//         method: badgeId ? 'PUT' : 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(badgeDetails)
+//       });
+
+//       if (response.ok) {
+//         const savedBadge = await response.json();
+//         setBadgeDetails(savedBadge);
+//         setIsSaved(true);
+//         setToastActive(true);
+//         setTimeout(() => setToastActive(false), 3000);
+//         setIsModified(false);
+//         onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been saved
+//         onBackClick(); // Redirect back to the main page
+//       } else {
+//         console.error('Failed to save badge');
+//       }
+//     } catch (error) {
+//       console.error('Error saving badge:', error);
+//     }
+//   };
+
+//   const handlePublish = async () => {
+//     const badgeDetails = getBadgeDetails();
+//     badgeDetails.status = "Publish";
+
+//     try {
+//       const response = await fetch(`/api/badges/${badgeId ? badgeId : ''}`, {
+//         method: badgeId ? 'PUT' : 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(badgeDetails)
+//       });
+
+//       if (response.ok) {
+//         const savedBadge = await response.json();
+//         setBadgeDetails(savedBadge);
+//         setIsSaved(true);
+//         setToastActive(true);
+//         setTimeout(() => setToastActive(false), 3000);
+//         setIsModified(false);
+//         setIsPublished(true);
+//         onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been published
+//         onBackClick(); // Redirect back to the main page
+//       } else {
+//         console.error('Failed to publish badge');
+//       }
+//     } catch (error) {
+//       console.error('Error publishing badge:', error);
+//     }
+//   };
+
+//   const handleUnpublish = async () => {
+//     const badgeDetails = getBadgeDetails();
+//     badgeDetails.status = "Draft";
+
+//     try {
+//       const response = await fetch(`/api/badges/${badgeId}`, {
+//         method: 'PUT',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(badgeDetails)
+//       });
+
+//       if (response.ok) {
+//         setIsPublished(false);
+//         setToastActive(true);
+//         setTimeout(() => setToastActive(false), 3000);
+//         onBackClick(); // Redirect back to the main page
+//       } else {
+//         console.error('Failed to unpublish badge');
+//       }
+//     } catch (error) {
+//       console.error('Error unpublishing badge:', error);
+//     }
+//   };
+
+//   const handleRemove = () => {
+//     setIsSaved(false);
+//     setIsModified(false);
+//   };
+
+//   const handleProductSelection = (component, pageId, selectedProduct) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         selectedProduct,
+//         isProductPickerOpen: false,
+//       }));
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedProduct,
+//           isProductPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedProduct,
+//           isProductPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   const handleCollectionSelection = (component, pageId, selectedCollection) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         selectedCollection,
+//         isCollectionPickerOpen: false,
+//       }));
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedCollection,
+//           isCollectionPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedCollection,
+//           isCollectionPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   const handleUrlSelection = (component, pageId, linkType, externalUrl) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         linkType,
+//         externalUrl,
+//       }));
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           linkType,
+//           externalUrl,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           linkType,
+//           externalUrl,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+
+//   const handleCancel = () => {
+//     if (badgeId) {
+//       // If editing an existing badge, reset to the original state
+//       setBadgeDetails(originalState);
+//     } else {
+//       // If creating a new badge, reset to default creation state
+//       setBadgeName("New Badge");
+//       setSingleBannerState({
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       });
+//       setIconBlockPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPaymentIconsPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPlacementData({
+//         placement_product_type: 'allProducts',
+//         placement_product_json: null,
+//         placement_collection_json: null,
+//         placement_tags_json: null,
+//       });
+//     }
+//     setIsModified(false);
+//     onBackClick(); // Redirect back to the main page
+//   };
+
+//   // ths is old getBadgeDetails working for normal  icon
+
+//   // const getBadgeDetails = () => {
+//   //   let badgeDetails = {};
+
+//   //   const extractId = (gid) => {
+//   //     const parts = gid.split('/');
+//   //     return parts.length > 1 ? parts[parts.length - 1] : gid;
+//   //   };
+
+//   //   const prefixIconName = (iconName) => {
+//   //     if (!iconName.startsWith("Lia")) {
+//   //       return "Lia" + iconName;
+//   //     }
+//   //     return iconName;
+//   //   };
+//   //   const prefixIconName1 = (iconName) => {
+//   //     if (!iconName.startsWith("Fc")) {
+//   //       return "Fc" + iconName;
+//   //     }
+//   //     return iconName;
+//   //   };
+
+//   //   if (badgeType === "single-banner") {
+//   //     badgeDetails = {
+//   //       badge_name: badgeName,
+//   //       badge_type: badgeType,
+//   //       status: isPublished ? "Publish" : "Draft",
+//   //       subheading: singleBannerState.subheading,
+//   //       title: singleBannerState.title,
+//   //       icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+//   //       call_to_action: singleBannerState.cta,
+//   //       button_text: singleBannerState.buttonText,
+//   //       product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
+//   //       collection_json: singleBannerState.selectedCollection ? JSON.stringify(singleBannerState.selectedCollection) : "",
+//   //       external_url: singleBannerState.externalUrl,
+//   //       badge_pages: [
+//   //         {
+//   //           title: singleBannerState.title,
+//   //           subheading: singleBannerState.subheading,
+//   //           icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+//   //           call_to_action: singleBannerState.cta,
+//   //           button_text: singleBannerState.buttonText,
+//   //           product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
+//   //           collection_json: singleBannerState.selectedCollection ? JSON.stringify(singleBannerState.selectedCollection) : "",
+//   //           external_url: singleBannerState.externalUrl,
+//   //           placement_product_type: placementData.placement_product_type,
+//   //           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//   //           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//   //           placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+//   //         },
+//   //       ],
+//   //     };
+//   //   } else if (badgeType === "icon-block") {
+//   //     badgeDetails = {
+//   //       badge_name: badgeName,
+//   //       badge_type: badgeType,
+//   //       status: isPublished ? "Publish" : "Draft",
+//   //       badge_pages: iconBlockPages.map((page) => ({
+//   //         title: page.title,
+//   //         subheading: page.subheading,
+//   //         icon_name: page.selectedIcon ? prefixIconName(page.selectedIcon.name) : "",
+//   //         call_to_action: page.cta,
+//   //         button_text: page.buttonText,
+//   //         product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
+//   //         collection_json: page.selectedCollection ? JSON.stringify(page.selectedCollection) : "",
+//   //         external_url: page.externalUrl,
+//   //         placement_product_type: placementData.placement_product_type,
+//   //         placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//   //         placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//   //         placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+//   //       })),
+//   //     };
+//   //   } else if (badgeType === "payment-icons") {
+//   //     badgeDetails = {
+//   //       badge_name: badgeName,
+//   //       badge_type: badgeType,
+//   //       status: isPublished ? "Publish" : "Draft",
+//   //       badge_pages: paymentIconsPages.map((page) => ({
+//   //         title: page.title,
+//   //         subheading: page.subheading,
+//   //         icon_name: page.selectedIcon ? prefixIconName1(page.selectedIcon.name) : "",
+//   //         call_to_action: page.cta,
+//   //         button_text: page.buttonText,
+//   //         product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
+//   //         collection_json: page.selectedCollection ? JSON.stringify(page.selectedCollection) : "",
+//   //         external_url: page.externalUrl,
+//   //         placement_product_type: placementData.placement_product_type,
+//   //         placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//   //         placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//   //         placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+//   //       })),
+//   //     };
+//   //   }
+
+//   //   return badgeDetails;
+//   // };
+
+
+//   const getBadgeDetails = () => {
+//     let badgeDetails = {};
+
+//     const extractId = (gid) => {
+//       const parts = gid.split('/');
+//       return parts.length > 1 ? parts[parts.length - 1] : gid;
+//     };
+
+//     const prefixIconName = (iconName) => {
+//       if (!iconName.startsWith("Lia")) {
+//         return "Lia" + iconName;
+//       }
+//       return iconName;
+//     };
+//     const prefixIconName1 = (iconName) => {
+//       if (!iconName.startsWith("Fc")) {
+//         return "Fc" + iconName;
+//       }
+//       return iconName;
+//     };
+
+//     if (badgeType === "single-banner") {
+//       badgeDetails = {
+//         badge_name: badgeName,
+//         badge_type: badgeType,
+//         status: isPublished ? "Publish" : "Draft",
+//         subheading: singleBannerState.subheading,
+//         title: singleBannerState.title,
+//         icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+//         icon_svg: singleBannerState.icon_svg, // Add the SVG string
+//         call_to_action: singleBannerState.cta,
+//         button_text: singleBannerState.buttonText,
+//         product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
+//         collection_json: singleBannerState.selectedCollection ? JSON.stringify(singleBannerState.selectedCollection) : "",
+//         external_url: singleBannerState.externalUrl,
+//         badge_pages: [
+//           {
+//             title: singleBannerState.title,
+//             subheading: singleBannerState.subheading,
+//             icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+//             icon_svg: singleBannerState.icon_svg, // Add the SVG string
+//             call_to_action: singleBannerState.cta,
+//             button_text: singleBannerState.buttonText,
+//             product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
+//             collection_json: singleBannerState.selectedCollection ? JSON.stringify(singleBannerState.selectedCollection) : "",
+//             external_url: singleBannerState.externalUrl,
+//             placement_product_type: placementData.placement_product_type,
+//             placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//             placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//             // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+//             placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+//           },
+//         ],
+//       };
+//     } else if (badgeType === "icon-block") {
+//       badgeDetails = {
+//         badge_name: badgeName,
+//         badge_type: badgeType,
+//         status: isPublished ? "Publish" : "Draft",
+//         badge_pages: iconBlockPages.map((page) => ({
+//           title: page.title,
+//           subheading: page.subheading,
+//           icon_name: page.selectedIcon ? prefixIconName(page.selectedIcon.name) : "",
+//           icon_svg: page.icon_svg, // Add the SVG string
+//           call_to_action: page.cta,
+//           button_text: page.buttonText,
+//           product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
+//           collection_json: page.selectedCollection ? JSON.stringify(page.selectedCollection) : "",
+//           external_url: page.externalUrl,
+//           placement_product_type: placementData.placement_product_type,
+//           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//           // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+//           placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+//         })),
+//       };
+//     } else if (badgeType === "payment-icons") {
+//       badgeDetails = {
+//         badge_name: badgeName,
+//         badge_type: badgeType,
+//         status: isPublished ? "Publish" : "Draft",
+//         badge_pages: paymentIconsPages.map((page) => ({
+//           title: page.title,
+//           subheading: page.subheading,
+//           icon_name: page.selectedIcon ? prefixIconName1(page.selectedIcon.name) : "",
+//           icon_svg: page.icon_svg, // Add the SVG string
+//           call_to_action: page.cta,
+//           button_text: page.buttonText,
+//           product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
+//           collection_json: page.selectedCollection ? JSON.stringify(page.selectedCollection) : "",
+//           external_url: page.externalUrl,
+//           placement_product_type: placementData.placement_product_type,
+//           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//           // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+//           placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+//         })),
+//       };
+//     }
+
+//     return badgeDetails;
+//   };
+
+
+//   return (
+//     <Frame>
+//       <Page
+//         backAction={{ content: 'Products', onAction: onBackClick }}
+//         title={badgeName}
+//         subtitle={`Badge ID: ${badgeId || "New Badge Id"}`}
+//         titleMetadata={isPublished ? <Badge status="success">Published</Badge> : <Badge tone="success">Draft</Badge>}
+//         compactTitle
+//         primaryAction={{
+//           content: isPublished ? 'Unpublish' : 'Publish',
+//           onAction: isPublished ? handleUnpublish : handlePublish,
+//           destructive: isPublished,
+//           primary: !isPublished,
+//         }}
+//         secondaryActions={[
+//           {
+//             content: isSaved && !isModified ? 'Delete' : 'Save',
+//             onAction: isSaved && !isModified ? handleDelete : handleSave,
+//             destructive: isSaved && !isModified,
+//             plain: !isSaved && !isModified,
+//             primary: !isSaved && !isModified,
+//           },
+//           isModified && {
+//             content: 'Cancel',
+//             onAction: handleCancel,
+//             destructive: false,
+//             plain: true,
+//           },
+//         ].filter(Boolean)}
+//       >
+//         {toastActive && <Toast content={isSaved ? "Badge Saved" : "Badge Published"} />}
+//         <div style={{ marginBottom: "20px" }}>
+//           <Tabs tabs={tabs} selected={selectedTab} onSelect={handleTabChange} />
+//         </div>
+
+//         <Grid>
+//           <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 5, xl: 5 }}>
+//             <LegacyCard>
+//               {selectedTab === 0 && (
+//                 <Card.Section>
+//                   <FormLayout>
+//                     <FormLayout.Group>
+//                       <Stack vertical>
+//                         <h1 className="BadgeCls">Badge type</h1>
+//                         <RadioButton
+//                           label="Single banner"
+//                           checked={badgeType === "single-banner"}
+//                           id="singleBanner"
+//                           name="badgeType"
+//                           onChange={() => {
+//                             console.log("Badge type changed to: Single banner");
+//                             setBadgeType("single-banner");
+//                             setIsModified(true);
+//                           }}
+//                         />
+//                         <RadioButton
+//                           label="Icon block"
+//                           checked={badgeType === "icon-block"}
+//                           id="iconBlock"
+//                           name="badgeType"
+//                           onChange={() => {
+//                             console.log("Badge type changed to: Icon block");
+//                             setBadgeType("icon-block");
+//                             setIsModified(true);
+//                           }}
+//                         />
+//                         <RadioButton
+//                           label="Payment icons"
+//                           checked={badgeType === "payment-icons"}
+//                           id="paymentIcons"
+//                           name="badgeType"
+//                           onChange={() => {
+//                             console.log("Badge type changed to: Payment icons");
+//                             setBadgeType("payment-icons");
+//                             setIsModified(true);
+//                           }}
+//                         />
+//                         <TextField
+//                           label="Badge name"
+//                           value={badgeName}
+//                           onChange={(value) => {
+//                             console.log("Badge name changed to:", value);
+//                             setBadgeName(value);
+//                             setIsModified(true);
+//                           }}
+//                           helpText="Only visible to you. For your own internal reference."
+//                         />
+//                       </Stack>
+
+//                       {badgeType === "single-banner" && (
+
+//                         <SingleBanner
+//                           {...singleBannerState}
+//                           setTitle={(value) => {
+//                             console.log("Title changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, title: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setSubheading={(value) => {
+//                             console.log("Subheading changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, subheading: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setButtonText={(value) => {
+//                             console.log("Button text changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, buttonText: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setLinkType={(value) => {
+//                             console.log("Link type changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, linkType: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setExternalUrl={(value) => {
+//                             console.log("External URL changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, externalUrl: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setSelectedIcon={(icon) => handleIconSelect("singleBanner", null, icon)}
+//                           setCta={(value) => {
+//                             console.log("CTA changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, cta: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setSelectedProduct={(value) => {
+//                             console.log("Selected product changed to:", value);
+//                             handleProductSelection("singleBanner", null, value);
+//                           }}
+//                           setSelectedCollection={(value) => {
+//                             console.log("Selected collection changed to:", value);
+//                             handleCollectionSelection("singleBanner", null, value);
+//                           }}
+//                           toggleIconModal={() => toggleIconModal("singleBanner")}
+//                           setIconModalActive={() => toggleIconModal("singleBanner")}
+//                           setIsProductPickerOpen={(value) => {
+//                             console.log("Product picker open state changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, isProductPickerOpen: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setIsCollectionPickerOpen={(value) => {
+//                             console.log("Collection picker open state changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, isCollectionPickerOpen: value }));
+//                             setIsModified(true);
+//                           }}
+//                           onProductSelect={(product) => handleProductSelection("singleBanner", null, product)}
+//                           onCollectionSelect={(collection) => handleCollectionSelection("singleBanner", null, collection)}
+//                           onUrlSelect={(linkType, externalUrl) => handleUrlSelection("singleBanner", null, linkType, externalUrl)}
+//                         />
+
+//                       )}
+//                       {badgeType === "icon-block" && (
+//                         <>
+//                           {iconBlockPages.map((page, index) => (
+
+//                             <IconBlock
+//                               key={page.id}
+//                               pageId={page.id}
+//                               {...page}
+//                               setTitle={(value) => {
+//                                 console.log("Title changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], title: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSubheading={(value) => {
+//                                 console.log("Subheading changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], subheading: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setButtonText={(value) => {
+//                                 console.log("Button text changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], buttonText: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setLinkType={(value) => {
+//                                 console.log("Link type changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   console.log("newPages:", newPages);
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   console.log("pageIndex:", pageIndex);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], linkType: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setExternalUrl={(value) => {
+//                                 console.log("External URL changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], externalUrl: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedIcon={(icon) => handleIconSelect("icon-block", page.id, icon)}
+//                               setCta={(value) => {
+//                                 console.log("CTA changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], cta: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedProduct={(value) => {
+//                                 console.log("Selected product changed to:", value);
+//                                 handleProductSelection("icon-block", page.id, value);
+//                               }}
+//                               setSelectedCollection={(value) => {
+//                                 console.log("Selected collection changed to:", value);
+//                                 handleCollectionSelection("icon-block", page.id, value);
+//                               }}
+//                               toggleIconModal={() => toggleIconModal("icon-block", page.id)}
+//                               setIconModalActive={() => toggleIconModal("icon-block", page.id)}
+//                               setIsProductPickerOpen={(value) => {
+//                                 console.log("Product picker open state changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isProductPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setIsCollectionPickerOpen={(value) => {
+//                                 console.log("Collection picker open state changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isCollectionPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               onRemove={() => removeIconBlockPage(page.id)}
+//                               pageIndex={index}
+//                               iconBlockPages={iconBlockPages}
+//                               onProductSelect={(product) => handleProductSelection("icon-block", page.id, product)}
+//                               onCollectionSelect={(collection) => handleCollectionSelection("icon-block", page.id, collection)}
+//                               onUrlSelect={(linkType, externalUrl) => handleUrlSelection("icon-block", page.id, linkType, externalUrl)}
+//                             />
+
+//                           ))}
+
+//                           <div className="addBtnMain">
+//                             <Button fullWidth onClick={addIconBlockPage}>
+//                               Add New Page
+//                             </Button>
+//                           </div>
+//                         </>
+//                       )}
+
+//                       {badgeType === "payment-icons" && (
+//                         <>
+//                           {paymentIconsPages.map((page, index) => (
+
+//                             <PaymentIcons
+//                               key={page.id}
+//                               pageId={page.id}
+//                               {...page}
+//                               setTitle={(value) => {
+//                                 console.log("Title changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], title: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSubheading={(value) => {
+//                                 console.log("Subheading changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], subheading: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setButtonText={(value) => {
+//                                 console.log("Button text changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], buttonText: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setLinkType={(value) => {
+//                                 console.log("Link type changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], linkType: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setExternalUrl={(value) => {
+//                                 console.log("External URL changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], externalUrl: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedIcon={(icon) => handleIconSelect("payment-icons", page.id, icon)}
+//                               setCta={(value) => {
+//                                 console.log("CTA changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], cta: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedProduct={(value) => {
+//                                 console.log("Selected product changed to:", value);
+//                                 handleProductSelection("payment-icons", page.id, value);
+//                               }}
+//                               setSelectedCollection={(value) => {
+//                                 console.log("Selected collection changed to:", value);
+//                                 handleCollectionSelection("payment-icons", page.id, value);
+//                               }}
+//                               toggleIconModal={() => toggleIconModal("payment-icons", page.id)}
+//                               setIconModalActive={() => toggleIconModal("payment-icons", page.id)}
+//                               setIsProductPickerOpen={(value) => {
+//                                 console.log("Product picker open state changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isProductPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setIsCollectionPickerOpen={(value) => {
+//                                 console.log("Collection picker open state changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isCollectionPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               onRemove={() => removePaymentIconsPage(page.id)}
+//                               pageIndex={index}
+//                               iconBlockPages={paymentIconsPages}
+//                               onProductSelect={(product) => handleProductSelection("payment-icons", page.id, product)}
+//                               onCollectionSelect={(collection) => handleCollectionSelection("payment-icons", page.id, collection)}
+//                               onUrlSelect={(linkType, externalUrl) => handleUrlSelection("payment-icons", page.id, linkType, externalUrl)}
+//                             />
+
+//                           ))}
+
+//                           <div className="addBtnMain">
+//                             <Button fullWidth onClick={addPaymentIconsPage}>
+//                               Add New Page
+//                             </Button>
+//                           </div>
+//                         </>
+//                       )}
+//                       {/* <div className="translations-section">
+//                         <Stack>
+//                           <Stack.Item>
+//                             <span className="Polaris-TextStyle--variationStrong">Translations</span>
+//                           </Stack.Item>
+//                           <Stack.Item>
+//                             <Badge status="info">
+//                               <span className="Polaris-Text--root Polaris-Text--bodySm">Essential plan</span>
+//                             </Badge>
+//                           </Stack.Item>
+//                         </Stack>
+//                       </div>
+//                       <Button fullWidth onClick={() => { }}>
+//                         Add translation
+//                       </Button> */}
+//                       <div style={{ textAlign: "center" }}>
+//                         <button
+//                           className="Polaris-Button Polaris-Button--outline Polaris-Button--fullWidth"
+//                           type="button"
+//                           onClick={handleContinueToDesign}
+//                         >
+//                           <span className="Polaris-Button__Content">
+//                             <span className="Polaris-Button__Icon">
+//                               <span className="Polaris-Icon">
+//                                 <span className="Polaris-Text--root Polaris-Text--visuallyHidden"></span>
+//                                 <svg
+//                                   viewBox="0 0 20 20"
+//                                   className="Polaris-Icon__Svg"
+//                                   focusable="false"
+//                                   aria-hidden="true"
+//                                 >
+//                                   <path d="m17.707 9.293-5-5a.999.999 0 0 0-1.414 1.414l3.293 3.293h-11.586a1 1 0 1 0 0 2h11.586l-3.293 3.293a.999.999 0 0 0 1.414 1.414l5-5a.999.999 0 0 0 0-1.414z"></path>
+//                                 </svg>
+//                               </span>
+//                             </span>
+//                             <span className="Polaris-Button__Text">Continue to design</span>
+//                           </span>
+//                         </button>
+//                       </div>
+//                     </FormLayout.Group>
+//                   </FormLayout>
+//                 </Card.Section>
+//               )}
+//               {selectedTab === 1 && (
+//                 <Design title={badgeType === "single-banner" ? singleBannerState.title : badgeType === "icon-block" ? iconBlockPages[0].title : paymentIconsPages[0].title} />
+//               )}
+//             </LegacyCard>
+
+//             {selectedTab === 2 && (
+//               <Placement
+//                 badgeType={badgeType}
+//                 placementData={placementData}
+//                 setPlacementData={setPlacementData}
+//               />
+//             )}
+
+//           </Grid.Cell>
+//           <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 7, xl: 7 }}>
+//             <LegacyCard>
+
+//               {badgeType === "single-banner" && (
+//                 <div className="badge-output-container">
+//                   {singleBannerState.selectedIcon ? (
+//                     <div className="badge-icon">
+//                       {IconComponent(getPrefixedIconName(singleBannerState.selectedIcon.name), badgeType)}
+//                     </div>
+//                   ) : (
+//                     <div className="icon-placeholder"></div>
+//                   )}
+//                   <div className="badge-text">
+//                     <h2 className="badge-title">{singleBannerState.title}</h2>
+//                     <h3 className="badge-subheading">{singleBannerState.subheading}</h3>
+//                   </div>
+//                   {singleBannerState.cta === "button-cta" && (
+//                     <button className="badge-button">{singleBannerState.buttonText}</button>
+//                   )}
+//                   {singleBannerState.cta === "clickable-banner-cta" && (
+//                     <div className="output-banner"></div>
+//                   )}
+//                 </div>
+//               )}
+
+//               {badgeType === "icon-block" && (
+//                 <div className="badge-output-container kdtYjY">
+//                   {iconBlockPages.map((page, index) => (
+//                     <div key={index} className="badge-output-page hVFYFW">
+//                       {page.selectedIcon ? (
+//                         <div className="badge-icon iubCKx">
+//                           {IconComponent(getPrefixedIconName(page.selectedIcon.name), badgeType)}
+//                         </div>
+//                       ) : (
+//                         <div className="icon-placeholder"></div>
+//                       )}
+//                       <div className="badge-text">
+//                         <h2 className="badge-title">{page.title}</h2>
+//                         <h3 className="badge-subheading">{page.subheading}</h3>
+//                       </div>
+//                       {page.cta === "button-cta" && (
+//                         <button className="badge-button">{page.buttonText}</button>
+//                       )}
+//                       {page.cta === "clickable-banner-cta" && (
+//                         <div className="output-banner"></div>
+//                       )}
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+
+//               {badgeType === "payment-icons" && (
+//                 <div className="badge-output-container kdtYjY">
+//                   {paymentIconsPages.map((page, index) => (
+//                     <div key={index} className="badge-output-page hVFYFW">
+//                       {page.selectedIcon ? (
+//                         <div className="badge-icon iubCKx">
+//                           {IconComponent(getPrefixedIconName1(page.selectedIcon.name), badgeType)}
+//                         </div>
+//                       ) : (
+//                         <div className="icon-placeholder"></div>
+//                       )}
+//                       <div className="badge-text">
+//                         <h2 className="badge-title">{page.title}</h2>
+//                         <h3 className="badge-subheading">{page.subheading}</h3>
+//                       </div>
+//                       {page.cta === "button-cta" && (
+//                         <button className="badge-button">{page.buttonText}</button>
+//                       )}
+//                       {page.cta === "clickable-banner-cta" && (
+//                         <div className="output-banner"></div>
+//                       )}
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+
+//             </LegacyCard>
+//           </Grid.Cell>
+//         </Grid>
+//       </Page>
+//     </Frame>
+//   );
+// }
+
+// export default BadgeEditor;
+
+
+
+//  working code 16-11-2024  adding comments 
+
+
+// import React, { useState, useEffect } from 'react'; // Importing React and necessary hooks
+// import {
+//   Page,
+//   Card,
+//   Tabs,
+//   Button,
+//   FormLayout,
+//   Badge,
+//   RadioButton,
+//   Stack,
+//   Grid,
+//   LegacyCard,
+//   TextField,
+//   Toast,
+//   Frame
+// } from '@shopify/polaris'; // Importing components from Shopify Polaris
+// import './BadgeEditor.css'; // Importing the CSS file for styling
+// import SingleBanner from './SingleBanner'; // Importing the SingleBanner component
+// import IconBlock from './IconBlock'; // Importing the IconBlock component
+// import PaymentIcons from './PaymentIcons'; // Importing the PaymentIcons component
+// import IconSelector from './IconSelector'; // Importing the IconSelector component
+// import ProductPicker from './ProductPicker'; // Importing the ProductPicker component
+// import CollectionPicker from './CollectionPicker'; // Importing the CollectionPicker component
+// import Design from './Design'; // Importing the Design component
+// import Placement from './Placement'; // Importing the Placement component
+// import * as icons from 'react-icons/lia'; // Importing all icons from react-icons/lia
+// import * as icons1 from 'react-icons/fc'; // Importing all icons from react-icons/fc
+// import serializeReactElementToSVG from './utils'; // Importing utility function to serialize React elements to SVG
+// import { useAuthenticatedFetch } from "../hooks"; // Importing custom hook for authenticated fetch
+
+// function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeData }) {
+//   const [selectedTab, setSelectedTab] = useState(0); // State to track the selected tab
+//   const [badgeType, setBadgeType] = useState("single-banner"); // State to track the type of badge
+//   const [badgeName, setBadgeName] = useState("Your badge"); // State to track the name of the badge
+//   const [isSaved, setIsSaved] = useState(false); // State to track if the badge is saved
+//   const [isPublished, setIsPublished] = useState(false); // State to track if the badge is published
+//   const [toastActive, setToastActive] = useState(false); // State to track if the toast message is active
+//   const [isModified, setIsModified] = useState(false); // State to track if the badge is modified
+//   const [originalState, setOriginalState] = useState({}); // State to store the original state of the badge
+//   const fetch = useAuthenticatedFetch(); // Custom hook for authenticated fetch
+
+//   const [singleBannerState, setSingleBannerState] = useState({
+//     title: "Free Shipping",
+//     subheading: "Delivered to Your doorstep, on us!",
+//     buttonText: "Shop Now",
+//     linkType: "",
+//     externalUrl: "",
+//     selectedIcon: null,
+//     cta: "no-cta",
+//     selectedProduct: null,
+//     selectedCollection: null,
+//     iconModalActive: false,
+//     isProductPickerOpen: false,
+//     isCollectionPickerOpen: false,
+//   }); // State to track the state of the single banner
+
+//   const [iconBlockPages, setIconBlockPages] = useState([{
+//     id: 1,
+//     title: "Free Shipping",
+//     subheading: "No Extra Costs",
+//     buttonText: "Shop Now",
+//     linkType: "",
+//     externalUrl: "",
+//     selectedIcon: null,
+//     cta: "no-cta",
+//     selectedProduct: null,
+//     selectedCollection: null,
+//     iconModalActive: false,
+//     isProductPickerOpen: false,
+//     isCollectionPickerOpen: false,
+//   }]); // State to track the state of the icon block pages
+
+//   const [paymentIconsPages, setPaymentIconsPages] = useState([{
+//     id: 1,
+//     title: "",
+//     subheading: "",
+//     buttonText: "Shop Now",
+//     linkType: "",
+//     externalUrl: "",
+//     selectedIcon: null,
+//     cta: "no-cta",
+//     selectedProduct: null,
+//     selectedCollection: null,
+//     iconModalActive: false,
+//     isProductPickerOpen: false,
+//     isCollectionPickerOpen: false,
+//   }]); // State to track the state of the payment icons pages
+
+//   const [placementData, setPlacementData] = useState({
+//     placement_product_type: 'allProducts',
+//     placement_product_json: null,
+//     placement_collection_json: null,
+//     placement_tags_json: null,
+//   }); // State to track the placement data
+
+//   // Function to prefix icon names with "Lia"
+//   const getPrefixedIconName = (iconName) => {
+//     if (!iconName) {
+//       return "";
+//     }
+//     if (!iconName.startsWith("Lia")) {
+//       return "Lia" + iconName;
+//     }
+//     return iconName;
+//   };
+
+//   // Function to prefix icon names with "Fc"
+//   const getPrefixedIconName1 = (iconName) => {
+//     if (!iconName) {
+//       return "";
+//     }
+//     if (!iconName.startsWith("Fc")) {
+//       return "Fc" + iconName;
+//     }
+//     return iconName;
+//   };
+
+//   // Function to get the icon component based on the icon name and badge type
+//   const getIconComponent = (iconName, badgeType) => {
+//     try {
+//       if (badgeType === "payment-icons") {
+//         return icons1[iconName];
+//       } else {
+//         return icons[iconName];
+//       }
+//     } catch (error) {
+//       console.error(`Error importing icon ${iconName}:`, error);
+//       return null;
+//     }
+//   };
+
+//   // Function to render the icon component
+//   const IconComponent = (iconName, badgeType) => {
+//     const Icon = getIconComponent(iconName, badgeType);
+//     return Icon ? <Icon size={32} /> : null;
+//   };
+
+//   // Function to ensure a value is a string
+//   const ensureString = (value) => {
+//     return Array.isArray(value) ? value.join(', ') : value;
+//   };
+
+//   // Fetch badge data on component mount
+//   useEffect(() => {
+//     if (badgeId && !isCreationMode) {
+//       const fetchBadgeData = async () => {
+//         try {
+//           const response = await fetch(`/api/badges/${badgeId}`);
+//           const data = await response.json();
+//           setBadgeType(data.badge_type);
+//           setBadgeName(data.badge_name);
+//           setIsPublished(data.status === "Publish");
+
+//           if (data.badge_type === "single-banner") {
+//             setSingleBannerState({
+//               title: data.badge_pages[0].title,
+//               subheading: data.badge_pages[0].subheading,
+//               buttonText: data.badge_pages[0].button_text,
+//               linkType: data.badge_pages[0].link_type,
+//               externalUrl: data.badge_pages[0].external_url,
+//               selectedIcon: data.badge_pages[0].icon_name ? { name: data.badge_pages[0].icon_name } : null,
+//               icon_svg: data.badge_pages[0].icon_svg, // Include the SVG string
+//               cta: data.badge_pages[0].call_to_action,
+//               selectedProduct: data.badge_pages[0].product_json ? JSON.parse(data.badge_pages[0].product_json) : null,
+//               selectedCollection: data.badge_pages[0].collection_json ? JSON.parse(data.badge_pages[0].collection_json) : null,
+//               iconModalActive: false,
+//               isProductPickerOpen: false,
+//               isCollectionPickerOpen: false,
+//             });
+//           } else if (data.badge_type === "icon-block") {
+//             setIconBlockPages(data.badge_pages.map((page, index) => ({
+//               ...page,
+//               id: index + 1,
+//               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+//               icon_svg: page.icon_svg, // Include the SVG string
+//               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//               cta: page.call_to_action, // Ensure cta is set here
+//               buttonText: page.button_text,
+//               externalUrl: page.external_url,
+//             })));
+//           } else if (data.badge_type === "payment-icons") {
+//             setPaymentIconsPages(data.badge_pages.map((page, index) => ({
+//               ...page,
+//               id: index + 1,
+//               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+//               icon_svg: page.icon_svg, // Include the SVG string
+//               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//               cta: page.call_to_action, // Ensure cta is set here
+//               buttonText: page.button_text,
+//               externalUrl: page.external_url,
+//             })));
+//           }
+
+//           setPlacementData({
+//             placement_product_type: data.badge_pages[0].placement_product_type,
+//             placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
+//             placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
+//             placement_tags_json: data.badge_pages[0].placement_tags_json || '', // Changed to string
+//           });
+
+//           setOriginalState({
+//             singleBannerState: { ...singleBannerState },
+//             iconBlockPages: [...iconBlockPages],
+//             paymentIconsPages: [...paymentIconsPages],
+//             placementData: { ...placementData },
+//           });
+
+//         } catch (error) {
+//           console.error('Error fetching badge data:', error);
+//         }
+//       };
+
+//       fetchBadgeData();
+//     } else if (isCreationMode) {
+//       console.log("in isCreationMode");
+//       setBadgeName("New Badge");
+//       setSingleBannerState({
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       });
+//       setIconBlockPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPaymentIconsPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPlacementData({
+//         placement_product_type: 'allProducts',
+//         placement_product_json: null,
+//         placement_collection_json: null,
+//         placement_tags_json: '', // Changed to string
+//       });
+//     }
+//   }, [badgeId, isCreationMode]);
+
+//   // Function to set badge details
+//   const setBadgeDetails = (badgeData) => {
+//     setBadgeName(badgeData.badge_name);
+//     setBadgeType(badgeData.badge_type);
+//     setIsPublished(badgeData.status === "Publish");
+
+//     if (badgeData.badge_type === "single-banner") {
+//       setSingleBannerState({
+//         title: badgeData.badge_pages?.[0]?.title || "Free Shipping",
+//         subheading: badgeData.badge_pages?.[0]?.subheading || "Delivered to Your doorstep, on us!",
+//         buttonText: badgeData.badge_pages?.[0]?.button_text || "Shop Now",
+//         linkType: badgeData.badge_pages?.[0]?.linkType || "",
+//         externalUrl: badgeData.badge_pages?.[0]?.external_url || "",
+//         selectedIcon: badgeData.badge_pages?.[0]?.icon_name ? { name: badgeData.badge_pages[0].icon_name.replace("Lia", "") } : null,
+//         icon_svg: badgeData.badge_pages?.[0]?.icon_svg || "", // Include the SVG string
+//         cta: badgeData.badge_pages?.[0]?.call_to_action || "no-cta",
+//         selectedProduct: badgeData.badge_pages?.[0]?.product_json ? JSON.parse(badgeData.badge_pages[0].product_json) : null,
+//         selectedCollection: badgeData.badge_pages?.[0]?.collection_json ? JSON.parse(badgeData.badge_pages[0].collection_json) : null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       });
+//     } else if (badgeData.badge_type === "icon-block") {
+//       setIconBlockPages(badgeData.badge_pages?.map((page, index) => ({
+//         ...page,
+//         id: index + 1,
+//         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Lia", "") } : null,
+//         icon_svg: page.icon_svg || "", // Include the SVG string
+//         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//         cta: page.call_to_action, // Ensure cta is set here
+//         buttonText: page.button_text,
+//         externalUrl: page.external_url,
+//       })) || []);
+//     } else if (badgeData.badge_type === "payment-icons") {
+//       setPaymentIconsPages(badgeData.badge_pages?.map((page, index) => ({
+//         ...page,
+//         id: index + 1,
+//         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Fc", "") } : null,
+//         icon_svg: page.icon_svg || "", // Include the SVG string
+//         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+//         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+//         cta: page.call_to_action, // Ensure cta is set here
+//         buttonText: page.button_text,
+//         externalUrl: page.external_url,
+//       })) || []);
+//     }
+
+//     setPlacementData({
+//       placement_product_type: badgeData.badge_pages?.[0]?.placement_product_type || 'allProducts',
+//       placement_product_json: badgeData.badge_pages?.[0]?.placement_product_json || null,
+//       placement_collection_json: badgeData.badge_pages?.[0]?.placement_collection_json || null,
+//       placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || '', // Changed to string
+//     });
+//   };
+
+//   // Function to handle tab change
+//   const handleTabChange = (selectedTabIndex) => {
+//     setSelectedTab(selectedTabIndex);
+//   };
+
+//   // Tabs configuration
+//   const tabs = [
+//     { id: "content", content: "Content", accessibilityLabel: "Content Tab" },
+//     { id: "design", content: "Design", accessibilityLabel: "Design Tab" },
+//     { id: "placement", content: "Placement", accessibilityLabel: "Placement Tab" },
+//   ];
+
+//   // Function to toggle the icon modal
+//   const toggleIconModal = (component, pageId) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         iconModalActive: !prevState.iconModalActive,
+//       }));
+//       setIsModified(true);
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           iconModalActive: !newPages[pageIndex].iconModalActive,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           iconModalActive: !newPages[pageIndex].iconModalActive,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   // Function to handle icon selection
+//   const handleIconSelect = (component, pageId, icon) => {
+//     let svgString = null;
+//     if (icon) {
+//       svgString = serializeReactElementToSVG(icon.icon);
+//     }
+
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         selectedIcon: icon,
+//         iconModalActive: false,
+//         icon_svg: svgString, // Add the SVG string
+//       }));
+//       setIsModified(true);
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedIcon: icon,
+//           iconModalActive: false,
+//           icon_svg: svgString, // Add the SVG string
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedIcon: icon,
+//           iconModalActive: false,
+//           icon_svg: svgString, // Add the SVG string
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   // Function to handle continuing to the design tab
+//   const handleContinueToDesign = () => {
+//     setSelectedTab(1);
+//   };
+
+//   // Function to handle continuing to the placement tab
+//   const handleContinueToPlacement = () => {
+//     setSelectedTab(2);
+//   };
+
+//   // Function to add a new icon block page
+//   const addIconBlockPage = () => {
+//     setIconBlockPages((prevPages) => [
+//       ...prevPages,
+//       {
+//         id: prevPages.length + 1,
+//         title: "",
+//         subheading: "",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       },
+//     ]);
+//     setIsModified(true);
+//   };
+
+//   // Function to add a new payment icons page
+//   const addPaymentIconsPage = () => {
+//     setPaymentIconsPages((prevPages) => [
+//       ...prevPages,
+//       {
+//         id: prevPages.length + 1,
+//         title: "",
+//         subheading: "",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       },
+//     ]);
+//     setIsModified(true);
+//   };
+
+//   // Function to remove an icon block page
+//   const removeIconBlockPage = (pageId) => {
+//     setIconBlockPages((prevPages) => prevPages.filter(page => page.id !== pageId));
+//     setIsModified(true);
+//   };
+
+//   // Function to remove a payment icons page
+//   const removePaymentIconsPage = (pageId) => {
+//     setPaymentIconsPages((prevPages) => prevPages.filter(page => page.id !== pageId));
+//     setIsModified(true);
+//   };
+
+//   // Function to handle saving the badge
+//   const handleSave = async () => {
+//     const badgeDetails = getBadgeDetails();
+
+//     console.log("badgeDetails for save details :", badgeDetails);
+
+//     badgeDetails.status = isPublished ? "Publish" : "Draft";
+
+//     try {
+//       const response = await fetch(`/api/badges/${badgeId ? badgeId : ''}`, {
+//         method: badgeId ? 'PUT' : 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(badgeDetails)
+//       });
+
+//       if (response.ok) {
+//         const savedBadge = await response.json();
+//         setBadgeDetails(savedBadge);
+//         setIsSaved(true);
+//         setToastActive(true);
+//         setTimeout(() => setToastActive(false), 3000);
+//         setIsModified(false);
+//         onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been saved
+//         onBackClick(); // Redirect back to the main page
+//       } else {
+//         console.error('Failed to save badge');
+//       }
+//     } catch (error) {
+//       console.error('Error saving badge:', error);
+//     }
+//   };
+
+//   // Function to handle publishing the badge
+//   const handlePublish = async () => {
+//     const badgeDetails = getBadgeDetails();
+//     badgeDetails.status = "Publish";
+
+//     try {
+//       const response = await fetch(`/api/badges/${badgeId ? badgeId : ''}`, {
+//         method: badgeId ? 'PUT' : 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(badgeDetails)
+//       });
+
+//       if (response.ok) {
+//         const savedBadge = await response.json();
+//         setBadgeDetails(savedBadge);
+//         setIsSaved(true);
+//         setToastActive(true);
+//         setTimeout(() => setToastActive(false), 3000);
+//         setIsModified(false);
+//         setIsPublished(true);
+//         onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been published
+//         onBackClick(); // Redirect back to the main page
+//       } else {
+//         console.error('Failed to publish badge');
+//       }
+//     } catch (error) {
+//       console.error('Error publishing badge:', error);
+//     }
+//   };
+
+//   // Function to handle unpublishing the badge
+//   const handleUnpublish = async () => {
+//     const badgeDetails = getBadgeDetails();
+//     badgeDetails.status = "Draft";
+
+//     try {
+//       const response = await fetch(`/api/badges/${badgeId}`, {
+//         method: 'PUT',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(badgeDetails)
+//       });
+
+//       if (response.ok) {
+//         setIsPublished(false);
+//         setToastActive(true);
+//         setTimeout(() => setToastActive(false), 3000);
+//         onBackClick(); // Redirect back to the main page
+//       } else {
+//         console.error('Failed to unpublish badge');
+//       }
+//     } catch (error) {
+//       console.error('Error unpublishing badge:', error);
+//     }
+//   };
+
+//   // Function to handle removing the badge
+//   const handleRemove = () => {
+//     setIsSaved(false);
+//     setIsModified(false);
+//   };
+
+//   // Function to handle product selection
+//   const handleProductSelection = (component, pageId, selectedProduct) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         selectedProduct,
+//         isProductPickerOpen: false,
+//       }));
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedProduct,
+//           isProductPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedProduct,
+//           isProductPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   // Function to handle collection selection
+//   const handleCollectionSelection = (component, pageId, selectedCollection) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         selectedCollection,
+//         isCollectionPickerOpen: false,
+//       }));
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedCollection,
+//           isCollectionPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           selectedCollection,
+//           isCollectionPickerOpen: false,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   // Function to handle URL selection
+//   const handleUrlSelection = (component, pageId, linkType, externalUrl) => {
+//     if (component === "singleBanner") {
+//       setSingleBannerState((prevState) => ({
+//         ...prevState,
+//         linkType,
+//         externalUrl,
+//       }));
+//     } else if (component === "payment-icons") {
+//       setPaymentIconsPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           linkType,
+//           externalUrl,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else if (component === "icon-block") {
+//       setIconBlockPages((prevPages) => {
+//         const newPages = [...prevPages];
+//         const pageIndex = newPages.findIndex(page => page.id === pageId);
+//         newPages[pageIndex] = {
+//           ...newPages[pageIndex],
+//           linkType,
+//           externalUrl,
+//         };
+//         setIsModified(true);
+//         return newPages;
+//       });
+//     } else {
+//       console.error("Unknown component:", component);
+//     }
+//   };
+
+//   // Function to handle cancel action
+//   const handleCancel = () => {
+//     if (badgeId) {
+//       // If editing an existing badge, reset to the original state
+//       setBadgeDetails(originalState);
+//     } else {
+//       // If creating a new badge, reset to default creation state
+//       setBadgeName("New Badge");
+//       setSingleBannerState({
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       });
+//       setIconBlockPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPaymentIconsPages([{
+//         id: 1,
+//         title: "Sample Title",
+//         subheading: "Sample Subheading",
+//         buttonText: "Shop Now",
+//         linkType: "",
+//         externalUrl: "",
+//         selectedIcon: null,
+//         cta: "no-cta",
+//         selectedProduct: null,
+//         selectedCollection: null,
+//         iconModalActive: false,
+//         isProductPickerOpen: false,
+//         isCollectionPickerOpen: false,
+//       }]);
+//       setPlacementData({
+//         placement_product_type: 'allProducts',
+//         placement_product_json: null,
+//         placement_collection_json: null,
+//         placement_tags_json: null,
+//       });
+//     }
+//     setIsModified(false);
+//     onBackClick(); // Redirect back to the main page
+//   };
+
+//   // Function to get badge details for saving
+//   const getBadgeDetails = () => {
+//     let badgeDetails = {};
+
+//     const extractId = (gid) => {
+//       const parts = gid.split('/');
+//       return parts.length > 1 ? parts[parts.length - 1] : gid;
+//     };
+
+//     const prefixIconName = (iconName) => {
+//       if (!iconName.startsWith("Lia")) {
+//         return "Lia" + iconName;
+//       }
+//       return iconName;
+//     };
+//     const prefixIconName1 = (iconName) => {
+//       if (!iconName.startsWith("Fc")) {
+//         return "Fc" + iconName;
+//       }
+//       return iconName;
+//     };
+
+//     if (badgeType === "single-banner") {
+//       badgeDetails = {
+//         badge_name: badgeName,
+//         badge_type: badgeType,
+//         status: isPublished ? "Publish" : "Draft",
+//         subheading: singleBannerState.subheading,
+//         title: singleBannerState.title,
+//         icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+//         icon_svg: singleBannerState.icon_svg, // Add the SVG string
+//         call_to_action: singleBannerState.cta,
+//         button_text: singleBannerState.buttonText,
+//         product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
+//         collection_json: singleBannerState.selectedCollection ? JSON.stringify(singleBannerState.selectedCollection) : "",
+//         external_url: singleBannerState.externalUrl,
+//         badge_pages: [
+//           {
+//             title: singleBannerState.title,
+//             subheading: singleBannerState.subheading,
+//             icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+//             icon_svg: singleBannerState.icon_svg, // Add the SVG string
+//             call_to_action: singleBannerState.cta,
+//             button_text: singleBannerState.buttonText,
+//             product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
+//             collection_json: singleBannerState.selectedCollection ? JSON.stringify(singleBannerState.selectedCollection) : "",
+//             external_url: singleBannerState.externalUrl,
+//             placement_product_type: placementData.placement_product_type,
+//             placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//             placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//             placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+//           },
+//         ],
+//       };
+//     } else if (badgeType === "icon-block") {
+//       badgeDetails = {
+//         badge_name: badgeName,
+//         badge_type: badgeType,
+//         status: isPublished ? "Publish" : "Draft",
+//         badge_pages: iconBlockPages.map((page) => ({
+//           title: page.title,
+//           subheading: page.subheading,
+//           icon_name: page.selectedIcon ? prefixIconName(page.selectedIcon.name) : "",
+//           icon_svg: page.icon_svg, // Add the SVG string
+//           call_to_action: page.cta,
+//           button_text: page.buttonText,
+//           product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
+//           collection_json: page.selectedCollection ? JSON.stringify(page.selectedCollection) : "",
+//           external_url: page.externalUrl,
+//           placement_product_type: placementData.placement_product_type,
+//           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//           placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+//         })),
+//       };
+//     } else if (badgeType === "payment-icons") {
+//       badgeDetails = {
+//         badge_name: badgeName,
+//         badge_type: badgeType,
+//         status: isPublished ? "Publish" : "Draft",
+//         badge_pages: paymentIconsPages.map((page) => ({
+//           title: page.title,
+//           subheading: page.subheading,
+//           icon_name: page.selectedIcon ? prefixIconName1(page.selectedIcon.name) : "",
+//           icon_svg: page.icon_svg, // Add the SVG string
+//           call_to_action: page.cta,
+//           button_text: page.buttonText,
+//           product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
+//           collection_json: page.selectedCollection ? JSON.stringify(page.selectedCollection) : "",
+//           external_url: page.externalUrl,
+//           placement_product_type: placementData.placement_product_type,
+//           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
+//           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
+//           placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+//         })),
+//       };
+//     }
+
+//     return badgeDetails;
+//   };
+
+//   return (
+//     <Frame>
+//       <Page
+//         backAction={{ content: 'Products', onAction: onBackClick }}
+//         title={badgeName}
+//         subtitle={`Badge ID: ${badgeId || "New Badge Id"}`}
+//         titleMetadata={isPublished ? <Badge status="success">Published</Badge> : <Badge tone="success">Draft</Badge>}
+//         compactTitle
+//         primaryAction={{
+//           content: isPublished ? 'Unpublish' : 'Publish',
+//           onAction: isPublished ? handleUnpublish : handlePublish,
+//           destructive: isPublished,
+//           primary: !isPublished,
+//         }}
+//         secondaryActions={[
+//           {
+//             content: isSaved && !isModified ? 'Delete' : 'Save',
+//             onAction: isSaved && !isModified ? handleDelete : handleSave,
+//             destructive: isSaved && !isModified,
+//             plain: !isSaved && !isModified,
+//             primary: !isSaved && !isModified,
+//           },
+//           isModified && {
+//             content: 'Cancel',
+//             onAction: handleCancel,
+//             destructive: false,
+//             plain: true,
+//           },
+//         ].filter(Boolean)}
+//       >
+//         {toastActive && <Toast content={isSaved ? "Badge Saved" : "Badge Published"} />}
+//         <div style={{ marginBottom: "20px" }}>
+//           <Tabs tabs={tabs} selected={selectedTab} onSelect={handleTabChange} />
+//         </div>
+
+//         <Grid>
+//           <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 5, xl: 5 }}>
+//             <LegacyCard>
+//               {selectedTab === 0 && (
+//                 <Card.Section>
+//                   <FormLayout>
+//                     <FormLayout.Group>
+//                       <Stack vertical>
+//                         <h1 className="BadgeCls">Badge type</h1>
+//                         <RadioButton
+//                           label="Single banner"
+//                           checked={badgeType === "single-banner"}
+//                           id="singleBanner"
+//                           name="badgeType"
+//                           onChange={() => {
+//                             console.log("Badge type changed to: Single banner");
+//                             setBadgeType("single-banner");
+//                             setIsModified(true);
+//                           }}
+//                         />
+//                         <RadioButton
+//                           label="Icon block"
+//                           checked={badgeType === "icon-block"}
+//                           id="iconBlock"
+//                           name="badgeType"
+//                           onChange={() => {
+//                             console.log("Badge type changed to: Icon block");
+//                             setBadgeType("icon-block");
+//                             setIsModified(true);
+//                           }}
+//                         />
+//                         <RadioButton
+//                           label="Payment icons"
+//                           checked={badgeType === "payment-icons"}
+//                           id="paymentIcons"
+//                           name="badgeType"
+//                           onChange={() => {
+//                             console.log("Badge type changed to: Payment icons");
+//                             setBadgeType("payment-icons");
+//                             setIsModified(true);
+//                           }}
+//                         />
+//                         <TextField
+//                           label="Badge name"
+//                           value={badgeName}
+//                           onChange={(value) => {
+//                             console.log("Badge name changed to:", value);
+//                             setBadgeName(value);
+//                             setIsModified(true);
+//                           }}
+//                           helpText="Only visible to you. For your own internal reference."
+//                         />
+//                       </Stack>
+
+//                       {badgeType === "single-banner" && (
+
+//                         <SingleBanner
+//                           {...singleBannerState}
+//                           setTitle={(value) => {
+//                             console.log("Title changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, title: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setSubheading={(value) => {
+//                             console.log("Subheading changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, subheading: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setButtonText={(value) => {
+//                             console.log("Button text changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, buttonText: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setLinkType={(value) => {
+//                             console.log("Link type changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, linkType: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setExternalUrl={(value) => {
+//                             console.log("External URL changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, externalUrl: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setSelectedIcon={(icon) => handleIconSelect("singleBanner", null, icon)}
+//                           setCta={(value) => {
+//                             console.log("CTA changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, cta: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setSelectedProduct={(value) => {
+//                             console.log("Selected product changed to:", value);
+//                             handleProductSelection("singleBanner", null, value);
+//                           }}
+//                           setSelectedCollection={(value) => {
+//                             console.log("Selected collection changed to:", value);
+//                             handleCollectionSelection("singleBanner", null, value);
+//                           }}
+//                           toggleIconModal={() => toggleIconModal("singleBanner")}
+//                           setIconModalActive={() => toggleIconModal("singleBanner")}
+//                           setIsProductPickerOpen={(value) => {
+//                             console.log("Product picker open state changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, isProductPickerOpen: value }));
+//                             setIsModified(true);
+//                           }}
+//                           setIsCollectionPickerOpen={(value) => {
+//                             console.log("Collection picker open state changed to:", value);
+//                             setSingleBannerState((prevState) => ({ ...prevState, isCollectionPickerOpen: value }));
+//                             setIsModified(true);
+//                           }}
+//                           onProductSelect={(product) => handleProductSelection("singleBanner", null, product)}
+//                           onCollectionSelect={(collection) => handleCollectionSelection("singleBanner", null, collection)}
+//                           onUrlSelect={(linkType, externalUrl) => handleUrlSelection("singleBanner", null, linkType, externalUrl)}
+//                         />
+
+//                       )}
+//                       {badgeType === "icon-block" && (
+//                         <>
+//                           {iconBlockPages.map((page, index) => (
+
+//                             <IconBlock
+//                               key={page.id}
+//                               pageId={page.id}
+//                               {...page}
+//                               setTitle={(value) => {
+//                                 console.log("Title changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], title: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSubheading={(value) => {
+//                                 console.log("Subheading changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], subheading: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setButtonText={(value) => {
+//                                 console.log("Button text changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], buttonText: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setLinkType={(value) => {
+//                                 console.log("Link type changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], linkType: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setExternalUrl={(value) => {
+//                                 console.log("External URL changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], externalUrl: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedIcon={(icon) => handleIconSelect("icon-block", page.id, icon)}
+//                               setCta={(value) => {
+//                                 console.log("CTA changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], cta: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedProduct={(value) => {
+//                                 console.log("Selected product changed to:", value);
+//                                 handleProductSelection("icon-block", page.id, value);
+//                               }}
+//                               setSelectedCollection={(value) => {
+//                                 console.log("Selected collection changed to:", value);
+//                                 handleCollectionSelection("icon-block", page.id, value);
+//                               }}
+//                               toggleIconModal={() => toggleIconModal("icon-block", page.id)}
+//                               setIconModalActive={() => toggleIconModal("icon-block", page.id)}
+//                               setIsProductPickerOpen={(value) => {
+//                                 console.log("Product picker open state changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isProductPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setIsCollectionPickerOpen={(value) => {
+//                                 console.log("Collection picker open state changed to:", value);
+//                                 setIconBlockPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isCollectionPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               onRemove={() => removeIconBlockPage(page.id)}
+//                               pageIndex={index}
+//                               iconBlockPages={iconBlockPages}
+//                               onProductSelect={(product) => handleProductSelection("icon-block", page.id, product)}
+//                               onCollectionSelect={(collection) => handleCollectionSelection("icon-block", page.id, collection)}
+//                               onUrlSelect={(linkType, externalUrl) => handleUrlSelection("icon-block", page.id, linkType, externalUrl)}
+//                             />
+
+//                           ))}
+
+//                           <div className="addBtnMain">
+//                             <Button fullWidth onClick={addIconBlockPage}>
+//                               Add New Page
+//                             </Button>
+//                           </div>
+//                         </>
+//                       )}
+
+//                       {badgeType === "payment-icons" && (
+//                         <>
+//                           {paymentIconsPages.map((page, index) => (
+
+//                             <PaymentIcons
+//                               key={page.id}
+//                               pageId={page.id}
+//                               {...page}
+//                               setTitle={(value) => {
+//                                 console.log("Title changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], title: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSubheading={(value) => {
+//                                 console.log("Subheading changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], subheading: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setButtonText={(value) => {
+//                                 console.log("Button text changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], buttonText: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setLinkType={(value) => {
+//                                 console.log("Link type changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], linkType: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setExternalUrl={(value) => {
+//                                 console.log("External URL changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], externalUrl: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedIcon={(icon) => handleIconSelect("payment-icons", page.id, icon)}
+//                               setCta={(value) => {
+//                                 console.log("CTA changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], cta: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setSelectedProduct={(value) => {
+//                                 console.log("Selected product changed to:", value);
+//                                 handleProductSelection("payment-icons", page.id, value);
+//                               }}
+//                               setSelectedCollection={(value) => {
+//                                 console.log("Selected collection changed to:", value);
+//                                 handleCollectionSelection("payment-icons", page.id, value);
+//                               }}
+//                               toggleIconModal={() => toggleIconModal("payment-icons", page.id)}
+//                               setIconModalActive={() => toggleIconModal("payment-icons", page.id)}
+//                               setIsProductPickerOpen={(value) => {
+//                                 console.log("Product picker open state changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isProductPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               setIsCollectionPickerOpen={(value) => {
+//                                 console.log("Collection picker open state changed to:", value);
+//                                 setPaymentIconsPages((prevPages) => {
+//                                   const newPages = [...prevPages];
+//                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
+//                                   newPages[pageIndex] = { ...newPages[pageIndex], isCollectionPickerOpen: value };
+//                                   setIsModified(true);
+//                                   return newPages;
+//                                 });
+//                               }}
+//                               onRemove={() => removePaymentIconsPage(page.id)}
+//                               pageIndex={index}
+//                               iconBlockPages={paymentIconsPages}
+//                               onProductSelect={(product) => handleProductSelection("payment-icons", page.id, product)}
+//                               onCollectionSelect={(collection) => handleCollectionSelection("payment-icons", page.id, collection)}
+//                               onUrlSelect={(linkType, externalUrl) => handleUrlSelection("payment-icons", page.id, linkType, externalUrl)}
+//                             />
+
+//                           ))}
+
+//                           <div className="addBtnMain">
+//                             <Button fullWidth onClick={addPaymentIconsPage}>
+//                               Add New Page
+//                             </Button>
+//                           </div>
+//                         </>
+//                       )}
+//                       <div style={{ textAlign: "center" }}>
+//                         <button
+//                           className="Polaris-Button Polaris-Button--outline Polaris-Button--fullWidth"
+//                           type="button"
+//                           onClick={handleContinueToDesign}
+//                         >
+//                           <span className="Polaris-Button__Content">
+//                             <span className="Polaris-Button__Icon">
+//                               <span className="Polaris-Icon">
+//                                 <span className="Polaris-Text--root Polaris-Text--visuallyHidden"></span>
+//                                 <svg
+//                                   viewBox="0 0 20 20"
+//                                   className="Polaris-Icon__Svg"
+//                                   focusable="false"
+//                                   aria-hidden="true"
+//                                 >
+//                                   <path d="m17.707 9.293-5-5a.999.999 0 0 0-1.414 1.414l3.293 3.293h-11.586a1 1 0 1 0 0 2h11.586l-3.293 3.293a.999.999 0 0 0 1.414 1.414l5-5a.999.999 0 0 0 0-1.414z"></path>
+//                                 </svg>
+//                               </span>
+//                             </span>
+//                             <span className="Polaris-Button__Text">Continue to design</span>
+//                           </span>
+//                         </button>
+//                       </div>
+//                     </FormLayout.Group>
+//                   </FormLayout>
+//                 </Card.Section>
+//               )}
+//               {/* {selectedTab === 1 && (
+//                 <Design title={badgeType === "single-banner" ? singleBannerState.title : badgeType === "icon-block" ? iconBlockPages[0].title : paymentIconsPages[0].title} />  
+//               )} */}
+
+//               {selectedTab === 1 && (
+//                 <Design
+//                   title={badgeType === "single-banner" ? singleBannerState.title : badgeType === "icon-block" ? iconBlockPages[0].title : paymentIconsPages[0].title}
+//                   handleContinueToPlacement={handleContinueToPlacement}
+//                 />
+//               )}
+
+//             </LegacyCard>
+
+//             {selectedTab === 2 && (
+//               <Placement
+//                 badgeType={badgeType}
+//                 placementData={placementData}
+//                 setPlacementData={setPlacementData}
+//               />
+//             )}
+
+//           </Grid.Cell>
+//           <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 7, xl: 7 }}>
+//             <LegacyCard>
+
+//               {badgeType === "single-banner" && (
+//                 <div className="badge-output-container">
+//                   {singleBannerState.selectedIcon ? (
+//                     <div className="badge-icon">
+//                       {IconComponent(getPrefixedIconName(singleBannerState.selectedIcon.name), badgeType)}
+//                     </div>
+//                   ) : (
+//                     <div className="icon-placeholder"></div>
+//                   )}
+//                   <div className="badge-text">
+//                     <h2 className="badge-title">{singleBannerState.title}</h2>
+//                     <h3 className="badge-subheading">{singleBannerState.subheading}</h3>
+//                   </div>
+//                   {singleBannerState.cta === "button-cta" && (
+//                     <button className="badge-button">{singleBannerState.buttonText}</button>
+//                   )}
+//                   {singleBannerState.cta === "clickable-banner-cta" && (
+//                     <div className="output-banner"></div>
+//                   )}
+//                 </div>
+//               )}
+
+//               {badgeType === "icon-block" && (
+//                 <div className="badge-output-container kdtYjY">
+//                   {iconBlockPages.map((page, index) => (
+//                     <div key={index} className="badge-output-page hVFYFW">
+//                       {page.selectedIcon ? (
+//                         <div className="badge-icon iubCKx">
+//                           {IconComponent(getPrefixedIconName(page.selectedIcon.name), badgeType)}
+//                         </div>
+//                       ) : (
+//                         <div className="icon-placeholder"></div>
+//                       )}
+//                       <div className="badge-text">
+//                         <h2 className="badge-title">{page.title}</h2>
+//                         <h3 className="badge-subheading">{page.subheading}</h3>
+//                       </div>
+//                       {page.cta === "button-cta" && (
+//                         <button className="badge-button">{page.buttonText}</button>
+//                       )}
+//                       {page.cta === "clickable-banner-cta" && (
+//                         <div className="output-banner"></div>
+//                       )}
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+
+//               {badgeType === "payment-icons" && (
+//                 <div className="badge-output-container kdtYjY">
+//                   {paymentIconsPages.map((page, index) => (
+//                     <div key={index} className="badge-output-page hVFYFW">
+//                       {page.selectedIcon ? (
+//                         <div className="badge-icon iubCKx">
+//                           {IconComponent(getPrefixedIconName1(page.selectedIcon.name), badgeType)}
+//                         </div>
+//                       ) : (
+//                         <div className="icon-placeholder"></div>
+//                       )}
+//                       <div className="badge-text">
+//                         <h2 className="badge-title">{page.title}</h2>
+//                         <h3 className="badge-subheading">{page.subheading}</h3>
+//                       </div>
+//                       {page.cta === "button-cta" && (
+//                         <button className="badge-button">{page.buttonText}</button>
+//                       )}
+//                       {page.cta === "clickable-banner-cta" && (
+//                         <div className="output-banner"></div>
+//                       )}
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+
+//             </LegacyCard>
+//           </Grid.Cell>
+//         </Grid>
+//       </Page>
+//     </Frame>
+//   );
+// }
+
+// export default BadgeEditor;
+
+
+// Testing code at 18-11-2024
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -1914,13 +4829,11 @@ import * as icons1 from 'react-icons/fc';
 import serializeReactElementToSVG from './utils';
 import { useAuthenticatedFetch } from "../hooks";
 
- 
-
 function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeData }) {
   const [selectedTab, setSelectedTab] = useState(0);
   const [badgeType, setBadgeType] = useState("single-banner");
   const [badgeName, setBadgeName] = useState("Your badge");
-  const [isSaved, setIsSaved] = useState(false); 
+  const [isSaved, setIsSaved] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [toastActive, setToastActive] = useState(false);
   const [isModified, setIsModified] = useState(false);
@@ -1981,16 +4894,22 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     placement_tags_json: null,
   });
 
-  // const getPrefixedIconName = (iconName) => {
-  //   if (badgeType === "single-banner" && !iconName.startsWith("Lia")) {
-  //     return "Lia" + iconName;
-  //   } else if (badgeType === "icon-block" && !iconName.startsWith("Lia")) {
-  //     return "Lia" + iconName;
-  //   } else if (badgeType === "payment-icons" && !iconName.startsWith("Fc")) {
-  //     return "Fc" + iconName;
-  //   }
-  //   return iconName;
-  // };
+  const [designState, setDesignState] = useState({
+    backgroundColor: '#FFFFFF',
+    borderColor: '#c5c8d1',
+    titleColor: '#202223',
+    subheadingColor: '#96A4B6',
+    iconColor: '#333333',
+    cornerRadius: 8,
+    bordersize: 0,
+    titleSize: 16,
+    subheadingSize: 14,
+    iconSize: 32,
+    buttonColor: '#202223',
+    buttonTextColor: '#fafafa',
+    buttonBorderRadius:4,
+    buttonTextSize: 14,
+  });
 
   const getPrefixedIconName = (iconName) => {
     if (!iconName) {
@@ -2001,7 +4920,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     }
     return iconName;
   };
-  
+
   const getPrefixedIconName1 = (iconName) => {
     if (!iconName) {
       return "";
@@ -2011,7 +4930,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     }
     return iconName;
   };
-  
+
   const getIconComponent = (iconName, badgeType) => {
     try {
       if (badgeType === "payment-icons") {
@@ -2027,13 +4946,141 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
 
   const IconComponent = (iconName, badgeType) => {
     const Icon = getIconComponent(iconName, badgeType);
-    return Icon ? <Icon size={32} /> : null;
+    return Icon ? <Icon size={designState.iconSize} style={{ color: designState.iconColor }} /> : null;
   };
 
   const ensureString = (value) => {
     return Array.isArray(value) ? value.join(', ') : value;
   };
-  
+
+  // useEffect(() => {
+  //   if (badgeId && !isCreationMode) {
+  //     const fetchBadgeData = async () => {
+  //       try {
+  //         const response = await fetch(`/api/badges/${badgeId}`);
+  //         const data = await response.json();
+  //         setBadgeType(data.badge_type);
+  //         setBadgeName(data.badge_name);
+  //         setIsPublished(data.status === "Publish");
+
+  //         if (data.badge_type === "single-banner") {
+  //           setSingleBannerState({
+  //             title: data.badge_pages[0].title,
+  //             subheading: data.badge_pages[0].subheading,
+  //             buttonText: data.badge_pages[0].button_text,
+  //             linkType: data.badge_pages[0].link_type,
+  //             externalUrl: data.badge_pages[0].external_url,
+  //             selectedIcon: data.badge_pages[0].icon_name ? { name: data.badge_pages[0].icon_name } : null,
+  //             icon_svg: data.badge_pages[0].icon_svg,
+  //             cta: data.badge_pages[0].call_to_action,
+  //             selectedProduct: data.badge_pages[0].product_json ? JSON.parse(data.badge_pages[0].product_json) : null,
+  //             selectedCollection: data.badge_pages[0].collection_json ? JSON.parse(data.badge_pages[0].collection_json) : null,
+  //             iconModalActive: false,
+  //             isProductPickerOpen: false,
+  //             isCollectionPickerOpen: false,
+  //           });
+  //         } else if (data.badge_type === "icon-block") {
+  //           setIconBlockPages(data.badge_pages.map((page, index) => ({
+  //             ...page,
+  //             id: index + 1,
+  //             selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+  //             icon_svg: page.icon_svg,
+  //             selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+  //             selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+  //             cta: page.call_to_action,
+  //             buttonText: page.button_text,
+  //             externalUrl: page.external_url,
+  //           })));
+  //         } else if (data.badge_type === "payment-icons") {
+  //           setPaymentIconsPages(data.badge_pages.map((page, index) => ({
+  //             ...page,
+  //             id: index + 1,
+  //             selectedIcon: page.icon_name ? { name: page.icon_name } : null,
+  //             icon_svg: page.icon_svg,
+  //             selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
+  //             selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
+  //             cta: page.call_to_action,
+  //             buttonText: page.button_text,
+  //             externalUrl: page.external_url,
+  //           })));
+  //         }
+
+  //         setPlacementData({
+  //           placement_product_type: data.badge_pages[0].placement_product_type,
+  //           placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
+  //           placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
+  //           placement_tags_json: data.badge_pages[0].placement_tags_json || '',
+  //         });
+
+  //         setOriginalState({
+  //           singleBannerState: { ...singleBannerState },
+  //           iconBlockPages: [...iconBlockPages],
+  //           paymentIconsPages: [...paymentIconsPages],
+  //           placementData: { ...placementData },
+  //         });
+
+  //       } catch (error) {
+  //         console.error('Error fetching badge data:', error);
+  //       }
+  //     };
+
+  //     fetchBadgeData();
+  //   } else if (isCreationMode) {
+  //     setBadgeName("New Badge");
+  //     setSingleBannerState({
+  //       title: "Sample Title",
+  //       subheading: "Sample Subheading",
+  //       buttonText: "Shop Now",
+  //       linkType: "",
+  //       externalUrl: "",
+  //       selectedIcon: null,
+  //       cta: "no-cta",
+  //       selectedProduct: null,
+  //       selectedCollection: null,
+  //       iconModalActive: false,
+  //       isProductPickerOpen: false,
+  //       isCollectionPickerOpen: false,
+  //     });
+  //     setIconBlockPages([{
+  //       id: 1,
+  //       title: "Sample Title",
+  //       subheading: "Sample Subheading",
+  //       buttonText: "Shop Now",
+  //       linkType: "",
+  //       externalUrl: "",
+  //       selectedIcon: null,
+  //       cta: "no-cta",
+  //       selectedProduct: null,
+  //       selectedCollection: null,
+  //       iconModalActive: false,
+  //       isProductPickerOpen: false,
+  //       isCollectionPickerOpen: false,
+  //     }]);
+  //     setPaymentIconsPages([{
+  //       id: 1,
+  //       title: "Sample Title",
+  //       subheading: "Sample Subheading",
+  //       buttonText: "Shop Now",
+  //       linkType: "",
+  //       externalUrl: "",
+  //       selectedIcon: null,
+  //       cta: "no-cta",
+  //       selectedProduct: null,
+  //       selectedCollection: null,
+  //       iconModalActive: false,
+  //       isProductPickerOpen: false,
+  //       isCollectionPickerOpen: false,
+  //     }]);
+  //     setPlacementData({
+  //       placement_product_type: 'allProducts',
+  //       placement_product_json: null,
+  //       placement_collection_json: null,
+  //       placement_tags_json: '',
+  //     });
+  //   }
+  // }, [badgeId, isCreationMode]);
+
+
   useEffect(() => {
     if (badgeId && !isCreationMode) {
       const fetchBadgeData = async () => {
@@ -2043,7 +5090,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           setBadgeType(data.badge_type);
           setBadgeName(data.badge_name);
           setIsPublished(data.status === "Publish");
-
+  
           if (data.badge_type === "single-banner") {
             setSingleBannerState({
               title: data.badge_pages[0].title,
@@ -2052,7 +5099,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               linkType: data.badge_pages[0].link_type,
               externalUrl: data.badge_pages[0].external_url,
               selectedIcon: data.badge_pages[0].icon_name ? { name: data.badge_pages[0].icon_name } : null,
-              icon_svg: data.badge_pages[0].icon_svg, // Include the SVG string
+              icon_svg: data.badge_pages[0].icon_svg,
               cta: data.badge_pages[0].call_to_action,
               selectedProduct: data.badge_pages[0].product_json ? JSON.parse(data.badge_pages[0].product_json) : null,
               selectedCollection: data.badge_pages[0].collection_json ? JSON.parse(data.badge_pages[0].collection_json) : null,
@@ -2065,10 +5112,10 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               ...page,
               id: index + 1,
               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
-              icon_svg: page.icon_svg, // Include the SVG string
+              icon_svg: page.icon_svg,
               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-              cta: page.call_to_action, // Ensure cta is set here
+              cta: page.call_to_action,
               buttonText: page.button_text,
               externalUrl: page.external_url,
             })));
@@ -2077,38 +5124,54 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
               ...page,
               id: index + 1,
               selectedIcon: page.icon_name ? { name: page.icon_name } : null,
-              icon_svg: page.icon_svg, // Include the SVG string
+              icon_svg: page.icon_svg,
               selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
               selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-              cta: page.call_to_action, // Ensure cta is set here
+              cta: page.call_to_action,
               buttonText: page.button_text,
               externalUrl: page.external_url,
             })));
           }
-
+  
           setPlacementData({
             placement_product_type: data.badge_pages[0].placement_product_type,
             placement_product_json: data.badge_pages[0].placement_product_json ? JSON.parse(data.badge_pages[0].placement_product_json) : null,
             placement_collection_json: data.badge_pages[0].placement_collection_json ? JSON.parse(data.badge_pages[0].placement_collection_json) : null,
-            // placement_tags_json: data.badge_pages[0].placement_tags_json ? JSON.parse(data.badge_pages[0].placement_tags_json) : null,
-            placement_tags_json: data.badge_pages[0].placement_tags_json || '', // Changed to string
+            placement_tags_json: data.badge_pages[0].placement_tags_json || '',
           });
-
+  
+          setDesignState({
+            backgroundColor: data.background_color,
+            borderColor: data.border_color,
+            titleColor: data.title_color,
+            subheadingColor: data.subheading_color,
+            iconColor: data.icon_color,
+            cornerRadius: data.corner_radius,
+            bordersize: data.border_size,
+            titleSize: data.title_size,
+            subheadingSize: data.subheading_size,
+            iconSize: data.icon_size,
+            buttonColor: data.button_color,
+            buttonTextColor: data.button_text_color,
+            buttonBorderRadius: data.button_border_radius,
+            buttonTextSize: data.button_text_size,
+          });
+  
           setOriginalState({
             singleBannerState: { ...singleBannerState },
             iconBlockPages: [...iconBlockPages],
             paymentIconsPages: [...paymentIconsPages],
             placementData: { ...placementData },
+            designState: { ...designState },
           });
-
+  
         } catch (error) {
           console.error('Error fetching badge data:', error);
         }
       };
-
+  
       fetchBadgeData();
     } else if (isCreationMode) {
-      console.log("in isCreationMode");
       setBadgeName("New Badge");
       setSingleBannerState({
         title: "Sample Title",
@@ -2158,12 +5221,27 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         placement_product_type: 'allProducts',
         placement_product_json: null,
         placement_collection_json: null,
-        // placement_tags_json: null,
-        placement_tags_json: '', // Changed to string
+        placement_tags_json: '',
+      });
+      setDesignState({
+        backgroundColor: '#FFFFFF',
+        borderColor: '#c5c8d1',
+        titleColor: '#202223',
+        subheadingColor: '#96A4B6',
+        iconColor: '#333333',
+        cornerRadius: 8,
+        bordersize: 0,
+        titleSize: 16,
+        subheadingSize: 14,
+        iconSize: 32,
+        buttonColor: '#202223',
+        buttonTextColor: '#fafafa',
+        buttonBorderRadius: 4,
+        buttonTextSize: 14,
       });
     }
   }, [badgeId, isCreationMode]);
-
+  
 
   const setBadgeDetails = (badgeData) => {
     setBadgeName(badgeData.badge_name);
@@ -2178,7 +5256,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         linkType: badgeData.badge_pages?.[0]?.linkType || "",
         externalUrl: badgeData.badge_pages?.[0]?.external_url || "",
         selectedIcon: badgeData.badge_pages?.[0]?.icon_name ? { name: badgeData.badge_pages[0].icon_name.replace("Lia", "") } : null,
-        icon_svg: badgeData.badge_pages?.[0]?.icon_svg || "", // Include the SVG string
+        icon_svg: badgeData.badge_pages?.[0]?.icon_svg || "",
         cta: badgeData.badge_pages?.[0]?.call_to_action || "no-cta",
         selectedProduct: badgeData.badge_pages?.[0]?.product_json ? JSON.parse(badgeData.badge_pages[0].product_json) : null,
         selectedCollection: badgeData.badge_pages?.[0]?.collection_json ? JSON.parse(badgeData.badge_pages[0].collection_json) : null,
@@ -2191,10 +5269,10 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         ...page,
         id: index + 1,
         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Lia", "") } : null,
-        icon_svg: page.icon_svg || "", // Include the SVG string
+        icon_svg: page.icon_svg || "",
         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-        cta: page.call_to_action, // Ensure cta is set here
+        cta: page.call_to_action,
         buttonText: page.button_text,
         externalUrl: page.external_url,
       })) || []);
@@ -2203,10 +5281,10 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         ...page,
         id: index + 1,
         selectedIcon: page.icon_name ? { name: page.icon_name.replace("Fc", "") } : null,
-        icon_svg: page.icon_svg || "", // Include the SVG string
+        icon_svg: page.icon_svg || "",
         selectedProduct: page.product_json ? JSON.parse(page.product_json) : null,
         selectedCollection: page.collection_json ? JSON.parse(page.collection_json) : null,
-        cta: page.call_to_action, // Ensure cta is set here
+        cta: page.call_to_action,
         buttonText: page.button_text,
         externalUrl: page.external_url,
       })) || []);
@@ -2216,12 +5294,9 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       placement_product_type: badgeData.badge_pages?.[0]?.placement_product_type || 'allProducts',
       placement_product_json: badgeData.badge_pages?.[0]?.placement_product_json || null,
       placement_collection_json: badgeData.badge_pages?.[0]?.placement_collection_json || null,
-      // placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || null,
-      placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || '', // Changed to string
-
+      placement_tags_json: badgeData.badge_pages?.[0]?.placement_tags_json || '',
     });
   };
-
 
   const handleTabChange = (selectedTabIndex) => {
     setSelectedTab(selectedTabIndex);
@@ -2267,58 +5342,18 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     }
   };
 
-  // ths is old handleIconSelect working for normal  icon
-
-  // const handleIconSelect = (component, pageId, icon) => {
-  //   if (component === "singleBanner") {
-  //     setSingleBannerState((prevState) => ({
-  //       ...prevState,
-  //       selectedIcon: icon,
-  //       iconModalActive: false,
-  //     }));
-  //     setIsModified(true);
-  //   } else if (component === "payment-icons") {
-  //     setPaymentIconsPages((prevPages) => {
-  //       const newPages = [...prevPages];
-  //       const pageIndex = newPages.findIndex(page => page.id === pageId);
-  //       newPages[pageIndex] = {
-  //         ...newPages[pageIndex],
-  //         selectedIcon: icon,
-  //         iconModalActive: false,
-  //       };
-  //       setIsModified(true);
-  //       return newPages;
-  //     });
-  //   } else if (component === "icon-block") {
-  //     setIconBlockPages((prevPages) => {
-  //       const newPages = [...prevPages];
-  //       const pageIndex = newPages.findIndex(page => page.id === pageId);
-  //       newPages[pageIndex] = {
-  //         ...newPages[pageIndex],
-  //         selectedIcon: icon,
-  //         iconModalActive: false,
-  //       };
-  //       setIsModified(true);
-  //       return newPages;
-  //     });
-  //   } else {
-  //     console.error("Unknown component:", component);
-  //   }
-  // };
-
-
   const handleIconSelect = (component, pageId, icon) => {
     let svgString = null;
     if (icon) {
       svgString = serializeReactElementToSVG(icon.icon);
     }
-  
+
     if (component === "singleBanner") {
       setSingleBannerState((prevState) => ({
         ...prevState,
         selectedIcon: icon,
         iconModalActive: false,
-        icon_svg: svgString, // Add the SVG string
+        icon_svg: svgString,
       }));
       setIsModified(true);
     } else if (component === "payment-icons") {
@@ -2329,7 +5364,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           ...newPages[pageIndex],
           selectedIcon: icon,
           iconModalActive: false,
-          icon_svg: svgString, // Add the SVG string
+          icon_svg: svgString,
         };
         setIsModified(true);
         return newPages;
@@ -2342,7 +5377,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           ...newPages[pageIndex],
           selectedIcon: icon,
           iconModalActive: false,
-          icon_svg: svgString, // Add the SVG string
+          icon_svg: svgString,
         };
         setIsModified(true);
         return newPages;
@@ -2351,10 +5386,13 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       console.error("Unknown component:", component);
     }
   };
-  
 
   const handleContinueToDesign = () => {
     setSelectedTab(1);
+  };
+
+  const handleContinueToPlacement = () => {
+    setSelectedTab(2);
   };
 
   const addIconBlockPage = () => {
@@ -2414,8 +5452,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   const handleSave = async () => {
     const badgeDetails = getBadgeDetails();
 
-    console.log("badgeDetails for save details :", badgeDetails);
-
     badgeDetails.status = isPublished ? "Publish" : "Draft";
 
     try {
@@ -2434,8 +5470,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         setToastActive(true);
         setTimeout(() => setToastActive(false), 3000);
         setIsModified(false);
-        onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been saved
-        onBackClick(); // Redirect back to the main page
+        onBadgeSave(savedBadge.id);
+        onBackClick();
       } else {
         console.error('Failed to save badge');
       }
@@ -2465,8 +5501,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         setTimeout(() => setToastActive(false), 3000);
         setIsModified(false);
         setIsPublished(true);
-        onBadgeSave(savedBadge.id); // Notify the parent component that the badge has been published
-        onBackClick(); // Redirect back to the main page
+        onBadgeSave(savedBadge.id);
+        onBackClick();
       } else {
         console.error('Failed to publish badge');
       }
@@ -2492,7 +5528,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         setIsPublished(false);
         setToastActive(true);
         setTimeout(() => setToastActive(false), 3000);
-        onBackClick(); // Redirect back to the main page
+        onBackClick();
       } else {
         console.error('Failed to unpublish badge');
       }
@@ -2614,13 +5650,10 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
     }
   };
 
-
   const handleCancel = () => {
     if (badgeId) {
-      // If editing an existing badge, reset to the original state
       setBadgeDetails(originalState);
     } else {
-      // If creating a new badge, reset to default creation state
       setBadgeName("New Badge");
       setSingleBannerState({
         title: "Sample Title",
@@ -2674,10 +5707,8 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       });
     }
     setIsModified(false);
-    onBackClick(); // Redirect back to the main page
+    onBackClick();
   };
-
-  // ths is old getBadgeDetails working for normal  icon
 
   // const getBadgeDetails = () => {
   //   let badgeDetails = {};
@@ -2708,6 +5739,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //       subheading: singleBannerState.subheading,
   //       title: singleBannerState.title,
   //       icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+  //       icon_svg: singleBannerState.icon_svg,
   //       call_to_action: singleBannerState.cta,
   //       button_text: singleBannerState.buttonText,
   //       product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
@@ -2718,6 +5750,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //           title: singleBannerState.title,
   //           subheading: singleBannerState.subheading,
   //           icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
+  //           icon_svg: singleBannerState.icon_svg,
   //           call_to_action: singleBannerState.cta,
   //           button_text: singleBannerState.buttonText,
   //           product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
@@ -2726,7 +5759,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //           placement_product_type: placementData.placement_product_type,
   //           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
   //           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-  //           placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+  //           placement_tags_json: ensureString(placementData.placement_tags_json),
   //         },
   //       ],
   //     };
@@ -2739,6 +5772,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //         title: page.title,
   //         subheading: page.subheading,
   //         icon_name: page.selectedIcon ? prefixIconName(page.selectedIcon.name) : "",
+  //         icon_svg: page.icon_svg,
   //         call_to_action: page.cta,
   //         button_text: page.buttonText,
   //         product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
@@ -2747,7 +5781,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //         placement_product_type: placementData.placement_product_type,
   //         placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
   //         placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-  //         placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+  //         placement_tags_json: ensureString(placementData.placement_tags_json),
   //       })),
   //     };
   //   } else if (badgeType === "payment-icons") {
@@ -2759,6 +5793,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //         title: page.title,
   //         subheading: page.subheading,
   //         icon_name: page.selectedIcon ? prefixIconName1(page.selectedIcon.name) : "",
+  //         icon_svg: page.icon_svg,
   //         call_to_action: page.cta,
   //         button_text: page.buttonText,
   //         product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
@@ -2767,7 +5802,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   //         placement_product_type: placementData.placement_product_type,
   //         placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
   //         placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-  //         placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
+  //         placement_tags_json: ensureString(placementData.placement_tags_json),
   //       })),
   //     };
   //   }
@@ -2776,14 +5811,15 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
   // };
 
 
+  // update the getBadge Details for design section
   const getBadgeDetails = () => {
     let badgeDetails = {};
-
+  
     const extractId = (gid) => {
       const parts = gid.split('/');
       return parts.length > 1 ? parts[parts.length - 1] : gid;
     };
-
+  
     const prefixIconName = (iconName) => {
       if (!iconName.startsWith("Lia")) {
         return "Lia" + iconName;
@@ -2796,7 +5832,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
       }
       return iconName;
     };
-
+  
     if (badgeType === "single-banner") {
       badgeDetails = {
         badge_name: badgeName,
@@ -2805,7 +5841,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
         subheading: singleBannerState.subheading,
         title: singleBannerState.title,
         icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
-        icon_svg: singleBannerState.icon_svg, // Add the SVG string
+        icon_svg: singleBannerState.icon_svg,
         call_to_action: singleBannerState.cta,
         button_text: singleBannerState.buttonText,
         product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
@@ -2816,7 +5852,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
             title: singleBannerState.title,
             subheading: singleBannerState.subheading,
             icon_name: singleBannerState.selectedIcon ? prefixIconName(singleBannerState.selectedIcon.name) : "",
-            icon_svg: singleBannerState.icon_svg, // Add the SVG string
+            icon_svg: singleBannerState.icon_svg,
             call_to_action: singleBannerState.cta,
             button_text: singleBannerState.buttonText,
             product_json: singleBannerState.selectedProduct ? JSON.stringify(singleBannerState.selectedProduct) : "",
@@ -2825,10 +5861,23 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
             placement_product_type: placementData.placement_product_type,
             placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
             placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-            // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
-            placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+            placement_tags_json: ensureString(placementData.placement_tags_json),
           },
         ],
+        background_color: designState.backgroundColor,
+        border_color: designState.borderColor,
+        title_color: designState.titleColor,
+        subheading_color: designState.subheadingColor,
+        icon_color: designState.iconColor,
+        corner_radius: designState.cornerRadius,
+        border_size: designState.bordersize,
+        title_size: designState.titleSize,
+        subheading_size: designState.subheadingSize,
+        icon_size: designState.iconSize,
+        button_color: designState.buttonColor,
+        button_text_color: designState.buttonTextColor,
+        button_border_radius: designState.buttonBorderRadius,
+        button_text_size: designState.buttonTextSize,
       };
     } else if (badgeType === "icon-block") {
       badgeDetails = {
@@ -2839,7 +5888,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           title: page.title,
           subheading: page.subheading,
           icon_name: page.selectedIcon ? prefixIconName(page.selectedIcon.name) : "",
-          icon_svg: page.icon_svg, // Add the SVG string
+          icon_svg: page.icon_svg,
           call_to_action: page.cta,
           button_text: page.buttonText,
           product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
@@ -2848,9 +5897,22 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           placement_product_type: placementData.placement_product_type,
           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-          // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
-          placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+          placement_tags_json: ensureString(placementData.placement_tags_json),
         })),
+        background_color: designState.backgroundColor,
+        border_color: designState.borderColor,
+        title_color: designState.titleColor,
+        subheading_color: designState.subheadingColor,
+        icon_color: designState.iconColor,
+        corner_radius: designState.cornerRadius,
+        border_size: designState.bordersize,
+        title_size: designState.titleSize,
+        subheading_size: designState.subheadingSize,
+        icon_size: designState.iconSize,
+        button_color: designState.buttonColor,
+        button_text_color: designState.buttonTextColor,
+        button_border_radius: designState.buttonBorderRadius,
+        button_text_size: designState.buttonTextSize,
       };
     } else if (badgeType === "payment-icons") {
       badgeDetails = {
@@ -2861,7 +5923,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           title: page.title,
           subheading: page.subheading,
           icon_name: page.selectedIcon ? prefixIconName1(page.selectedIcon.name) : "",
-          icon_svg: page.icon_svg, // Add the SVG string
+          icon_svg: page.icon_svg,
           call_to_action: page.cta,
           button_text: page.buttonText,
           product_json: page.selectedProduct ? JSON.stringify(page.selectedProduct) : "",
@@ -2870,16 +5932,30 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
           placement_product_type: placementData.placement_product_type,
           placement_product_json: placementData.placement_product_json ? JSON.stringify(placementData.placement_product_json) : null,
           placement_collection_json: placementData.placement_collection_json ? JSON.stringify(placementData.placement_collection_json) : null,
-          // placement_tags_json: placementData.placement_tags_json ? JSON.stringify(placementData.placement_tags_json) : null,
-          placement_tags_json: ensureString(placementData.placement_tags_json), // Ensure it's a string
+          placement_tags_json: ensureString(placementData.placement_tags_json),
         })),
+        background_color: designState.backgroundColor,
+        border_color: designState.borderColor,
+        title_color: designState.titleColor,
+        subheading_color: designState.subheadingColor,
+        icon_color: designState.iconColor,
+        corner_radius: designState.cornerRadius,
+        border_size: designState.bordersize,
+        title_size: designState.titleSize,
+        subheading_size: designState.subheadingSize,
+        icon_size: designState.iconSize,
+        button_color: designState.buttonColor,
+        button_text_color: designState.buttonTextColor,
+        button_border_radius: designState.buttonBorderRadius,
+        button_text_size: designState.buttonTextSize,
       };
     }
-
+  
     return badgeDetails;
   };
 
-
+  
+  
   return (
     <Frame>
       <Page
@@ -2970,7 +6046,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       </Stack>
 
                       {badgeType === "single-banner" && (
-
                         <SingleBanner
                           {...singleBannerState}
                           setTitle={(value) => {
@@ -3028,12 +6103,10 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                           onCollectionSelect={(collection) => handleCollectionSelection("singleBanner", null, collection)}
                           onUrlSelect={(linkType, externalUrl) => handleUrlSelection("singleBanner", null, linkType, externalUrl)}
                         />
-
                       )}
                       {badgeType === "icon-block" && (
                         <>
                           {iconBlockPages.map((page, index) => (
-
                             <IconBlock
                               key={page.id}
                               pageId={page.id}
@@ -3072,9 +6145,7 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                                 console.log("Link type changed to:", value);
                                 setIconBlockPages((prevPages) => {
                                   const newPages = [...prevPages];
-                                  console.log("newPages:", newPages);
                                   const pageIndex = newPages.findIndex(p => p.id === page.id);
-                                  console.log("pageIndex:", pageIndex);
                                   newPages[pageIndex] = { ...newPages[pageIndex], linkType: value };
                                   setIsModified(true);
                                   return newPages;
@@ -3138,7 +6209,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                               onCollectionSelect={(collection) => handleCollectionSelection("icon-block", page.id, collection)}
                               onUrlSelect={(linkType, externalUrl) => handleUrlSelection("icon-block", page.id, linkType, externalUrl)}
                             />
-
                           ))}
 
                           <div className="addBtnMain">
@@ -3152,7 +6222,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                       {badgeType === "payment-icons" && (
                         <>
                           {paymentIconsPages.map((page, index) => (
-
                             <PaymentIcons
                               key={page.id}
                               pageId={page.id}
@@ -3255,7 +6324,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                               onCollectionSelect={(collection) => handleCollectionSelection("payment-icons", page.id, collection)}
                               onUrlSelect={(linkType, externalUrl) => handleUrlSelection("payment-icons", page.id, linkType, externalUrl)}
                             />
-
                           ))}
 
                           <div className="addBtnMain">
@@ -3265,21 +6333,6 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                           </div>
                         </>
                       )}
-                      {/* <div className="translations-section">
-                        <Stack>
-                          <Stack.Item>
-                            <span className="Polaris-TextStyle--variationStrong">Translations</span>
-                          </Stack.Item>
-                          <Stack.Item>
-                            <Badge status="info">
-                              <span className="Polaris-Text--root Polaris-Text--bodySm">Essential plan</span>
-                            </Badge>
-                          </Stack.Item>
-                        </Stack>
-                      </div>
-                      <Button fullWidth onClick={() => { }}>
-                        Add translation
-                      </Button> */}
                       <div style={{ textAlign: "center" }}>
                         <button
                           className="Polaris-Button Polaris-Button--outline Polaris-Button--fullWidth"
@@ -3309,105 +6362,136 @@ function BadgeEditor({ onBackClick, badgeId, onBadgeSave, isCreationMode, badgeD
                 </Card.Section>
               )}
               {selectedTab === 1 && (
-                <Design title={badgeType === "single-banner" ? singleBannerState.title : badgeType === "icon-block" ? iconBlockPages[0].title : paymentIconsPages[0].title} />
+                <Design
+                  title={badgeType === "single-banner" ? singleBannerState.title : badgeType === "icon-block" ? iconBlockPages[0].title : paymentIconsPages[0].title}
+                  handleContinueToPlacement={handleContinueToPlacement}
+                  designState={designState}
+                  setDesignState={setDesignState}
+                />
               )}
+
+              {selectedTab === 2 && (
+                <Placement
+                  badgeType={badgeType}
+                  placementData={placementData}
+                  setPlacementData={setPlacementData}
+                />
+              )}
+
             </LegacyCard>
-
-            {selectedTab === 2 && (
-              <Placement
-                badgeType={badgeType}
-                placementData={placementData}
-                setPlacementData={setPlacementData}
-              />
-            )}
-
-
-
-          </Grid.Cell>
-          <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 7, xl: 7 }}>
-            <LegacyCard>
-
-              {badgeType === "single-banner" && (
-                <div className="badge-output-container">
-                  {singleBannerState.selectedIcon ? (
-                    <div className="badge-icon">
-                      {IconComponent(getPrefixedIconName(singleBannerState.selectedIcon.name), badgeType)}
+            </Grid.Cell>
+            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 3, lg: 7, xl: 7 }}>
+              <LegacyCard>
+                {badgeType === "single-banner" && (
+                  <div className="badge-output-container"   style={{
+                    backgroundColor: designState.backgroundColor,
+                    border: `${designState.bordersize}px solid ${designState.borderColor}`, // Dynamically setting the border
+                    borderRadius: `${designState.cornerRadius}px`,
+                  }}>
+                    {singleBannerState.selectedIcon ? (
+                      <div className="badge-icon">
+                        {IconComponent(getPrefixedIconName(singleBannerState.selectedIcon.name), badgeType)}
+                      </div>
+                    ) : (
+                      <div className="icon-placeholder"></div>
+                    )}
+                    <div className="badge-text">
+                      <h2 className="badge-title" style={{ color: designState.titleColor, fontSize: `${designState.titleSize}px` }}>
+                        {singleBannerState.title}
+                      </h2>
+                      <h3 className="badge-subheading" style={{ color: designState.subheadingColor, fontSize: `${designState.subheadingSize}px` }}>
+                        {singleBannerState.subheading}
+                      </h3>
                     </div>
-                  ) : (
-                    <div className="icon-placeholder"></div>
-                  )}
-                  <div className="badge-text">
-                    <h2 className="badge-title">{singleBannerState.title}</h2>
-                    <h3 className="badge-subheading">{singleBannerState.subheading}</h3>
+                    {singleBannerState.cta === "button-cta" && (
+                      <button className="badge-button" style={{ backgroundColor: designState.buttonColor, color: designState.buttonTextColor, fontSize: `${designState.buttonTextSize}px`, borderRadius: designState.buttonBorderRadius }}>
+                        {singleBannerState.buttonText}
+                      </button>
+                    )}
+                    {singleBannerState.cta === "clickable-banner-cta" && (
+                      <div className="output-banner"></div>
+                    )}
                   </div>
-                  {singleBannerState.cta === "button-cta" && (
-                    <button className="badge-button">{singleBannerState.buttonText}</button>
-                  )}
-                  {singleBannerState.cta === "clickable-banner-cta" && (
-                    <div className="output-banner"></div>
-                  )}
-                </div>
-              )}
+                )}
 
-              {badgeType === "icon-block" && (
-                <div className="badge-output-container kdtYjY">
-                  {iconBlockPages.map((page, index) => (
-                    <div key={index} className="badge-output-page hVFYFW">
-                      {page.selectedIcon ? (
-                        <div className="badge-icon iubCKx">
-                          {IconComponent(getPrefixedIconName(page.selectedIcon.name), badgeType)}
+                {badgeType === "icon-block" && (
+                  <div className="badge-output-container kdtYjY"   style={{
+                    backgroundColor: designState.backgroundColor,
+                    border: `${designState.bordersize}px solid ${designState.borderColor}`, // Dynamically setting the border
+                    borderRadius: `${designState.cornerRadius}px`,
+                  }}>
+                    {iconBlockPages.map((page, index) => (
+                      <div key={index} className="badge-output-page hVFYFW" style={{ backgroundColor: designState.backgroundColor, borderRadius: designState.cornerRadius, borderColor: designState.borderColor }}>
+                        {page.selectedIcon ? (
+                          <div className="badge-icon iubCKx">
+                            {IconComponent(getPrefixedIconName(page.selectedIcon.name), badgeType)}
+                          </div>
+                        ) : (
+                          <div className="icon-placeholder"></div>
+                        )}
+                        <div className="badge-text">
+                          <h2 className="badge-title" style={{ color: designState.titleColor, fontSize: `${designState.titleSize}px` }}>
+                            {page.title}
+                          </h2>
+                          <h3 className="badge-subheading" style={{ color: designState.subheadingColor, fontSize: `${designState.subheadingSize}px` }}>
+                            {page.subheading}
+                          </h3>
                         </div>
-                      ) : (
-                        <div className="icon-placeholder"></div>
-                      )}
-                      <div className="badge-text">
-                        <h2 className="badge-title">{page.title}</h2>
-                        <h3 className="badge-subheading">{page.subheading}</h3>
+                        {page.cta === "button-cta" && (
+                          <button className="badge-button" style={{ backgroundColor: designState.buttonColor, color: designState.buttonTextColor, fontSize: `${designState.buttonTextSize}px`, borderRadius: designState.buttonBorderRadius }}>
+                            {page.buttonText}
+                          </button>
+                        )}
+                        {page.cta === "clickable-banner-cta" && (
+                          <div className="output-banner"></div>
+                        )}
                       </div>
-                      {page.cta === "button-cta" && (
-                        <button className="badge-button">{page.buttonText}</button>
-                      )}
-                      {page.cta === "clickable-banner-cta" && (
-                        <div className="output-banner"></div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
 
-              {badgeType === "payment-icons" && (
-                <div className="badge-output-container kdtYjY">
-                  {paymentIconsPages.map((page, index) => (
-                    <div key={index} className="badge-output-page hVFYFW">
-                      {page.selectedIcon ? (
-                        <div className="badge-icon iubCKx">
-                          {IconComponent(getPrefixedIconName1(page.selectedIcon.name), badgeType)}
+                {badgeType === "payment-icons" && (
+                  <div className="badge-output-container kdtYjY"   style={{
+                    backgroundColor: designState.backgroundColor,
+                    border: `${designState.bordersize}px solid ${designState.borderColor}`, // Dynamically setting the border
+                    borderRadius: `${designState.cornerRadius}px`,
+                  }}>
+                    {paymentIconsPages.map((page, index) => (
+                      <div key={index} className="badge-output-page hVFYFW" style={{ backgroundColor: designState.backgroundColor, borderRadius: designState.cornerRadius, borderColor: designState.borderColor }}>
+                        {page.selectedIcon ? (
+                          <div className="badge-icon iubCKx">
+                            {IconComponent(getPrefixedIconName1(page.selectedIcon.name), badgeType)}
+                          </div>
+                        ) : (
+                          <div className="icon-placeholder"></div>
+                        )}
+                        <div className="badge-text">
+                          <h2 className="badge-title" style={{ color: designState.titleColor, fontSize: `${designState.titleSize}px` }}>
+                            {page.title}
+                          </h2>
+                          <h3 className="badge-subheading" style={{ color: designState.subheadingColor, fontSize: `${designState.subheadingSize}px` }}>
+                            {page.subheading}
+                          </h3>
                         </div>
-                      ) : (
-                        <div className="icon-placeholder"></div>
-                      )}
-                      <div className="badge-text">
-                        <h2 className="badge-title">{page.title}</h2>
-                        <h3 className="badge-subheading">{page.subheading}</h3>
+                        {page.cta === "button-cta" && (
+                          <button className="badge-button" style={{ backgroundColor: designState.buttonColor, color: designState.buttonTextColor, fontSize: `${designState.buttonTextSize}px`, borderRadius: designState.buttonBorderRadius }}>
+                            {page.buttonText}
+                          </button>
+                        )}
+                        {page.cta === "clickable-banner-cta" && (
+                          <div className="output-banner"></div>
+                        )}
                       </div>
-                      {page.cta === "button-cta" && (
-                        <button className="badge-button">{page.buttonText}</button>
-                      )}
-                      {page.cta === "clickable-banner-cta" && (
-                        <div className="output-banner"></div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-            </LegacyCard>
-          </Grid.Cell>
-        </Grid>
+                    ))}
+                  </div>
+                )}
+              </LegacyCard>
+            </Grid.Cell>
+          </Grid>
+        
       </Page>
     </Frame>
   );
 }
 
 export default BadgeEditor;
-

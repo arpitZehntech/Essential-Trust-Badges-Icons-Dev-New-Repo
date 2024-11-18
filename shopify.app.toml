@@ -3,7 +3,7 @@
 client_id = "3c71d8066fd873dfafb10a06b22b8ca0"
 name = "Essential-Trust-badges-icons"
 handle = "essential-trust-badges-icons"
-application_url = "https://enters-capital-interracial-nec.trycloudflare.com"
+application_url = "https://ed-excel-acoustic-citizens.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products,read_products"
 
 [auth]
 redirect_urls = [
-  "https://enters-capital-interracial-nec.trycloudflare.com/auth/callback",
-  "https://enters-capital-interracial-nec.trycloudflare.com/auth/shopify/callback",
-  "https://enters-capital-interracial-nec.trycloudflare.com/api/auth/callback"
+  "https://ed-excel-acoustic-citizens.trycloudflare.com/auth/callback",
+  "https://ed-excel-acoustic-citizens.trycloudflare.com/auth/shopify/callback",
+  "https://ed-excel-acoustic-citizens.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

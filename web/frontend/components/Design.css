@@ -1,0 +1,17 @@
+.kXtYkP {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1em;
+
+}
+
+.wCls
+{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.cardWithBorder {
+    border-bottom: 3px solid red !important;
+  }

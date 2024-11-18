@@ -1,13 +1,11 @@
-{% render "badgeUrl" %}
+{% render "badgeUrl" %} <!-- Renders the 'badgeUrl' snippet, which likely generates the URL for the badge -->
 
 {% schema %}
   {
-      "name": "Badges & Icons",
-      "target": "body",
-      "javascript": "badges.js",
-      "stylesheet": "test.css",
-      "settings": []
+      "name": "Badges & Icons",    // The name of the block, which will be displayed in the Shopify admin 
+      "target": "body",    // Specifies that the block should be inserted into the body of the page 
+      "javascript": "badges.js",    // Includes the JavaScript file that contains the logic for the badges 
+      "stylesheet": "test.css",     //Includes the CSS file that styles the badges 
+      "settings": []     //An empty array for settings, which can be used to configure the block 
   }
-  {% endschema %}
-   
-   
+{% endschema %} <!-- Ends the schema definition -->

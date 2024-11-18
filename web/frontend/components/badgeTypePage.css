@@ -1,12 +1,11 @@
-.back-arrow {
+/*  working code 16-11-2024   */
+/* .back-arrow {
     fill: rgb(97, 106, 117);
-    /* Initial color */
     transition: fill 0.3s ease;
 }
 
 .Polaris-Button:hover .back-arrow {
     fill: rgb(31, 33, 36);
-    /* Color on hover */
 }
 
 .cardContainer  {
@@ -19,7 +18,6 @@
     margin-bottom: 20px;
 }
 
-/* Media query for screens below 489px */
 @media (max-width: 489px) {
     .flexContainer  {
         padding: var(--p-space-4) var(--p-space-4) !important;
@@ -34,4 +32,52 @@
 .breadcrumbs
 {
     padding-right: 10px; 
+} */
+
+
+
+
+/* working code 16-11-2024  adding comments  */
+
+
+
+/* Styles for the back arrow icon */
+.back-arrow {
+    fill: rgb(97, 106, 117); /* Set the fill color of the back arrow */
+    transition: fill 0.3s ease; /* Add a smooth transition effect for the fill color */
+}
+
+/* Change the fill color of the back arrow on hover */
+.Polaris-Button:hover .back-arrow {
+    fill: rgb(31, 33, 36); /* Set the fill color on hover */
+}
+
+/* Styles for the card container */
+.cardContainer {
+    overflow: hidden !important; /* Ensure the content does not overflow */
+    padding: 10px !important; /* Add padding inside the card container */
+    width: 290px !important; /* Set a fixed width for the card container */
+}
+
+/* Styles for the card image */
+.cardImage {
+    margin-bottom: 20px; /* Add bottom margin to the card image */
+}
+
+/* Media query for screens with a maximum width of 489px */
+@media (max-width: 489px) {
+    .flexContainer {
+        padding: var(--p-space-4) var(--p-space-4) !important; /* Add padding to the flex container on smaller screens */
+    }
+}
+
+/* Styles for the flex container */
+.flexContainer {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Center align items vertically */
+}
+
+/* Styles for the breadcrumbs */
+.breadcrumbs {
+    padding-right: 10px; /* Add right padding to the breadcrumbs */
 }
