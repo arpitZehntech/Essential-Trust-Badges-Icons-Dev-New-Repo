@@ -101,7 +101,6 @@
 
 /* working code 16-11-2024  adding comments  */
 
-
 .emptyStateMargin {
   padding: 28px 0px 0px; /* Add padding to the top of the empty state margin */
 }
@@ -136,6 +135,12 @@
   .Polaris-Text--subdued {
       padding-top: 4px !important; /* Add top padding to subdued text on small screens */
   }
+  .Polaris-Page {
+    padding: var(--p-space-2) !important; /* Add padding to the page on small screens */
+  }
+  .Polaris-Page__Content {
+    overflow-x: auto; /* Allow horizontal scrolling for tables on small screens */
+  }
 }
 
 .Polaris-Text--subdued {
@@ -154,49 +159,58 @@
 
 .left-header,
 .right-header {
-font-weight: 600; /* Make header text bold */
-padding: 16px 20px; /* Add padding to headers */
+  font-weight: 600; /* Make header text bold */
+  padding: 16px 20px; /* Add padding to headers */
 }
 
 .left-header {
-text-align: left; /* Align left header text to the left */
+  text-align: left; /* Align left header text to the left */
 }
 
 .right-header {
-text-align: right; /* Align right header text to the right */
+  text-align: right; /* Align right header text to the right */
 }
 
 .body-row {
-border-top: 1px solid #e1e3e5; /* Add top border to body rows */
+  border-top: 1px solid #e1e3e5; /* Add top border to body rows */
 }
 
 .left-data,
 .right-data {
-padding: 16px 20px; /* Add padding to data cells */
-border-top: 1px solid #e1e3e5; /* Add top border to data cells */
+  padding: 16px 20px; /* Add padding to data cells */
+  border-top: 1px solid #e1e3e5; /* Add top border to data cells */
 }
 
 .left-data {
-text-align: left; /* Align left data text to the left */
+  text-align: left; /* Align left data text to the left */
 }
 
 .right-data {
-text-align: right; /* Align right data text to the right */
+  text-align: right; /* Align right data text to the right */
 }
 
 .custom-row {
-display: flex; /* Use flexbox for custom row layout */
-align-items: center; /* Center align items vertically */
+  display: flex; /* Use flexbox for custom row layout */
+  align-items: center; /* Center align items vertically */
 }
 
 .drag-icon {
-margin-right: 8px; /* Add right margin to drag icon */
+  margin-right: 8px; /* Add right margin to drag icon */
 }
 
 .title1 {
-margin-left: 8px; /* Add left margin to title */
+  margin-left: 8px; /* Add left margin to title */
 }
 
 .warnigText {
-padding: 20px; /* Add padding to warning text */
+  padding: 20px; /* Add padding to warning text */
+}
+
+/* Ensure the table is scrollable on smaller screens */
+@media (max-width: 600px) {
+  .polaris-table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
 }

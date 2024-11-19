@@ -1,0 +1,4 @@
+.container-div:only-child,
+.container-div1:only-child {
+    grid-column: 1 / -1;
+}
